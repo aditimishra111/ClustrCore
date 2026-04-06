@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up – ClustrCore</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+    /* ── TOKENS (matches landing page exactly) ── */
+    :root {
+      --orange:#c8623a; --orange-l:#e08c4a; --orange-d:#a34c28;
+      --blue:#3a6bc8; --blue-l:#6a9be8;
+      --grad:linear-gradient(135deg, var(--orange) 0%, var(--orange-l) 50%, var(--blue) 100%);
+      --grad-text:linear-gradient(90deg, var(--orange) 0%, var(--orange-l) 40%, var(--blue) 100%);
+
+      --bg:#faf8f5; --bg2:#f2ede6; --bg3:#ebe4d9;
+      --ink:#1a1410; --ink2:#4a3f35; --ink3:#8c7b6d;
+      --card:#ffffff; --card2:rgba(255,255,255,0.75);
+      --line:rgba(26,20,16,0.08); --line2:rgba(26,20,16,0.15);
+      --sh1:0 1px 4px rgba(26,20,16,0.06),0 4px 16px rgba(26,20,16,0.06);
+      --sh2:0 8px 32px rgba(26,20,16,0.10),0 2px 8px rgba(26,20,16,0.06);
+      --sh3:0 24px 64px rgba(26,20,16,0.14),0 4px 16px rgba(26,20,16,0.08);
+      --glow:rgba(200,98,58,0.18);
+      --ease:cubic-bezier(0.4,0,0.2,1); --t:0.3s;
+    }
+    [data-theme="dark"] {
+      --bg:#110e0b; --bg2:#1a1512; --bg3:#231e18;
+      --ink:#f5f0ea; --ink2:#b5a898; --ink3:#6b5e52;
+      --card:#1e1a15; --card2:rgba(30,26,21,0.85);
+      --line:rgba(245,240,234,0.07); --line2:rgba(245,240,234,0.14);
+      --sh1:0 1px 4px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.25);
+      --sh2:0 8px 32px rgba(0,0,0,0.4),0 2px 8px rgba(0,0,0,0.3);
+      --sh3:0 24px 64px rgba(0,0,0,0.55),0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.25rem;
+      position: relative;
+      overflow-x: hidden;
+      transition: background var(--t), color var(--t);
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 20%, rgba(200,98,58,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 70% at 10% 80%, rgba(58,107,200,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 50%, rgba(224,140,74,0.06) 0%, transparent 50%);
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+    .theme-toggle {
+      position: fixed; top: 1.25rem; right: 1.25rem; z-index: 100;
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1px solid var(--line2); background: var(--card2);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      color: var(--ink2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; transition: all var(--t); box-shadow: var(--sh1);
+    }
+    .theme-toggle:hover { border-color: var(--orange); color: var(--orange); transform: scale(1.05); }
+
+    .back-link {
+      position: fixed; top: 1.25rem; left: 1.25rem; z-index: 100;
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-size: 0.82rem; font-weight: 500; color: var(--ink3);
+      text-decoration: none; background: var(--card2);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--line2); border-radius: 100px;
+      padding: 0.45rem 1rem; box-shadow: var(--sh1); transition: all var(--t);
+    }
+    .back-link:hover { color: var(--orange); border-color: rgba(200,98,58,0.3); }
+
+    .signup-card {
+      background: var(--card2);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border: 1px solid var(--line2); border-radius: 28px;
+      width: 100%; max-width: 490px;
+      padding: 2.875rem 2.625rem;
+      box-shadow: var(--sh3); position: relative; z-index: 2;
+      animation: cardIn 0.7s var(--ease) both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .signup-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--grad); border-radius: 28px 28px 0 0;
+    }
+
+    .card-header { text-align: center; margin-bottom: 2.25rem; }
+
+    .logo-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      background: var(--bg2); border: 1px solid var(--line2);
+      border-radius: 100px; padding: 0.32rem 0.9rem;
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 1.125rem;
+    }
+    .logo-eyebrow::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--orange); animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+    .card-title {
+      font-family: 'Playfair Display', serif; font-size: 2.1rem;
+      font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 0.5rem;
+    }
+    .card-title .gradient-text {
+      background: var(--grad-text);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .card-subtitle { font-size: 0.88rem; color: var(--ink3); font-weight: 300; line-height: 1.5; }
+
+    .msg-banner {
+      border-radius: 10px; padding: 0.65rem 0.9rem; font-size: 0.82rem;
+      display: none; margin-bottom: 1.125rem;
+      align-items: center; gap: 0.5rem; line-height: 1.4;
+    }
+    .msg-banner.show { display: flex; }
+    .msg-banner.error { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: #ef4444; }
+    .msg-banner.success { background: rgba(58,156,90,0.08); border: 1px solid rgba(58,156,90,0.25); color: #3a9c5a; }
+
+    .form-group { margin-bottom: 1.05rem; }
+
+    .form-label {
+      display: block; font-family: 'DM Mono', monospace; font-size: 0.62rem;
+      font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink3); margin-bottom: 0.4rem;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-icon {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      color: var(--ink3); font-size: 0.8rem; pointer-events: none; transition: color var(--t);
+    }
+    .input-wrap:focus-within .input-icon { color: var(--orange); }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    select {
+      width: 100%; padding: 0.72rem 1rem 0.72rem 2.4rem;
+      background: var(--bg2); border: 1px solid var(--line2); border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.87rem; color: var(--ink);
+      outline: none; transition: all var(--t); appearance: none;
+    }
+    input::placeholder { color: var(--ink3); }
+    input:focus, select:focus {
+      border-color: var(--orange); background: var(--card);
+      box-shadow: 0 0 0 3px rgba(200,98,58,0.1);
+    }
+
+    .toggle-pw {
+      position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--ink3);
+      cursor: pointer; font-size: 0.8rem; padding: 4px; transition: color var(--t);
+    }
+    .toggle-pw:hover { color: var(--orange); }
+
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      pointer-events: none; color: var(--ink3); font-size: 0.65rem;
+    }
+    .select-wrap select { padding-right: 2.5rem; cursor: pointer; }
+
+    /* ── SECRET CODE FIELD ── */
+    .secret-expand {
+      overflow: hidden; max-height: 0; opacity: 0;
+      transition: max-height 0.5s var(--ease), opacity 0.35s ease, margin 0.35s ease;
+      margin-bottom: 0;
+    }
+    .secret-expand.open {
+      max-height: 200px; opacity: 1; margin-bottom: 1.05rem;
+    }
+
+    /* Secret code alert box — subtle amber warning */
+    .secret-notice {
+      display: flex; align-items: flex-start; gap: 0.55rem;
+      background: rgba(245,158,11,0.07);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 10px; padding: 0.65rem 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .secret-notice i { color: #f59e0b; font-size: 0.8rem; margin-top: 1px; flex-shrink: 0; }
+    .secret-notice p {
+      font-size: 0.78rem; color: var(--ink2); line-height: 1.45; font-weight: 300;
+    }
+    .secret-notice strong { font-weight: 600; color: var(--ink); }
+
+    /* Secret input gets a special accent when focused */
+    .secret-input-wrap input:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+    }
+    .secret-input-wrap:focus-within .input-icon { color: #f59e0b; }
+
+    /* ── STRENGTH BAR ── */
+    .strength-wrap { margin-top: 0.5rem; display: none; }
+    .strength-wrap.show { display: block; }
+    .strength-track { height: 3px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-bottom: 0.3rem; }
+    .strength-bar { height: 100%; width: 0%; border-radius: 3px; transition: width 0.4s ease, background 0.4s ease; }
+    .strength-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* ── ROLE CARDS ── */
+    .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 0.4rem; }
+
+    .role-card {
+      border: 1px solid var(--line2); border-radius: 12px; padding: 0.875rem 0.5rem;
+      text-align: center; cursor: pointer; transition: all var(--t);
+      background: var(--bg2); position: relative; overflow: hidden;
+    }
+    .role-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--grad); transform: scaleX(0); transition: transform var(--t);
+    }
+    .role-card:hover { border-color: rgba(200,98,58,0.25); background: var(--card); transform: translateY(-1px); }
+    .role-card.selected { border-color: var(--orange); background: var(--card); box-shadow: 0 0 0 3px rgba(200,98,58,0.1), var(--sh1); }
+    .role-card.selected::after { transform: scaleX(1); }
+    .role-card i { display: block; font-size: 1.05rem; margin-bottom: 0.35rem; color: var(--ink3); transition: color var(--t); }
+    .role-card.selected i { color: var(--orange); }
+    .role-card span { font-family: 'DM Mono', monospace; font-size: 0.63rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink3); transition: color var(--t); }
+    .role-card.selected span { color: var(--ink); }
+    #role { display: none; }
+
+    /* ── TEAM EXPAND ── */
+    .team-expand { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.55s var(--ease), opacity 0.4s ease; }
+    .team-expand.open { max-height: 700px; opacity: 1; }
+
+    .section-divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.125rem 0; }
+    .section-divider-line { flex: 1; height: 1px; background: var(--line2); }
+    .section-divider-badge {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      font-family: 'DM Mono', monospace; font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      background: rgba(200,98,58,0.07); border: 1px solid rgba(200,98,58,0.2);
+      color: var(--orange); padding: 0.22rem 0.75rem; border-radius: 100px; white-space: nowrap;
+    }
+
+    .team-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-top: 0.4rem; }
+    .team-opt[data-team="tech"]    i { color: var(--blue) !important; }
+    .team-opt[data-team="events"]  i { color: var(--orange) !important; }
+    .team-opt[data-team="digital"] i { color: #7c3aed !important; }
+    .team-opt.selected[data-team="tech"]    { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(58,107,200,0.12), var(--sh1); }
+    .team-opt.selected[data-team="events"]  { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(200,98,58,0.12), var(--sh1); }
+    .team-opt.selected[data-team="digital"] { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12), var(--sh1); }
+
+    #photoGroup { display: none; }
+    #photoGroup.show { display: block; }
+
+    .photo-drop {
+      width: 100%; height: 130px; background: var(--bg2);
+      border: 1.5px dashed var(--line2); border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; cursor: pointer; transition: all var(--t);
+      position: relative; overflow: hidden; gap: 0.4rem;
+    }
+    .photo-drop:hover { border-color: var(--orange); background: rgba(200,98,58,0.04); }
+    .photo-drop i { font-size: 1.6rem; color: var(--ink3); transition: color var(--t); }
+    .photo-drop span { font-size: 0.8rem; color: var(--ink3); transition: color var(--t); }
+    .photo-drop:hover i, .photo-drop:hover span { color: var(--orange); }
+    .photo-drop.has-image { border-style: solid; border-color: rgba(200,98,58,0.25); }
+    .photo-drop.has-image img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+    .photo-drop.has-image i, .photo-drop.has-image span { display: none; }
+    .photo-hint { font-size: 0.72rem; color: var(--ink3); margin-top: 0.3rem; }
+
+    #socialGroup { display: none; }
+
+    .btn-submit {
+      width: 100%; padding: 0.9rem; margin-top: 1.375rem;
+      background: var(--grad); color: white; border: none; border-radius: 100px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: all var(--t);
+      box-shadow: 0 4px 20px rgba(200,98,58,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      position: relative; overflow: hidden;
+    }
+    .btn-submit::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,0.1); opacity: 0; transition: opacity var(--t);
+    }
+    .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,98,58,0.5); }
+    .btn-submit:hover::before { opacity: 1; }
+    .btn-submit:active:not(:disabled) { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.6s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .divider {
+      display: flex; align-items: center; gap: 0.875rem; margin: 1.5rem 0;
+      color: var(--ink3); font-family: 'DM Mono', monospace;
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line2); }
+
+    .signin-row { text-align: center; color: var(--ink3); font-size: 0.85rem; font-weight: 300; }
+    .signin-row a { color: var(--orange); text-decoration: none; font-weight: 600; transition: color var(--t); }
+    .signin-row a:hover { color: var(--blue); }
+
+    .success-overlay {
+      position: absolute; inset: 0; background: var(--card2);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-radius: 28px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.875rem;
+      z-index: 10; opacity: 0; pointer-events: none; transition: opacity var(--t);
+    }
+    .success-overlay.show { opacity: 1; pointer-events: all; }
+    .success-icon {
+      width: 64px; height: 64px; background: rgba(58,156,90,0.1);
+      border: 1px solid rgba(58,156,90,0.3); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.7rem; color: #3a9c5a;
+      animation: successPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+      box-shadow: 0 0 0 8px rgba(58,156,90,0.08);
+    }
+    @keyframes successPop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-overlay h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--ink); }
+    .success-overlay p { font-size: 0.85rem; color: var(--ink3); font-weight: 300; }
+
+    @media (max-width: 520px) {
+      .signup-card { padding: 2.25rem 1.5rem; }
+      .card-title { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <i class="fas fa-moon"></i>
+  </button>
+
+  <a href="index.html" class="back-link">
+    <i class="fas fa-arrow-left"></i> Back to home
+  </a>
+
+  <div class="signup-card">
+
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-icon"><i class="fas fa-check"></i></div>
+      <h3>Account Created!</h3>
+      <p>Redirecting you to login…</p>
+    </div>
+
+    <div class="card-header">
+      <div class="logo-eyebrow">Join the Community</div>
+      <h1 class="card-title">
+        <span class="gradient-text">ClustrCore</span>
+      </h1>
+      <p class="card-subtitle">Create your account and start exploring</p>
+    </div>
+
+    <div class="msg-banner error" id="msgBanner">
+      <i class="fas fa-circle-exclamation"></i>
+      <span id="msgText">Please fill all fields.</span>
+    </div>
+
+    <form id="signupForm" autocomplete="off">
+
+      <!-- Name -->
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <div class="input-wrap">
+          <i class="fas fa-user input-icon"></i>
+          <input id="name" type="text" placeholder="Your full name" required>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope input-icon"></i>
+          <input id="email" type="email" placeholder="you@example.com" required>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input id="password" type="password" placeholder="Create a strong password" required>
+          <button type="button" class="toggle-pw" id="togglePw" aria-label="Toggle password">
+            <i class="fas fa-eye" id="pwIcon"></i>
+          </button>
+        </div>
+        <div class="strength-wrap" id="strengthWrap">
+          <div class="strength-track">
+            <div class="strength-bar" id="strengthBar"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel" style="color:var(--ink3)">—</span>
+        </div>
+      </div>
+
+      <!-- Role -->
+      <div class="form-group">
+        <label class="form-label">Your Role</label>
+        <select id="role" name="role"></select>
+        <div class="role-grid" id="roleGrid">
+          <div class="role-card" data-role="student">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Student</span>
+          </div>
+          <div class="role-card" data-role="team">
+            <i class="fas fa-users"></i>
+            <span>Team</span>
+          </div>
+          <div class="role-card" data-role="admin">
+            <i class="fas fa-shield-halved"></i>
+            <span>Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECRET CODE FIELD (shown for Team / Admin only) ── -->
+      <div class="secret-expand" id="secretExpand">
+        <div class="secret-notice">
+          <i class="fas fa-key"></i>
+          <p>
+            <strong>Restricted Access</strong> — This role requires a secret code shared
+            by the club leadership. Contact your coordinator if you don't have one.
+          </p>
+        </div>
+        <label class="form-label" for="secretCode">
+          <i class="fas fa-lock" style="margin-right:0.3rem;font-size:0.7rem;"></i>
+          Secret Access Code
+        </label>
+        <div class="input-wrap secret-input-wrap">
+          <i class="fas fa-key input-icon"></i>
+          <input
+            id="secretCode"
+            type="password"
+            placeholder="Enter the access code"
+            autocomplete="off"
+          >
+          <button type="button" class="toggle-pw" id="toggleSecret" aria-label="Toggle secret code">
+            <i class="fas fa-eye" id="secretIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- TEAM / ADMIN EXTRA FIELDS -->
+      <div id="teamFields" class="team-expand">
+
+        <div class="section-divider">
+          <span class="section-divider-line"></span>
+          <span class="section-divider-badge"><i class="fas fa-users"></i> Team Details</span>
+          <span class="section-divider-line"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="input-wrap">
+            <i class="fas fa-phone input-icon"></i>
+            <input id="phone" type="tel" placeholder="98765 43210">
+          </div>
+        </div>
+
+        <div class="form-group" id="teamGroup">
+          <label class="form-label">Your Team</label>
+          <div class="team-grid" id="teamGrid">
+            <div class="role-card team-opt" data-team="tech">
+              <i class="fas fa-code"></i>
+              <span>Technical</span>
+            </div>
+            <div class="role-card team-opt" data-team="events">
+              <i class="fas fa-calendar-days"></i>
+              <span>Events</span>
+            </div>
+            <div class="role-card team-opt" data-team="digital">
+              <i class="fas fa-palette"></i>
+              <span>Digital</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" id="roleGroup">
+          <label class="form-label">Role in Team</label>
+          <div class="input-wrap select-wrap">
+            <i class="fas fa-id-badge input-icon"></i>
+            <select id="teamRole">
+              <option value="">— select your team first —</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="photoGroup">
+          <label class="form-label">Your Photo</label>
+          <div class="photo-drop" id="photoDrop">
+            <i class="fas fa-camera"></i>
+            <span>Click to upload</span>
+            <input id="photoInput" type="file" accept="image/*"
+              style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
+          </div>
+          <p class="photo-hint">Max 5MB · JPG / PNG / WEBP</p>
+        </div>
+
+        <div id="socialGroup">
+          <div class="section-divider" style="margin-top:1.125rem">
+            <span class="section-divider-line"></span>
+            <span class="section-divider-badge"><i class="fas fa-share-alt"></i> Social Links (Optional)</span>
+            <span class="section-divider-line"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn</label>
+            <div class="input-wrap">
+              <i class="fab fa-linkedin input-icon"></i>
+              <input id="linkedin" type="text" placeholder="linkedin.com/in/yourprofile">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">GitHub</label>
+            <div class="input-wrap">
+              <i class="fab fa-github input-icon"></i>
+              <input id="github" type="text" placeholder="github.com/yourprofile">
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /teamFields -->
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <div class="spinner" id="spinner"></div>
+        <span id="btnText"><i class="fas fa-user-plus"></i> Create Account</span>
+      </button>
+
+    </form>
+
+    <div class="divider"><span>or</span></div>
+
+    <div class="signin-row">
+      Already have an account? <a href="login.html">Sign In</a>
+    </div>
+
+  </div><!-- /signup-card -->
+
+  <script src="signup.js"></script>
+  <script>
+  (() => {
+    /* ── THEME ── */
+    const html = document.documentElement;
+    const tBtn = document.getElementById('themeToggle');
+    applyTheme(localStorage.getItem('clustr-theme') || 'light');
+    function applyTheme(t) {
+      html.setAttribute('data-theme', t);
+      localStorage.setItem('clustr-theme', t);
+      tBtn.querySelector('i').className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    tBtn.addEventListener('click', () =>
+      applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+    /* ── PASSWORD TOGGLE ── */
+    const pwInput = document.getElementById('password');
+    const pwIcon  = document.getElementById('pwIcon');
+    document.getElementById('togglePw').addEventListener('click', () => {
+      const show = pwInput.type === 'password';
+      pwInput.type = show ? 'text' : 'password';
+      pwIcon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+    });
+
+    /* ── SECRET CODE TOGGLE ── */
+    const secretInput = document.getElementById('secretCode');
+    const secretIcon  = document.getElementById('secretIcon');
+    document.getElementById('toggleSecret').addEventListener('click', () => {
+      const show = secretInput.type === 'password';
+      secretInput.type = show ? 'text' : 'password';
+      secretIcon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+    });
+
+    /* ── PASSWORD STRENGTH ── */
+    const strengthWrap  = document.getElementById('strengthWrap');
+    const strengthBar   = document.getElementById('strengthBar');
+    const strengthLabel = document.getElementById('strengthLabel');
+    pwInput.addEventListener('input', () => {
+      const val = pwInput.value;
+      if (!val) { strengthWrap.classList.remove('show'); return; }
+      strengthWrap.classList.add('show');
+      let score = 0;
+      if (val.length >= 8)                         score++;
+      if (/[a-z]/.test(val) && /[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val))                       score++;
+      if (/[^a-zA-Z0-9]/.test(val))               score++;
+      const levels = [
+        { pct:'25%',  color:'#ef4444', label:'Weak'   },
+        { pct:'50%',  color:'#ef4444', label:'Weak'   },
+        { pct:'66%',  color:'#f59e0b', label:'Medium' },
+        { pct:'100%', color:'#3a9c5a', label:'Strong' },
+      ];
+      const lvl = levels[Math.min(score, 3)];
+      strengthBar.style.width      = lvl.pct;
+      strengthBar.style.background = lvl.color;
+      strengthLabel.textContent    = lvl.label;
+      strengthLabel.style.color    = lvl.color;
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClustrCore Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           THEME VARIABLES
+        ======================================== */
+        :root {
+            --bg-page: #F5F3F0;
+            --bg-card: #ffffff;
+            --bg-card-hover: #ffffff;
+            --text-primary: #2D2D2D;
+            --text-secondary: #78716C;
+            --text-muted: #A8A29E;
+            --border-color: rgba(200, 98, 58, 0.3);
+            --border-subtle: #E8E3DD;
+            --badge-bg: #FFF7F5;
+            --badge-border: #FECDC2;
+            --badge-text: #E87A5D;
+            --back-btn-bg: rgba(255,255,255,0.9);
+            --back-btn-text: #c8623a;
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-card-hover: 0 12px 32px rgba(232, 122, 93, 0.2);
+            --shadow-toggle: 0 2px 12px rgba(0,0,0,0.1);
+            --toggle-bg: rgba(255,255,255,0.9);
+            --toggle-border: rgba(200,98,58,0.3);
+            --footer-text: #A8A29E;
+            --admin-bg: linear-gradient(135deg, #7C6B8F 0%, #6B5A7E 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-page: #1A1816;
+            --bg-card: #252220;
+            --bg-card-hover: #2D2A27;
+            --text-primary: #F0EDE8;
+            --text-secondary: #B8B0A8;
+            --text-muted: #6E6660;
+            --border-color: rgba(232, 122, 93, 0.4);
+            --border-subtle: #3A3530;
+            --badge-bg: rgba(232, 122, 93, 0.12);
+            --badge-border: rgba(232, 122, 93, 0.3);
+            --badge-text: #E87A5D;
+            --back-btn-bg: rgba(37,34,32,0.9);
+            --back-btn-text: #E87A5D;
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-card-hover: 0 12px 32px rgba(232, 122, 93, 0.15);
+            --shadow-toggle: 0 2px 12px rgba(0,0,0,0.4);
+            --toggle-bg: rgba(37,34,32,0.9);
+            --toggle-border: rgba(232,122,93,0.3);
+            --footer-text: #6E6660;
+            --admin-bg: linear-gradient(135deg, #5C4F70 0%, #4A3E5E 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-page);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            background: var(--back-btn-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            color: var(--back-btn-text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: var(--shadow-toggle);
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            transform: translateX(-2px);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--toggle-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--toggle-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-toggle);
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .theme-toggle .icon-sun { display: none; }
+        .theme-toggle .icon-moon { display: block; }
+        [data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+        [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+        /* Main Container */
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            transition: color 0.3s;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #E87A5D 0%, #7C6B8F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 48px;
+            line-height: 1.6;
+            transition: color 0.3s;
+        }
+
+        /* Card Button */
+        .card-button {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-card);
+            display: block;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .card-button:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-card-hover);
+            border-color: #E87A5D;
+            background: var(--bg-card-hover);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #E87A5D;
+            letter-spacing: -0.3px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            transition: color 0.3s;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 16px;
+            border: 1px solid var(--badge-border);
+            transition: all 0.3s;
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: var(--footer-text);
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+
+        /* Admin Secret */
+        .admin-secret {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 18px;
+            background: var(--admin-bg);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(124, 107, 143, 0.25);
+            transition: all 0.3s;
+            opacity: 0.7;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .admin-secret:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(124, 107, 143, 0.35);
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 28px; }
+        }
+
+        /* ========================================
+           CONFIRM OVERLAY (for admin access)
+        ======================================== */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .confirm-overlay.show { opacity: 1; }
+
+        .confirm-dialog {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .confirm-dialog h3 {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .confirm-dialog p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .confirm-dialog input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 16px;
+            font-family: inherit;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .confirm-dialog input[type="password"]:focus {
+            border-color: #E87A5D;
+            box-shadow: 0 0 0 3px rgba(232,122,93,0.15);
+        }
+
+        .dialog-error {
+            color: #E87A5D;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .dialog-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dialog-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .dialog-btn-cancel {
+            background: var(--bg-page);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border-subtle);
+        }
+        .dialog-btn-cancel:hover {
+            background: var(--border-subtle);
+        }
+
+        .dialog-btn-submit {
+            background: linear-gradient(135deg, #E87A5D 0%, #D86F58 100%);
+            color: white;
+            border: none;
+        }
+        .dialog-btn-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="../index.html" class="back-btn">← Back to ClustrCore</a>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-moon" width="18" height="18" fill="none" stroke="#c8623a" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+        </svg>
+        <svg class="icon-sun" width="18" height="18" fill="none" stroke="#E87A5D" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/>
+            <path stroke-linecap="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <h1><span class="gradient-text">ClustrCore</span> Assistant</h1>
+        <p>Your AI-powered club helper. Get instant answers about membership, events, and activities.</p>
+
+        <a href="student-chatbot.html" class="card-button">
+            <div class="card-icon">💬</div>
+            <div class="card-title">Chat with Us</div>
+            <div class="card-description">
+                Ask questions and get instant AI-powered answers about our club, events, and community.
+            </div>
+            <div class="badge">✨ Instant Replies • 24/7 Available</div>
+        </a>
+
+        <div class="footer">
+            Powered by AI • Built for ClustrCore community
+        </div>
+    </div>
+
+    <div class="admin-secret" onclick="promptAdminAccess()">
+        🔐 Team Access
+    </div>
+
+    <script>
+        // ========== THEME LOGIC ==========
+        const html = document.documentElement;
+        const toggleBtn = document.getElementById('themeToggle');
+
+        const saved = localStorage.getItem('clustrcore-theme') || 'light';
+        html.setAttribute('data-theme', saved);
+
+        toggleBtn.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('clustrcore-theme', next);
+        });
+
+        // ========== ADMIN ACCESS ==========
+        function promptAdminAccess() {
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+
+            overlay.innerHTML = `
+                <div class="confirm-dialog">
+                    <h3>Team Access</h3>
+                    <p>Enter your access code to continue</p>
+                    <input type="password" id="accessCodeInput" placeholder="Enter access code">
+                    <div class="dialog-error" id="errorMsg">Invalid access code</div>
+                    <div class="dialog-actions">
+                        <button class="dialog-btn dialog-btn-cancel" id="cancelBtn">Cancel</button>
+                        <button class="dialog-btn dialog-btn-submit" id="submitBtn">Submit</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.classList.add('show'), 10);
+
+            const input = overlay.querySelector('#accessCodeInput');
+            const errorMsg = overlay.querySelector('#errorMsg');
+            input.focus();
+
+            function checkCode() {
+                if (input.value === 'CLUB2024') {
+                    window.location.href = 'admin-panel.html';
+                } else {
+                    errorMsg.style.display = 'block';
+                    input.value = '';
+                    input.focus();
+                }
+            }
+
+            function closeDialog() {
+                overlay.classList.remove('show');
+                setTimeout(() => overlay.remove(), 300);
+            }
+
+            overlay.querySelector('#submitBtn').addEventListener('click', checkCode);
+            overlay.querySelector('#cancelBtn').addEventListener('click', closeDialog);
+            input.addEventListener('keypress', e => { if (e.key === 'Enter') checkCode(); });
+            overlay.addEventListener('click', e => { if (e.target === overlay) closeDialog(); });
+        }
+    </script>
+</body>
+</html>

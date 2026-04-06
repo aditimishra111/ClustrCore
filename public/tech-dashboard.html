@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical — TechNova</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg:#f5f7fc; --bg2:#eaeefc; --bg3:#dde3f7;
+      --card:#ffffff; --card2:rgba(255,255,255,0.72);
+      --ink:#111827; --ink2:#374151; --ink3:#6b7280;
+      --a:#2563eb; --ag:#3a9c5a; --ar:#ef4444; --ay:#f59e0b;
+      --glow:rgba(37,99,235,.20);
+      --grad:linear-gradient(135deg,#2563eb 0%,#60a5fa 100%);
+      --grad-text:linear-gradient(90deg,#2563eb 0%,#60a5fa 60%,#93c5fd 100%);
+      --line:rgba(17,24,39,.08); --line2:rgba(17,24,39,.15);
+      --sh1:0 1px 4px rgba(17,24,39,.06),0 4px 16px rgba(17,24,39,.06);
+      --sh2:0 8px 32px rgba(17,24,39,.10),0 2px 8px rgba(17,24,39,.06);
+      --sh3:0 24px 64px rgba(17,24,39,.14),0 4px 16px rgba(17,24,39,.08);
+      --sw:268px; --ease:cubic-bezier(.4,0,.2,1); --t:.3s; --r:16px;
+    }
+    [data-theme="dark"] {
+      --bg:#090d14; --bg2:#111827; --bg3:#1a2336;
+      --card:#131d2e; --card2:rgba(19,29,46,.82);
+      --ink:#e8f0fe; --ink2:#9bafd6; --ink3:#4b6080;
+      --a:#60a5fa; --ag:#5ccf80; --glow:rgba(96,165,250,.18);
+      --line:rgba(232,240,254,.07); --line2:rgba(232,240,254,.14);
+      --sh1:0 1px 4px rgba(0,0,0,.30),0 4px 16px rgba(0,0,0,.25);
+      --sh2:0 8px 32px rgba(0,0,0,.40),0 2px 8px rgba(0,0,0,.30);
+      --sh3:0 24px 64px rgba(0,0,0,.55),0 4px 16px rgba(0,0,0,.40);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);color:var(--ink);
+      min-height:100vh;display:flex;overflow-x:hidden;
+      transition:background var(--t),color var(--t);
+    }
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.022;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    img{max-width:100%;height:auto;display:block}
+    a{text-decoration:none;color:inherit}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--bg2)}
+    ::-webkit-scrollbar-thumb{background:var(--a);border-radius:3px}
+
+    .sidebar{
+      position:fixed;left:0;top:0;width:var(--sw);height:100vh;
+      background:var(--card2);
+      backdrop-filter:blur(24px) saturate(180%);
+      -webkit-backdrop-filter:blur(24px) saturate(180%);
+      border-right:1px solid var(--line2);
+      display:flex;flex-direction:column;z-index:200;overflow:hidden;
+      box-shadow:var(--sh2);
+    }
+    .sidebar::after{content:'';position:absolute;top:-80px;left:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.12) 0%,transparent 70%);pointer-events:none;}
+    .sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);z-index:1}
+
+    .sb-hdr{padding:1.625rem 1.375rem 1.25rem;border-bottom:1px solid var(--line);position:relative;z-index:1}
+    .sb-logo{display:flex;align-items:center;gap:.55rem;text-decoration:none;margin-bottom:1.125rem}
+    .sb-brand{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;letter-spacing:-.02em;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sb-user{display:flex;align-items:center;gap:.7rem}
+    .sb-av{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;flex-shrink:0;overflow:hidden;box-shadow:0 2px 12px var(--glow);}
+    .sb-av img{width:100%;height:100%;object-fit:cover}
+    .sb-meta strong{display:block;font-size:.86rem;font-weight:600;letter-spacing:-.01em}
+    .sb-meta span{font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
+
+    .sb-nav{flex:1;padding:1rem .875rem;overflow-y:auto;position:relative;z-index:1}
+    .nav-lbl{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:0 .6rem;margin:.625rem 0 .25rem;font-family:'DM Mono',monospace;}
+    .nav-item{display:flex;align-items:center;gap:.75rem;padding:.625rem .75rem;border-radius:11px;color:var(--ink2);text-decoration:none;font-size:.84rem;font-weight:500;transition:all var(--t);margin-bottom:3px;border:1px solid transparent;cursor:pointer;background:none;width:100%;text-align:left;position:relative;font-family:'DM Sans',sans-serif;}
+    .nav-item::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;border-radius:0 3px 3px 0;background:var(--a);transform:scaleY(0);transition:transform var(--t);}
+    .nav-item:hover,.nav-item.active{background:var(--bg2);color:var(--ink);border-color:var(--line);}
+    .nav-item.active{background:rgba(37,99,235,.07);border-color:rgba(37,99,235,.18);}
+    .nav-item.active::before,.nav-item:hover::before{transform:scaleY(1)}
+    .nav-item i{width:18px;text-align:center;font-size:.82rem;color:var(--ink3);transition:color var(--t)}
+    .nav-item:hover i,.nav-item.active i{color:var(--a)}
+
+    .sb-footer{padding:.875rem;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:.5rem;position:relative;z-index:1}
+    .theme-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;background:var(--bg2);border:1px solid var(--line);border-radius:11px;cursor:pointer;transition:all var(--t);}
+    .theme-row:hover{border-color:rgba(37,99,235,.3)}
+    .theme-lbl{font-size:.8rem;font-weight:500;color:var(--ink2);display:flex;align-items:center;gap:.5rem}
+    .pill{width:38px;height:20px;background:var(--line2);border-radius:20px;position:relative;transition:background var(--t)}
+    .pill::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform var(--t);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    [data-theme="dark"] .pill{background:var(--a)}
+    [data-theme="dark"] .pill::after{transform:translateX(18px)}
+    .logout-btn{display:flex;align-items:center;gap:.6rem;padding:.625rem .8rem;background:none;border:1px solid var(--line);border-radius:11px;color:var(--ink3);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all var(--t);width:100%;}
+    .logout-btn:hover{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#ef4444}
+
+    .main{margin-left:var(--sw);min-height:100vh;padding:2rem 2rem 5rem;width:100%;position:relative;z-index:1;}
+    .main::before{content:'';position:fixed;top:0;right:0;width:600px;height:600px;background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(37,99,235,.07) 0%,transparent 60%);pointer-events:none;z-index:0;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+    .tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s var(--ease) both}
+
+    .topbar{background:var(--card2);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--line2);border-radius:20px;padding:1.25rem 1.625rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;box-shadow:var(--sh1);animation:fadeDown .5s var(--ease) both;position:relative;overflow:hidden;}
+    .topbar::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.09) 0%,transparent 70%);pointer-events:none;}
+    .topbar h1{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.8vw,1.7rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:.2rem;}
+    .topbar h1 span{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .topbar p{font-size:.8rem;color:var(--ink3);font-weight:300;letter-spacing:.01em}
+    .team-chip{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.35rem 1rem;border-radius:100px;background:rgba(37,99,235,.1);color:var(--a);border:1px solid rgba(37,99,235,.25);}
+    .team-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--a);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+
+    .sc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;box-shadow:var(--sh1);margin-bottom:1.25rem;transition:box-shadow var(--t);}
+    .sc:hover{box-shadow:var(--sh2)}
+    .sc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
+    .sc-hdr-l{display:flex;align-items:center;gap:.6rem}
+    .sc-hdr h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;letter-spacing:-.01em;}
+    .sc-hdr i{font-size:.85rem;color:var(--a)}
+
+    .btn{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;padding:.45rem 1rem;border-radius:100px;border:none;cursor:pointer;transition:all var(--t);font-family:'DM Sans',sans-serif;text-decoration:none;position:relative;overflow:hidden;}
+    .btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);opacity:0;transition:opacity var(--t)}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:hover::before{opacity:1}
+    .btn-p{background:var(--grad);color:#fff;box-shadow:0 2px 12px var(--glow)}
+    .btn-p:hover{box-shadow:0 4px 20px var(--glow)}
+    .btn-g{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.25)}
+    .btn-g:hover{background:rgba(58,156,90,.2)}
+    .btn-o{background:transparent;border:1px solid var(--line2);color:var(--ink2)}
+    .btn-o:hover{border-color:var(--a);color:var(--a)}
+    .btn-r{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
+    .btn-r:hover{background:rgba(239,68,68,.18)}
+    .btn-sm{padding:.3rem .7rem;font-size:.72rem}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+    .search-bar{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+    .search-input{flex:1;min-width:180px;padding:.6rem 1rem;background:var(--bg2);border:1px solid var(--line);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);outline:none;transition:all var(--t);}
+    .search-input:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--glow)}
+    .search-input::placeholder{color:var(--ink3)}
+    select.search-input{cursor:pointer;appearance:none}
+
+    .tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;font-size:.82rem}
+    thead th{background:var(--bg2);padding:.75rem 1rem;text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--line);white-space:nowrap;font-family:'DM Mono',monospace;}
+    tbody td{padding:.8rem 1rem;border-bottom:1px solid var(--line);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover td{background:var(--bg2)}
+
+    .badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.22rem .55rem;border-radius:5px;font-family:'DM Mono',monospace;}
+    .badge-green{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.2)}
+    .badge-purple{background:rgba(37,99,235,.1);color:#2563eb;border:1px solid rgba(37,99,235,.2)}
+    .badge-yellow{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-red{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+    .badge-gray{background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+    .badge-pending{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-approved{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.2)}
+    .badge-attended{background:rgba(37,99,235,.1);color:var(--a);border:1px solid rgba(37,99,235,.2)}
+    .badge-rejected{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+    .badge-waitlisted{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-draft,.badge-closed{background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+    .badge-open{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.2)}
+    .badge-completed{background:rgba(37,99,235,.1);color:var(--a);border:1px solid rgba(37,99,235,.2)}
+    .badge-normal{background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+    .badge-important{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-urgent{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+
+    .compose{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:1.375rem}
+    .compose label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.38rem;margin-top:1rem;font-family:'DM Mono',monospace;}
+    .compose label:first-child{margin-top:0}
+    .compose input,.compose select,.compose textarea{width:100%;padding:.65rem 1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none;transition:all var(--t);resize:vertical;}
+    .compose input:focus,.compose select:focus,.compose textarea:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--glow)}
+    .compose input::placeholder,.compose textarea::placeholder{color:var(--ink3)}
+
+    .ev-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+    .ev-pill{padding:.38rem 1rem;border-radius:100px;border:1px solid var(--line);font-size:.78rem;font-weight:500;cursor:pointer;transition:all var(--t);background:var(--bg2);color:var(--ink2);}
+    .ev-pill:hover{border-color:var(--a);color:var(--a)}
+    .ev-pill.active{background:var(--a);color:#fff;border-color:var(--a);box-shadow:0 2px 10px var(--glow)}
+    .ev-pill-skel{height:36px;border-radius:100px}
+
+    .ann-card{padding:1rem 1.125rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.75rem;transition:all var(--t);position:relative;}
+    .ann-card:hover{background:var(--bg2);transform:translateX(3px)}
+    .ann-card.pinned{border-color:rgba(37,99,235,.28);background:rgba(37,99,235,.03)}
+    .ann-card-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.35rem}
+    .ann-card-title{font-size:.9rem;font-weight:600;font-family:'Playfair Display',serif;letter-spacing:-.01em}
+    .ann-card-body{font-size:.82rem;color:var(--ink2);line-height:1.65}
+    .ann-meta{display:flex;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}
+    .ann-meta span{font-size:.7rem;color:var(--ink3);display:flex;align-items:center;gap:.25rem}
+
+    .ev-row{display:flex;align-items:center;gap:1rem;padding:.875rem 1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.625rem;transition:all var(--t);}
+    .ev-row:hover{background:var(--bg2);transform:translateX(3px);border-color:rgba(37,99,235,.2)}
+    .ev-date-box{width:48px;height:48px;border-radius:12px;background:var(--grad);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 3px 10px var(--glow);}
+    .ev-date-box .day{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;line-height:1}
+    .ev-date-box .mon{font-size:.52rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.85}
+
+    .member-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.125rem;display:flex;align-items:center;gap:.875rem;transition:all var(--t);}
+    .member-card:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:rgba(37,99,235,.2)}
+    .m-av-wrap{position:relative;flex-shrink:0}
+    .m-av{width:46px;height:46px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;overflow:hidden;box-shadow:0 2px 10px var(--glow);}
+    .m-av img{width:100%;height:100%;object-fit:cover}
+    .m-name{font-size:.88rem;font-weight:600;display:flex;align-items:center;gap:.4rem;margin-bottom:.18rem;letter-spacing:-.01em}
+    .you-dot{width:7px;height:7px;border-radius:50%;background:#3a9c5a;box-shadow:0 0 6px #3a9c5a}
+    .m-role{font-size:.72rem;color:var(--ink3)}
+
+    .history-item{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:.875rem 1.125rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.625rem;transition:all var(--t);}
+    .history-item:hover{border-color:rgba(37,99,235,.2);transform:translateX(2px)}
+    .history-item-info h4{font-size:.87rem;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+    .history-item-info p{font-size:.7rem;color:var(--ink3);margin-top:.18rem}
+    .history-item-right{display:flex;align-items:center;gap:.65rem;flex-shrink:0}
+
+    .tab-bar{display:flex;gap:.4rem;margin-bottom:1.375rem;flex-wrap:wrap}
+    .tab-btn{padding:.42rem 1.1rem;border-radius:100px;border:1px solid var(--line);background:var(--card);color:var(--ink2);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:all var(--t);}
+    .tab-btn.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 2px 12px var(--glow)}
+
+    .ws-tab-bar{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:1.625rem;overflow-x:auto;}
+    .ws-tab{padding:.75rem 1.25rem;font-size:.83rem;font-weight:600;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+    .ws-tab:hover{color:var(--ink2)}
+    .ws-tab.active{color:var(--a);border-bottom-color:var(--a)}
+    .ws-panel{display:none}.ws-panel.active{display:block;animation:fadeUp .25s var(--ease) both}
+
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.125rem;border-top:1px solid var(--line)}
+    .pag-info{font-size:.7rem;color:var(--ink3);font-family:'DM Mono',monospace}
+    .pag-btns{display:flex;gap:.4rem}
+    .pag-btn{background:var(--bg2);border:1px solid var(--line);color:var(--ink2);width:30px;height:30px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:all var(--t);}
+    .pag-btn:hover,.pag-btn.active{border-color:var(--a);color:var(--a)}
+    .pag-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    .dash-grid-2{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+
+    /* ══ LIGHTBOX ══ */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+    .lightbox.show{opacity:1;pointer-events:all}
+    .lightbox img{max-width:88vw;max-height:82vh;border-radius:12px}
+    .lightbox-close{position:fixed;top:1.25rem;right:1.25rem;width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;cursor:pointer;color:white;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background var(--t)}
+    .lightbox-close:hover{background:rgba(255,255,255,.2)}
+
+    /* ══ MODAL ══ */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--t)}
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--card);border:1px solid var(--line);border-radius:24px;width:100%;max-width:520px;padding:2rem;box-shadow:var(--sh3);transform:translateY(20px) scale(.97);transition:transform var(--t);max-height:90vh;overflow-y:auto;}
+    .modal-overlay.open .modal{transform:translateY(0) scale(1)}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.375rem}
+    .modal-hdr h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+    .modal-x{width:32px;height:32px;background:var(--bg2);border:1px solid var(--line);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--ink2);transition:all var(--t)}
+    .modal-x:hover{background:#fee2e2;color:#ef4444}
+    .modal-footer{display:flex;gap:.65rem;justify-content:flex-end;margin-top:1.375rem}
+
+    /* ══ PAYMENT SCREENSHOT MODAL ══ */
+    .pay-modal-body { display:flex; flex-direction:column; gap:1rem; }
+
+    /* Student info strip inside payment modal */
+    .pay-student-strip {
+      display:flex;align-items:center;gap:.75rem;
+      padding:.875rem 1rem;
+      background:var(--bg2);border:1px solid var(--line);border-radius:14px;
+    }
+    .pay-student-av {
+      width:42px;height:42px;border-radius:10px;
+      background:var(--grad);display:flex;align-items:center;justify-content:center;
+      color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;flex-shrink:0;
+    }
+    .pay-student-name { font-size:.9rem;font-weight:600;margin-bottom:.15rem; }
+    .pay-student-email { font-size:.75rem;color:var(--ink3); }
+
+    /* Screenshot viewer */
+    .pay-screenshot-wrap {
+      border:1px solid var(--line2);border-radius:14px;overflow:hidden;
+      background:var(--bg2);min-height:200px;display:flex;align-items:center;justify-content:center;
+      cursor:zoom-in;position:relative;
+    }
+    .pay-screenshot-wrap img {
+      width:100%;max-height:360px;object-fit:contain;display:block;
+      transition:transform .3s ease;
+    }
+    .pay-screenshot-wrap:hover img { transform:scale(1.02); }
+    .pay-screenshot-wrap .zoom-hint {
+      position:absolute;bottom:.5rem;right:.5rem;
+      background:rgba(0,0,0,.5);color:white;border-radius:6px;
+      font-size:.65rem;padding:.2rem .5rem;pointer-events:none;
+    }
+    .pay-no-screenshot {
+      text-align:center;padding:2.5rem 1rem;color:var(--ink3);
+    }
+    .pay-no-screenshot i { font-size:2rem;margin-bottom:.75rem;display:block;opacity:.3; }
+    .pay-no-screenshot p { font-size:.82rem; }
+
+    /* Action buttons row */
+    .pay-actions {
+      display:flex;gap:.75rem;
+    }
+    .pay-actions .btn { flex:1;justify-content:center;padding:.65rem 1rem;font-size:.85rem; }
+
+    /* Screenshot button in table */
+    .screenshot-btn {
+      display:inline-flex;align-items:center;gap:.3rem;
+      font-size:.68rem;font-weight:600;padding:.25rem .65rem;border-radius:100px;
+      border:1px solid rgba(37,99,235,.3);background:rgba(37,99,235,.06);color:var(--a);
+      cursor:pointer;transition:all var(--t);font-family:'DM Sans',sans-serif;
+      white-space:nowrap;
+    }
+    .screenshot-btn:hover { background:rgba(37,99,235,.12);border-color:var(--a); }
+
+    .no-data{text-align:center;padding:3rem 1rem;color:var(--ink3);font-size:.86rem}
+    .no-data i{display:block;font-size:2.2rem;margin-bottom:.625rem;opacity:.28}
+    .loading{text-align:center;padding:2.5rem;color:var(--ink3);font-size:.85rem}
+    .loading i{animation:spin .8s linear infinite;display:inline-block;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:10px}
+    @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
+
+    @media(max-width:900px){.dash-grid-2,.two-col{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:1.25rem}}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-hdr">
+    <a href="portal.html" class="sb-logo"><span class="sb-brand">TechNova</span></a>
+    <div class="sb-user">
+      <div class="sb-av" id="sbAv">T</div>
+      <div class="sb-meta"><strong id="sbName">Member</strong><span id="sbRole">Technical</span></div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <p class="nav-lbl">Main</p>
+    <button class="nav-item active" onclick="switchTab('overview')">       <i class="fas fa-home"></i>          Dashboard</button>
+    <button class="nav-item"        onclick="switchTab('registrations')">   <i class="fas fa-users-line"></i>    Registrations</button>
+    <button class="nav-item"        onclick="switchTab('email')">           <i class="fas fa-envelope"></i>      Send Email</button>
+    <button class="nav-item"        onclick="switchTab('certificates')">    <i class="fas fa-certificate"></i>   Certificates</button>
+    <button class="nav-item"        onclick="switchTab('announcements')">   <i class="fas fa-bullhorn"></i>      Announcements</button>
+    <button class="nav-item"        onclick="switchTab('events')">          <i class="fas fa-calendar-alt"></i>  Events</button>
+    <p class="nav-lbl" style="margin-top:.875rem">Team</p>
+    <button class="nav-item"        onclick="switchTab('members')">         <i class="fas fa-users"></i>         Members</button>
+    <button class="nav-item"        onclick="switchTab('profile')">          <i class="fas fa-user"></i>          Profile</button>
+  </nav>
+  <div class="sb-footer">
+    <div class="theme-row" id="themeRow">
+      <span class="theme-lbl"><i class="fas fa-moon" id="themeIcon"></i> <span id="themeLbl">Dark Mode</span></span>
+      <div class="pill"></div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>Welcome, <span id="dashGreet">Member</span> 👋</h1>
+      <p id="dashSub">Technical Team Dashboard</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <span class="team-chip"><i class="fas fa-code"></i> Technical</span>
+      <div class="sb-av" id="topAv" style="width:38px;height:38px;font-size:.85rem;border-radius:50%">T</div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="tab-overview" class="tab-panel active">
+    <div class="dash-grid-2">
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-l"><i class="fas fa-user-plus"></i><h2>Recent Registrations</h2></div>
+          <button class="btn btn-p btn-sm" onclick="switchTab('registrations')">View All</button>
+        </div>
+        <div id="recentRegsContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+      </div>
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-l"><i class="fas fa-bullhorn"></i><h2>Announcements</h2></div>
+          <button class="btn btn-o btn-sm" onclick="switchTab('announcements')">See All</button>
+        </div>
+        <div id="annPreviewContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRATIONS -->
+  <div id="tab-registrations" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-users-line"></i><h2>Registrations</h2></div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <span id="regEventLabel" style="font-size:.78rem;color:var(--ink3)">Select an event</span>
+          <button class="btn btn-g btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.5rem;font-family:'DM Mono',monospace">Select Event</div>
+        <div class="ev-pills" id="regEventPicker">
+          <div class="skel ev-pill-skel" style="width:130px"></div>
+          <div class="skel ev-pill-skel" style="width:100px"></div>
+        </div>
+      </div>
+      <div class="search-bar" id="regSearchBar" style="display:none">
+        <input class="search-input" id="regSearch" placeholder="Search name or email…" oninput="filterRegTable()" style="max-width:320px">
+        <select class="search-input" id="regPayFilter" style="max-width:200px" onchange="filterRegTable()">
+          <option value="">All Payments</option>
+          <option value="not_required">Free</option>
+          <option value="screenshot_uploaded">Awaiting Verify</option>
+          <option value="verified">Verified</option>
+          <option value="pending">Pending</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div id="regTableWrap"><div class="no-data"><i class="fas fa-users-line"></i>Select an event above to view its registrations.</div></div>
+    </div>
+  </div>
+
+  <!-- EMAIL -->
+  <div id="tab-email" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-envelope"></i><h2>Send Email</h2></div>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchEmailMode('event')" id="emailModeEvent">By Event</button>
+        <button class="tab-btn" onclick="switchEmailMode('custom')" id="emailModeCustom">Custom Recipients</button>
+      </div>
+      <div class="compose">
+        <div id="emailEventGroup">
+          <label>Send to all participants of</label>
+          <select id="emailEventSelect"><option value="">Select event…</option></select>
+        </div>
+        <div id="emailCustomGroup" style="display:none">
+          <label>Email addresses (comma separated)</label>
+          <input id="emailCustomTo" placeholder="a@example.com, b@example.com">
+        </div>
+        <label>Subject</label>
+        <input id="emailSubject" placeholder="e.g. Important update about your registration">
+        <label>Message</label>
+        <textarea id="emailBody" rows="6" placeholder="Write your message here…"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:1.125rem">
+          <button class="btn btn-p" onclick="sendEmail()" id="sendEmailBtn"><i class="fas fa-paper-plane"></i> Send Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICATES -->
+  <div id="tab-certificates" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-certificate"></i><h2>Issue Certificates</h2></div>
+      </div>
+      <div style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.22);border-radius:12px;padding:.9rem 1.125rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.75rem;font-size:.82rem;color:var(--ink2)">
+        <i class="fas fa-info-circle" style="color:var(--a);margin-top:.1rem;flex-shrink:0"></i>
+        <div><strong>Certificates are sent only to attended participants</strong> after the event is marked as <strong>completed</strong>.</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#0f0e2e,#1a1260,#0d1a3a);border-radius:16px;padding:2rem;text-align:center;color:#fff;margin-bottom:1rem;border:1px solid rgba(96,165,250,.3);box-shadow:0 8px 40px rgba(37,99,235,.2);position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(37,99,235,.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(96,165,250,.1) 0%,transparent 50%)"></div>
+        <div style="font-size:.68rem;letter-spacing:.15em;opacity:.6;text-transform:uppercase;margin-bottom:.5rem;position:relative">Certificate of Participation</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:#ffd700;margin:.5rem 0;position:relative" id="certPreviewName">Participant Name</div>
+        <div style="font-size:.8rem;opacity:.5;margin:.25rem 0;position:relative">for successfully participating in</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;color:#c0cce0;margin:.25rem 0;position:relative" id="certPreviewEvent">Event Name</div>
+        <div style="font-size:.68rem;opacity:.35;margin-top:.5rem;position:relative">TechNova · Banasthali Vidyapith</div>
+      </div>
+      <div class="compose">
+        <label>Select Event</label>
+        <select id="certEventSelect" onchange="updateCertPreview()"><option value="">Choose event…</option></select>
+        <div id="certEventStatus" style="font-size:.75rem;margin-top:.5rem;color:var(--ink3)"></div>
+        <div style="display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap">
+          <button class="btn btn-p" onclick="openCertModal()"><i class="fas fa-user"></i> Send to One Student</button>
+          <button class="btn btn-g" onclick="sendBulkCerts()"><i class="fas fa-paper-plane"></i> Send to All Attended</button>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-history"></i><h2>Certificate History</h2></div></div>
+      <div id="certHistoryContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div id="tab-announcements" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-bullhorn"></i><h2>Announcements from All Teams</h2></div>
+      </div>
+      <div id="annContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div id="tab-events" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-calendar-alt"></i><h2>All Events</h2></div>
+        <span style="font-size:.78rem;color:var(--ink3)">Posted by Events Team</span>
+      </div>
+      <div id="eventsContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- MEMBERS -->
+  <div id="tab-members" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-users"></i><h2>Technical Team Members</h2></div>
+        <span id="onlineCount" style="font-size:.78rem;color:var(--ag);font-weight:600"></span>
+      </div>
+      <div id="membersContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.875rem">
+        <div class="skel" style="height:80px;border-radius:10px"></div>
+        <div class="skel" style="height:80px;border-radius:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="tab-profile" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-user"></i><h2>My Profile</h2></div>
+      </div>
+      <div style="display:flex;gap:1.5rem;align-items:flex-start">
+        <div id="profileAv" style="width:80px;height:80px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px var(--glow)"></div>
+        <div style="flex:1">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:.25rem" id="profileNameDisplay">—</h3>
+          <p style="color:var(--ink3);font-size:.85rem;margin-bottom:.25rem" id="profileRoleDisplay">Technical Team Member</p>
+          <p style="color:var(--ink3);font-size:.8rem" id="profileEmailDisplay">—</p>
+          <label style="display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.35rem;margin-top:1rem;font-family:'DM Mono',monospace">Profile Photo</label>
+          <input type="file" id="profilePhotoInput" accept="image/*" style="margin-bottom:.5rem">
+          <small style="color:var(--ink3);font-size:.75rem">Upload a new profile photo (max 5MB, JPG/PNG/WEBP)</small>
+          <label style="display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.35rem;margin-top:1rem;font-family:'DM Mono',monospace">LinkedIn Profile</label>
+          <input id="profileLinkedin" placeholder="https://linkedin.com/in/yourprofile" style="margin-bottom:.5rem;width:100%;max-width:400px;padding:.6rem .85rem;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none">
+          <br>
+          <button class="btn btn-p" onclick="updateProfile()" style="margin-top:.75rem"><i class="fas fa-save"></i> Update Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══ PAYMENT SCREENSHOT MODAL ══ -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-hdr">
+      <h3><i class="fas fa-receipt" style="color:var(--a);font-size:.9rem;margin-right:.4rem"></i> Payment Review</h3>
+      <button class="modal-x" onclick="closePayModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="pay-modal-body">
+      <!-- Student info -->
+      <div class="pay-student-strip">
+        <div class="pay-student-av" id="payStudentAv">?</div>
+        <div>
+          <div class="pay-student-name" id="payStudentName">—</div>
+          <div class="pay-student-email" id="payStudentEmail">—</div>
+        </div>
+        <div style="margin-left:auto" id="payCurrentBadge"></div>
+      </div>
+
+      <!-- Screenshot -->
+      <div>
+        <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.5rem;font-family:'DM Mono',monospace">
+          Payment Screenshot
+        </div>
+        <div class="pay-screenshot-wrap" id="payScreenshotWrap" onclick="openScreenshotLightbox()">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="pay-actions" id="payActionBtns">
+        <!-- populated by JS depending on current status -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CERT MODAL -->
+<div class="modal-overlay" id="certModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>Send Certificate to Student</h3>
+      <button class="modal-x" onclick="closeCertModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.22);border-radius:10px;padding:.9rem 1.125rem;margin-bottom:.875rem;display:flex;align-items:flex-start;gap:.75rem;font-size:.82rem;color:var(--ink2)">
+      <i class="fas fa-info-circle" style="color:var(--a);flex-shrink:0"></i>
+      <span>Only students marked as <strong>attended</strong> can receive certificates.</span>
+    </div>
+    <div class="compose" style="background:transparent;padding:0;border:none">
+      <label>Student Email</label>
+      <input id="certStudentEmail" placeholder="student@email.com">
+      <label style="margin-top:.875rem">Event Name</label>
+      <input id="certEventName" placeholder="e.g. Hackathon 2026">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-o" onclick="closeCertModal()">Cancel</button>
+      <button class="btn btn-p" onclick="sendSingleCert()"><i class="fas fa-paper-plane"></i> Send Certificate</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX (for screenshot fullscreen) -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <img id="lightboxImg" src="" alt="Payment Screenshot">
+</div>
+
+<!-- TOAST -->
+
+<script>
+(() => {
+  /* ── Change this to your actual API base URL ── */
+  const API = 'http://localhost:5000/api';
+
+  const session = JSON.parse(localStorage.getItem('clustr-team-session') || 'null');
+  if (!session || session.team !== 'tech') { window.location.href = 'portal.html'; return; }
+  const user = session.user;
+
+  /* Build auth headers — supports both token-based and x-user-id approaches */
+  const H = () => {
+    const h = { 'Content-Type': 'application/json', 'x-user-id': user.id };
+    const tok = user.token || localStorage.getItem('clustr-token');
+    if (tok) h['Authorization'] = 'Bearer ' + tok;
+    return h;
+  };
+
+  localStorage.setItem(`clustr-hb-${user.id}`, Date.now());
+  setInterval(() => localStorage.setItem(`clustr-hb-${user.id}`, Date.now()), 60_000);
+
+  /* ── Theme ── */
+  const html = document.documentElement;
+  applyTheme(localStorage.getItem('clustr-theme') || 'light');
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    localStorage.setItem('clustr-theme', t);
+    document.getElementById('themeIcon').className  = t === 'dark' ? 'fas fa-sun'  : 'fas fa-moon';
+    document.getElementById('themeLbl').textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+  }
+  document.getElementById('themeRow').addEventListener('click', () =>
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+  /* ── User info ── */
+  const init = user.name[0].toUpperCase();
+  const photo = localStorage.getItem(`clustr-photo-${user.id}`);
+  ['sbAv','topAv'].forEach(id => {
+    const el = document.getElementById(id);
+    if (photo) el.innerHTML = `<img src="${photo}" alt="">`;
+    else el.textContent = init;
+  });
+  document.getElementById('sbName').textContent    = user.name;
+  document.getElementById('sbRole').textContent    = user.teamRole || 'Technical';
+  document.getElementById('dashGreet').textContent = user.name;
+  document.getElementById('dashSub').textContent   =
+    `Technical Team — ${new Date().toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})}`;
+
+  if (!photo) {
+    fetch(`${API}/team/profile/${user.id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.user?.photo || !data?.user?.photoMime) return;
+        const src = `data:${data.user.photoMime};base64,${data.user.photo}`;
+        localStorage.setItem(`clustr-photo-${user.id}`, src);
+        ['sbAv','topAv'].forEach(id => { document.getElementById(id).innerHTML = `<img src="${src}" alt="">`; });
+      }).catch(() => {});
+  }
+
+  /* ── State ── */
+  let allEvents = [], allRegs = [], selRegEventId = null, selRegStatus = '';
+
+  /* ── Tab switching ── */
+  const NAV_BTNS = document.querySelectorAll('.nav-item');
+  window.switchTab = (name) => {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`tab-${name}`).classList.add('active');
+    NAV_BTNS.forEach(n => n.classList.remove('active'));
+    NAV_BTNS.forEach(n => { if (n.getAttribute('onclick') === `switchTab('${name}')`) n.classList.add('active'); });
+    ({
+      overview:      () => { loadRecentRegs(); loadAnnPreview(); },
+      registrations: loadRegEventPicker,
+      email:         loadEmailEvents,
+      certificates:  loadCertEvents,
+      announcements: loadAnnouncements,
+      events:        loadEvents,
+      members:       loadMembers,
+      profile:       loadProfile,
+    })[name]?.();
+  };
+
+  /* ══ OVERVIEW ══ */
+  async function loadRecentRegs() {
+    const el = document.getElementById('recentRegsContainer');
+    try {
+      const res = await fetch(`${API}/tech/registrations?limit=5`, { headers: H() });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const students = data.students || data.registrations || data.data || [];
+      if (!students.length) { el.innerHTML = '<div class="no-data"><i class="fas fa-user-slash"></i>No registrations yet.</div>'; return; }
+      el.innerHTML = `<div class="tbl-wrap"><table>
+        <thead><tr><th>Name</th><th>Email</th><th>Event</th><th>Date</th></tr></thead>
+        <tbody>${students.map(s => `<tr>
+          <td><strong>${s.name}</strong></td>
+          <td style="font-size:.78rem;color:var(--ink3)">${s.email}</td>
+          <td>${(s.events||[]).map(e=>`<span class="badge badge-attended">${e}</span>`).join('')||'—'}</td>
+          <td style="font-size:.75rem;color:var(--ink3)">${s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN') : '—'}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  async function loadAnnPreview() {
+    const el = document.getElementById('annPreviewContainer');
+    try {
+      const res  = await fetch(`${API}/tech/announcements`, { headers: H() });
+      const data = await res.json();
+      const anns = Array.isArray(data) ? data : (data.announcements || []);
+      const top  = anns.slice(0, 4);
+      if (!top.length) { el.innerHTML = '<div class="no-data"><i class="fas fa-bullhorn"></i>No announcements.</div>'; return; }
+      el.innerHTML = top.map(a => {
+        const pin = a.pinned ? '<span class="badge badge-important" style="margin-left:.4rem"><i class="fas fa-thumbtack"></i> Pinned</span>' : '';
+        return `<div class="ann-card ${a.pinned?'pinned':''}">
+          <div class="ann-card-hdr"><div class="ann-card-title">${a.title}${pin}</div></div>
+          <div class="ann-card-body">${(a.body||'').slice(0,100)}${(a.body||'').length>100?'…':''}</div>
+          <div class="ann-meta"><span><i class="fas fa-user"></i>${a.postedBy?.name||'Team'}</span><span><i class="fas fa-calendar"></i>${new Date(a.createdAt).toLocaleDateString('en-IN')}</span></div>
+        </div>`;
+      }).join('');
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  /* ══ REGISTRATIONS ══ */
+  async function loadRegEventPicker() {
+    if (!allEvents.length) {
+      try {
+        const res = await fetch(`${API}/tech/events`, { headers: H() });
+        const data = await res.json();
+        allEvents = Array.isArray(data) ? data : (data.events || []);
+      } catch {}
+    }
+    const el = document.getElementById('regEventPicker');
+    el.innerHTML = allEvents.length
+      ? allEvents.map(e => `<div class="ev-pill ${selRegEventId===e._id?'active':''}"
+          onclick="selectRegEvent('${e._id}','${escQ(e.title)}','${e.status}')">${e.title}</div>`).join('')
+      : '<span style="font-size:.82rem;color:var(--ink3)">No events found</span>';
+  }
+
+  window.selectRegEvent = async (id, title, status) => {
+    selRegEventId = id; selRegStatus = status;
+    document.getElementById('regEventLabel').textContent = title;
+    document.querySelectorAll('.ev-pill').forEach(p => p.classList.toggle('active', p.textContent.trim() === title));
+    await loadRegTable(id, status);
+  };
+
+  async function loadRegTable(eventId, status) {
+    const wrap = document.getElementById('regTableWrap');
+    const bar  = document.getElementById('regSearchBar');
+    wrap.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res  = await fetch(`${API}/registrations/event/${eventId}`, { headers: H() });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      allRegs = data.registrations || data.students || data.data || [];
+      bar.style.display = allRegs.length ? 'flex' : 'none';
+      renderRegTable(allRegs, ['open','closed','completed'].includes((status||'').toLowerCase()));
+    } catch (err) {
+      wrap.innerHTML = `<div class="no-data"><i class="fas fa-wifi"></i>Could not load registrations.<br><small style="opacity:.6">${err.message}</small></div>`;
+    }
+  }
+
+  function renderRegTable(regs, showAtt) {
+    const wrap = document.getElementById('regTableWrap');
+    if (!regs.length) { wrap.innerHTML = '<div class="no-data"><i class="fas fa-users-line"></i>No registrations for this event yet.</div>'; return; }
+    const hasTeam    = regs.some(r => r.teamName);
+    const hasProject = regs.some(r => r.projectIdea);
+    wrap.innerHTML = `<div class="tbl-wrap"><table>
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Phone</th>
+        ${hasTeam    ? '<th>Team</th>'    : ''}
+        ${hasProject ? '<th>Project</th>' : ''}
+        <th>Payment</th>
+        <th>Screenshot</th>
+        ${showAtt ? '<th style="text-align:center">Attended</th>' : ''}
+        <th>Actions</th>
+      </tr></thead>
+      <tbody>${regs.map(r => `<tr>
+        <td><strong>${r.name}</strong></td>
+        <td style="font-size:.78rem;color:var(--ink3)">${r.email}</td>
+        <td style="font-size:.78rem;color:var(--ink3)">${r.phone || '—'}</td>
+        ${hasTeam    ? `<td style="font-size:.78rem">${r.teamName || '—'}</td>` : ''}
+        ${hasProject ? `<td style="font-size:.75rem;color:var(--ink3);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.projectIdea || '—'}</td>` : ''}
+        <td>${payBadge(r.paymentStatus)}</td>
+        <td>${screenshotCell(r)}</td>
+        ${showAtt ? `<td style="text-align:center">
+          <span onclick="toggleAtt('${r._id}',this)" title="${r.status==='attended'?'Mark absent':'Mark present'}"
+            style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;cursor:pointer;transition:all .3s;border:2px solid ${r.status==='attended'?'#3a9c5a':'var(--line2)'};background:${r.status==='attended'?'#3a9c5a':'transparent'};color:${r.status==='attended'?'#fff':'var(--ink3)'}">
+            <i class="fas fa-check" style="font-size:.65rem"></i>
+          </span>
+        </td>` : ''}
+        <td>
+          <div style="display:flex;gap:.3rem;flex-wrap:wrap;align-items:center">
+            <button class="btn btn-o btn-sm" title="Quick email" onclick="quickEmail('${r.email}','${escQ(r.name)}')"><i class="fas fa-envelope"></i></button>
+            ${r.paymentStatus === 'screenshot_uploaded'
+              ? `<button class="btn btn-p btn-sm" onclick="openPayModal('${r._id}')"><i class="fas fa-receipt"></i> Review</button>`
+              : (r.paymentStatus === 'verified' || r.paymentStatus === 'rejected'
+                  ? `<button class="btn btn-o btn-sm" onclick="openPayModal('${r._id}')"><i class="fas fa-eye"></i></button>`
+                  : '')}
+          </div>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+
+  /* ── Screenshot cell in table ── */
+  function screenshotCell(r) {
+    const ps = r.paymentStatus;
+    if (ps === 'not_required') return '<span style="font-size:.72rem;color:var(--ink3)">N/A</span>';
+    const hasInline = !!(r.paymentScreenshot || r.screenshotData || r.screenshot);
+    const likelyStored = ['screenshot_uploaded', 'verified', 'rejected'].includes(ps);
+    if (!hasInline && !likelyStored) {
+      return '<span style="font-size:.72rem;color:var(--ink3)">None</span>';
+    }
+    return `<button class="screenshot-btn" onclick="openPayModal('${r._id}')">
+      <i class="fas fa-image"></i> View
+    </button>`;
+  }
+
+  /* ════════════════════════════════════════════════
+     PAYMENT MODAL — shows screenshot + verify/reject
+  ════════════════════════════════════════════════ */
+  let _payCurrentRegId = null;
+
+  window.openPayModal = (regId) => {
+    const reg = allRegs.find(r => r._id === regId);
+    if (!reg) { showToast('Registration not found', 'error'); return; }
+
+    _payCurrentRegId = regId;
+
+    /* Populate student info */
+    document.getElementById('payStudentAv').textContent    = (reg.name || '?')[0].toUpperCase();
+    document.getElementById('payStudentName').textContent  = reg.name || '—';
+    document.getElementById('payStudentEmail').textContent = reg.email || '—';
+    document.getElementById('payCurrentBadge').innerHTML   = payBadge(reg.paymentStatus);
+
+    /* Populate screenshot */
+    const wrap = document.getElementById('payScreenshotWrap');
+
+    /* Support multiple field names backends may use; list API omits base64 — load from dedicated URL */
+    const screenshotApiUrl = `${API}/registrations/${regId}/screenshot`;
+    let screenshotSrc =
+      reg.paymentScreenshot ||   /* URL or data URL string when present */
+      reg.screenshot        ||
+      (reg.screenshotData && reg.screenshotMime
+        ? `data:${reg.screenshotMime};base64,${reg.screenshotData}`
+        : null) ||
+      (reg.screenshotData && reg.screenshotData.startsWith('data:')
+        ? reg.screenshotData
+        : null);
+
+    if (!screenshotSrc && ['screenshot_uploaded', 'verified', 'rejected'].includes(reg.paymentStatus)) {
+      screenshotSrc = screenshotApiUrl;
+    }
+
+    if (screenshotSrc) {
+      wrap.innerHTML = `
+        <img src="${screenshotSrc}" alt="Payment screenshot"
+             onerror="this.parentElement.innerHTML='<div class=\\'pay-no-screenshot\\'><i class=\\'fas fa-image-slash\\'></i><p>Screenshot could not be loaded.</p></div>'">
+        <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to zoom</div>`;
+      wrap.style.cursor = 'zoom-in';
+      wrap.onclick = () => openScreenshotLightbox(screenshotSrc);
+    } else if (reg.paymentStatus === 'not_required') {
+      wrap.style.cursor = 'default';
+      wrap.innerHTML = `<div class="pay-no-screenshot"><i class="fas fa-gift"></i><p>This is a free event — no payment required.</p></div>`;
+      wrap.onclick = null;
+    } else {
+      wrap.style.cursor = 'default';
+      wrap.innerHTML = `<div class="pay-no-screenshot"><i class="fas fa-upload"></i><p>No screenshot uploaded yet by the student.</p></div>`;
+      wrap.onclick = null;
+    }
+
+    /* Action buttons — context-aware */
+    const actionWrap = document.getElementById('payActionBtns');
+    const ps = reg.paymentStatus;
+
+    if (ps === 'not_required') {
+      actionWrap.innerHTML = `<div style="font-size:.8rem;color:var(--ink3);padding:.5rem 0"><i class="fas fa-check-circle" style="color:var(--ag)"></i> Free event — no action needed.</div>`;
+    } else if (ps === 'verified') {
+      actionWrap.innerHTML = `
+        <div style="font-size:.8rem;color:var(--ag);padding:.5rem 0;flex:1"><i class="fas fa-check-circle"></i> Payment already verified.</div>
+        <button class="btn btn-r" onclick="doVerifyPay('${regId}','rejected')"><i class="fas fa-times"></i> Mark Rejected</button>`;
+    } else if (ps === 'rejected') {
+      actionWrap.innerHTML = `
+        <div style="font-size:.8rem;color:#ef4444;padding:.5rem 0;flex:1"><i class="fas fa-times-circle"></i> Payment was rejected.</div>
+        <button class="btn btn-g" onclick="doVerifyPay('${regId}','verified')"><i class="fas fa-check"></i> Mark Verified</button>`;
+    } else {
+      /* pending or screenshot_uploaded */
+      actionWrap.innerHTML = `
+        <button class="btn btn-r" style="flex:1" onclick="doVerifyPay('${regId}','rejected')">
+          <i class="fas fa-times-circle"></i> Reject
+        </button>
+        <button class="btn btn-g" style="flex:1" onclick="doVerifyPay('${regId}','verified')">
+          <i class="fas fa-check-circle"></i> Verify Payment
+        </button>`;
+    }
+
+    document.getElementById('payModal').classList.add('open');
+  };
+
+  window.closePayModal = () => {
+    document.getElementById('payModal').classList.remove('open');
+    _payCurrentRegId = null;
+  };
+
+  /* ── Core verify/reject action ── */
+  window.doVerifyPay = async (regId, newStatus) => {
+    /* Disable both buttons to prevent double-click */
+    const btns = document.querySelectorAll('#payActionBtns .btn');
+    btns.forEach(b => { b.disabled = true; b.style.opacity = '.6'; });
+
+    try {
+      /* Try the most common endpoint patterns */
+      const endpointCandidates = [
+        `${API}/registrations/${regId}/payment`,
+        `${API}/tech/registrations/${regId}/payment`,
+        `${API}/registrations/${regId}/payment-status`,
+        `${API}/registrations/${regId}`,
+      ];
+
+      let lastErr = null;
+      for (const url of endpointCandidates) {
+        try {
+          const res = await fetch(url, {
+            method: 'PATCH',
+            headers: H(),
+            body: JSON.stringify({ paymentStatus: newStatus, status: newStatus }),
+          });
+
+          /* Some APIs return non-JSON on 404 — guard against that */
+          const ct = res.headers.get('content-type') || '';
+          let data = {};
+          if (ct.includes('application/json')) {
+            data = await res.json();
+          } else {
+            const text = await res.text();
+            if (!res.ok) { lastErr = text || `HTTP ${res.status}`; continue; }
+          }
+
+          if (!res.ok) { lastErr = data.message || `HTTP ${res.status}`; continue; }
+
+          /* ✅ Success */
+          showToast(`Payment ${newStatus === 'verified' ? '✅ Verified' : '❌ Rejected'} successfully`, 'success');
+
+          /* Update in-memory record so re-render is instant */
+          const reg = allRegs.find(r => r._id === regId);
+          if (reg) reg.paymentStatus = newStatus;
+
+          closePayModal();
+          /* Re-render table */
+          renderRegTable(allRegs, ['open','closed','completed'].includes((selRegStatus||'').toLowerCase()));
+          return;
+        } catch (networkErr) {
+          lastErr = networkErr.message;
+        }
+      }
+
+      throw new Error(lastErr || 'All endpoints failed');
+    } catch (err) {
+      showToast(`Failed: ${err.message}`, 'error');
+      btns.forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+    }
+  };
+
+  /* Legacy inline buttons (kept for backward compat) */
+  window.verifyPay = (regId, status) => doVerifyPay(regId, status);
+
+  /* ── Screenshot lightbox ── */
+  window.openScreenshotLightbox = (src) => {
+    if (!src) return;
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').classList.add('show');
+  };
+
+  window.filterRegTable = () => {
+    const q   = document.getElementById('regSearch').value.toLowerCase();
+    const pay = document.getElementById('regPayFilter').value;
+    renderRegTable(
+      allRegs.filter(r =>
+        (!q   || r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)) &&
+        (!pay || r.paymentStatus === pay)
+      ),
+      ['open','closed','completed'].includes((selRegStatus||'').toLowerCase())
+    );
+  };
+
+  window.toggleAtt = async (regId, el) => {
+    const isNowAttended = el.style.background !== 'rgb(58, 156, 90)';
+    try {
+      const res = await fetch(`${API}/registrations/${regId}/attendance`, {
+        method: 'PATCH',
+        headers: H(),
+        body: JSON.stringify({ attended: isNowAttended }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.message || 'HTTP ' + res.status);
+      }
+      el.style.background  = isNowAttended ? '#3a9c5a' : 'transparent';
+      el.style.borderColor = isNowAttended ? '#3a9c5a' : 'var(--line2)';
+      el.style.color       = isNowAttended ? '#fff'    : 'var(--ink3)';
+      /* Update in-memory */
+      const reg = allRegs.find(r => r._id === regId);
+      if (reg) reg.status = isNowAttended ? 'attended' : 'registered';
+    } catch (err) { showToast(err.message || 'Could not update attendance', 'error'); }
+  };
+
+  function payBadge(s) {
+    const map = {
+      not_required:        ['badge-gray',    'Free'],
+      pending:             ['badge-pending',  'Pending'],
+      screenshot_uploaded: ['badge-attended', 'Awaiting'],
+      verified:            ['badge-green',    'Verified'],
+      rejected:            ['badge-red',      'Rejected'],
+    };
+    const [cls, lbl] = map[s] || ['badge-gray', s || '—'];
+    return `<span class="badge ${cls}">${lbl}</span>`;
+  }
+
+  window.exportCSV = () => {
+    if (!allRegs.length) { showToast('No data to export', 'error'); return; }
+    const h    = ['Name','Email','Phone','Team','Project Idea','Payment Status','Attended'];
+    const rows = allRegs.map(r => [r.name, r.email, r.phone||'', r.teamName||'', r.projectIdea||'', r.paymentStatus||'', r.status==='attended'?'Yes':'No']);
+    const csv  = [h, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    const a    = document.createElement('a');
+    a.href     = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = `registrations_${Date.now()}.csv`;
+    a.click();
+    showToast('CSV exported!', 'success');
+  };
+
+  /* ══ EMAIL ══ */
+  let emailMode = 'event';
+  window.switchEmailMode = (mode) => {
+    emailMode = mode;
+    document.getElementById('emailEventGroup').style.display  = mode === 'event'  ? 'block' : 'none';
+    document.getElementById('emailCustomGroup').style.display = mode === 'custom' ? 'block' : 'none';
+    document.getElementById('emailModeEvent').classList.toggle('active',  mode === 'event');
+    document.getElementById('emailModeCustom').classList.toggle('active', mode === 'custom');
+  };
+
+  async function loadEmailEvents() {
+    try {
+      const res  = await fetch(`${API}/tech/events`, { headers: H() });
+      const data = await res.json();
+      allEvents  = Array.isArray(data) ? data : (data.events || []);
+      const sel  = document.getElementById('emailEventSelect');
+      sel.innerHTML = '<option value="">Select event…</option>' +
+        allEvents.map(e => `<option value="${e.title}">${e.title}</option>`).join('');
+    } catch {}
+  }
+
+  window.sendEmail = async () => {
+    const subject = document.getElementById('emailSubject').value.trim();
+    const body    = document.getElementById('emailBody').value.trim();
+    if (!subject || !body) { showToast('Subject and message required', 'error'); return; }
+    let payload = { subject, body };
+    if (emailMode === 'event') {
+      const ev = document.getElementById('emailEventSelect').value;
+      if (!ev) { showToast('Please select an event', 'error'); return; }
+      payload.eventFilter = ev;
+    } else {
+      payload.to = document.getElementById('emailCustomTo').value.split(',').map(e => e.trim()).filter(Boolean);
+      if (!payload.to.length) { showToast('Enter at least one email', 'error'); return; }
+    }
+    const btn = document.getElementById('sendEmailBtn');
+    btn.innerHTML = '<i class="fas fa-spinner" style="animation:spin .8s linear infinite;display:inline-block"></i> Sending…';
+    btn.disabled  = true;
+    try {
+      const res  = await fetch(`${API}/tech/email/send`, { method:'POST', headers: H(), body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showToast(data.message, 'success');
+      document.getElementById('emailSubject').value = '';
+      document.getElementById('emailBody').value    = '';
+    } catch (e) { showToast(e.message || 'Failed to send email', 'error'); }
+    finally { btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Email'; btn.disabled = false; }
+  };
+
+  window.quickEmail = (email, name) => {
+    switchTab('email'); switchEmailMode('custom');
+    setTimeout(() => {
+      document.getElementById('emailCustomTo').value   = email;
+      document.getElementById('emailSubject').value    = `Message for ${name}`;
+    }, 100);
+  };
+
+  /* ══ CERTIFICATES ══ */
+  async function loadCertEvents() {
+    try {
+      const res  = await fetch(`${API}/tech/events`, { headers: H() });
+      const data = await res.json();
+      allEvents  = Array.isArray(data) ? data : (data.events || []);
+      const sel  = document.getElementById('certEventSelect');
+      sel.innerHTML = '<option value="">Choose event…</option>' +
+        allEvents.map(e => `<option value="${e.title}" data-status="${e.status}">${e.title}</option>`).join('');
+    } catch {}
+    loadCertHistory();
+  }
+
+  window.updateCertPreview = () => {
+    const sel = document.getElementById('certEventSelect');
+    document.getElementById('certPreviewEvent').textContent = sel.value || 'Event Name';
+    document.getElementById('certEventStatus').innerHTML = sel.value
+      ? '<span style="color:#3a9c5a"><i class="fas fa-check-circle"></i> Certificates can be issued for this event</span>'
+      : '';
+  };
+
+  window.openCertModal  = () => { document.getElementById('certEventName').value = document.getElementById('certEventSelect').value; document.getElementById('certModal').classList.add('open'); };
+  window.closeCertModal = () => document.getElementById('certModal').classList.remove('open');
+
+  window.sendSingleCert = async () => {
+    const email = document.getElementById('certStudentEmail').value.trim();
+    const eventName = document.getElementById('certEventName').value.trim();
+    if (!email || !eventName) { showToast('Email and event name required', 'error'); return; }
+    const student = allRegs.find(s => s.email === email);
+    if (!student) { showToast('Student not found in current event registrations', 'error'); return; }
+    try {
+      const res  = await fetch(`${API}/tech/certificates/send`, { method:'POST', headers: H(), body: JSON.stringify({ studentId: student._id, eventName }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showToast(data.message, 'success'); closeCertModal(); loadCertHistory();
+    } catch (e) { showToast(e.message || 'Failed', 'error'); }
+  };
+
+  window.sendBulkCerts = async () => {
+    const eventName = document.getElementById('certEventSelect').value;
+    if (!eventName) { showToast('Please select an event', 'error'); return; }
+    const cnt = allRegs.filter(r => r.status === 'attended').length;
+    if (!confirm(`Send certificates to ${cnt} attended participant${cnt!==1?'s':''} of "${eventName}"?`)) return;
+    showToast('Sending certificates…', 'info');
+    try {
+      const res  = await fetch(`${API}/tech/certificates/send-bulk`, { method:'POST', headers: H(), body: JSON.stringify({ eventName }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showToast(data.message, 'success'); loadCertHistory();
+    } catch (e) { showToast(e.message || 'Failed', 'error'); }
+  };
+
+  async function loadCertHistory() {
+    const el = document.getElementById('certHistoryContainer');
+    try {
+      const res  = await fetch(`${API}/tech/registrations?limit=200`, { headers: H() });
+      const data = await res.json();
+      const students = data.students || data.registrations || [];
+      const withCerts = students.filter(s => s.certificates?.length);
+      if (!withCerts.length) { el.innerHTML = '<div class="no-data"><i class="fas fa-certificate"></i>No certificates issued yet.</div>'; return; }
+      el.innerHTML = `<div class="tbl-wrap"><table><thead><tr><th>Student</th><th>Email</th><th>Certificates Issued</th></tr></thead><tbody>${withCerts.map(s=>`<tr><td><strong>${s.name}</strong></td><td style="font-size:.78rem">${s.email}</td><td>${s.certificates.map(c=>`<span class="badge badge-green">${c}</span>`).join(' ')}</td></tr>`).join('')}</tbody></table></div>`;
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  /* ══ ANNOUNCEMENTS ══ */
+  async function loadAnnouncements() {
+    const el = document.getElementById('annContainer');
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res  = await fetch(`${API}/tech/announcements`, { headers: H() });
+      const data = await res.json();
+      const anns = Array.isArray(data) ? data : (data.announcements || []);
+      if (!anns.length) { el.innerHTML = '<div class="no-data"><i class="fas fa-bullhorn"></i>No announcements yet.</div>'; return; }
+      el.innerHTML = anns.map(renderAnnCard).join('');
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  function renderAnnCard(a) {
+    const pin = a.pinned ? '<span class="badge badge-important" style="margin-left:.4rem"><i class="fas fa-thumbtack"></i> Pinned</span>' : '';
+    return `<div class="ann-card ${a.pinned?'pinned':''}">
+      <div class="ann-card-hdr"><div class="ann-card-title">${a.title}${pin}</div></div>
+      <div class="ann-card-body">${a.body||''}</div>
+      <div class="ann-meta">
+        <span class="badge badge-${a.priority||'normal'}">${a.priority||'normal'}</span>
+        <span><i class="fas fa-user"></i>${a.postedBy?.name||'—'}</span>
+        ${a.event?`<span><i class="fas fa-calendar"></i>${a.event.title||''}</span>`:''}
+        <span><i class="fas fa-clock"></i>${new Date(a.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+      </div>
+    </div>`;
+  }
+
+  /* ══ EVENTS ══ */
+  async function loadEvents() {
+    const el = document.getElementById('eventsContainer');
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res  = await fetch(`${API}/tech/events`, { headers: H() });
+      const data = await res.json();
+      allEvents  = Array.isArray(data) ? data : (data.events || []);
+      if (!allEvents.length) { el.innerHTML = '<div class="no-data"><i class="fas fa-calendar-xmark"></i>No events yet.</div>'; return; }
+      el.innerHTML = allEvents.map(e => {
+        const d = new Date(e.eventDate);
+        return `<div class="ev-row">
+          <div class="ev-date-box"><span class="day">${d.getDate()}</span><span class="mon">${d.toLocaleString('en',{month:'short'}).toUpperCase()}</span></div>
+          <div style="flex:1">
+            <div style="font-size:.88rem;font-weight:600;margin-bottom:.2rem">${e.title}</div>
+            <div style="font-size:.72rem;color:var(--ink3);display:flex;gap:.875rem;flex-wrap:wrap">
+              <span><i class="fas fa-location-dot"></i> ${e.venue||'TBD'}</span>
+              <span><i class="fas fa-tag"></i> ${e.category||'—'}</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <span class="badge badge-${e.status==='open'?'open':e.status==='completed'?'completed':'pending'}">${e.status}</span>
+            <button class="btn btn-o btn-sm" onclick="openRegsFromEvent('${e._id}','${escQ(e.title)}','${e.status}')"><i class="fas fa-users-line"></i> Regs</button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  window.openRegsFromEvent = (id, title, status) => { switchTab('registrations'); setTimeout(() => selectRegEvent(id, title, status), 150); };
+
+  /* ══ MEMBERS ══ */
+  async function loadMembers() {
+    const grid = document.getElementById('membersContainer');
+    try {
+      const res  = await fetch(`${API}/tech/members/tech`, { headers: H() });
+      const data = await res.json();
+      const members = data.members || data || [];
+      const now = Date.now(), THR = 5 * 60 * 1000; let cnt = 0;
+      grid.innerHTML = (members).map(m => {
+        const hb   = parseInt(localStorage.getItem(`clustr-hb-${m._id||m.id}`) || '0');
+        const live = (now - hb < THR) || (m.name === user.name);
+        if (live) cnt++;
+        const ph = localStorage.getItem(`clustr-photo-${m._id||m.id}`);
+        const av = ph ? `<img src="${ph}" alt="">` : m.name[0].toUpperCase();
+        return `<div class="member-card">
+          <div class="m-av-wrap">
+            <div class="m-av">${av}</div>
+            <div style="position:absolute;bottom:-2px;right:-2px;width:12px;height:12px;border-radius:50%;border:2px solid var(--card);background:${live?'#3a9c5a':'var(--ink3)'};${live?'box-shadow:0 0 0 2px rgba(58,156,90,.3)':''}"></div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="m-name">${m.name}${m.name===user.name?'<span class="you-dot"></span>':''}</div>
+            <div class="m-role">${m.teamRole||'Technical'}</div>
+          </div>
+          <span style="font-size:.65rem;font-weight:600;color:${live?'#3a9c5a':'var(--ink3)'}">${live?'● Online':hb?timeSince(hb):''}</span>
+        </div>`;
+      }).join('') || '<div class="no-data" style="grid-column:1/-1"><i class="fas fa-user-slash"></i>No members.</div>';
+      const oc = document.getElementById('onlineCount');
+      if (oc) oc.textContent = cnt > 0 ? `${cnt} online` : '';
+    } catch { grid.innerHTML = '<div class="no-data" style="grid-column:1/-1"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  /* ══ PROFILE ══ */
+  async function loadProfile() {
+    const av = document.getElementById('profileAv');
+    const ph = localStorage.getItem(`clustr-photo-${user.id}`);
+    if (ph) av.innerHTML = `<img src="${ph}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+    else av.textContent = user.name[0].toUpperCase();
+    document.getElementById('profileLinkedin').value = user.linkedin || '';
+    document.getElementById('profileNameDisplay').textContent  = user.name;
+    document.getElementById('profileRoleDisplay').textContent  = user.teamRole || 'Technical Team Member';
+    document.getElementById('profileEmailDisplay').textContent = user.email || '';
+  }
+
+  window.updateProfile = async () => {
+    const fileInput = document.getElementById('profilePhotoInput');
+    const linkedin  = document.getElementById('profileLinkedin').value.trim();
+    const formData  = new FormData();
+    if (fileInput.files[0]) formData.append('photo', fileInput.files[0]);
+    if (linkedin) formData.append('linkedin', linkedin);
+    const btn = document.querySelector('#tab-profile .btn-p');
+    btn.innerHTML = '<i class="fas fa-spinner" style="animation:spin .8s linear infinite"></i> Updating…'; btn.disabled = true;
+    try {
+      const res  = await fetch(`${API}/team/profile/${user.id}`, { method:'PUT', headers:{'x-user-id':user.id}, body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      if (fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          localStorage.setItem(`clustr-photo-${user.id}`, reader.result);
+          ['sbAv','topAv'].forEach(id => { document.getElementById(id).innerHTML = `<img src="${reader.result}" alt="">`; });
+          document.getElementById('profileAv').innerHTML = `<img src="${reader.result}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+      user.linkedin = linkedin;
+      showToast('Profile updated successfully!', 'success');
+      fileInput.value = '';
+    } catch (err) { showToast(err.message || 'Failed to update profile', 'error'); }
+    finally { btn.innerHTML = '<i class="fas fa-save"></i> Update Profile'; btn.disabled = false; }
+  };
+
+  document.getElementById('profilePhotoInput').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (f) { const r = new FileReader(); r.onload = () => { document.getElementById('profileAv').innerHTML = `<img src="${r.result}" style="width:100%;height:100%;object-fit:cover">`; }; r.readAsDataURL(f); }
+  });
+
+  /* ── Lightbox ── */
+  window.closeLightbox = () => { document.getElementById('lightbox').classList.remove('show'); document.getElementById('lightboxImg').src = ''; };
+
+  window.showToast = () => {};
+
+  /* ── Misc ── */
+  function escQ(s) { return (s || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+  function timeSince(ts) { const m=Math.round((Date.now()-ts)/60000);if(m<2)return 'just now';if(m<60)return `${m}m ago`;const h=Math.round(m/60);return h<24?`${h}h ago`:`${Math.round(h/24)}d ago`; }
+  window.doLogout = () => { localStorage.removeItem('clustr-team-session'); window.location.href = 'portal.html'; };
+
+  /* Close modals on backdrop click */
+  document.querySelectorAll('.modal-overlay').forEach(o =>
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); })
+  );
+
+  /* ── Init ── */
+  loadRecentRegs();
+  loadAnnPreview();
+})();
+</script>
+</body>
+</html>

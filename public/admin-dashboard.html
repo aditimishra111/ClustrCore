@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard – ClustrCore</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --orange:#c8623a; --orange-l:#e08c4a; --orange-d:#a34c28;
+      --blue:#3a6bc8;   --blue-l:#6a9be8;   --blue-d:#2a50a0;
+      --ag:#3a9c5a;
+      --grad:linear-gradient(135deg, var(--orange) 0%, var(--orange-l) 50%, var(--blue) 100%);
+      --grad-text:linear-gradient(90deg, var(--orange) 0%, var(--orange-l) 40%, var(--blue) 100%);
+      --bg:#faf8f5; --bg2:#f2ede6; --bg3:#ebe4d9;
+      --ink:#1a1410; --ink2:#4a3f35; --ink3:#8c7b6d;
+      --card:#ffffff; --card2:rgba(255,255,255,0.75);
+      --line:rgba(26,20,16,0.08); --line2:rgba(26,20,16,0.15);
+      --sh1:0 1px 4px rgba(26,20,16,0.06), 0 4px 16px rgba(26,20,16,0.06);
+      --sh2:0 8px 32px rgba(26,20,16,0.10), 0 2px 8px rgba(26,20,16,0.06);
+      --sh3:0 24px 64px rgba(26,20,16,0.14), 0 4px 16px rgba(26,20,16,0.08);
+      --r:16px; --ease:cubic-bezier(0.4,0,0.2,1); --t:0.3s;
+      --sw:272px; --glow:rgba(200,98,58,.18);
+    }
+    [data-theme="dark"] {
+      --bg:#110e0b; --bg2:#1a1512; --bg3:#231e18;
+      --ink:#f5f0ea; --ink2:#b5a898; --ink3:#6b5e52;
+      --card:#1e1a15; --card2:rgba(30,26,21,0.85);
+      --line:rgba(245,240,234,0.07); --line2:rgba(245,240,234,0.14);
+      --sh1:0 1px 4px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.25);
+      --sh2:0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+      --sh3:0 24px 64px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background var(--t),color var(--t);overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--orange);border-radius:2px}
+    a{text-decoration:none;color:inherit}
+    .sidebar{position:fixed;left:0;top:0;width:var(--sw);height:100vh;background:var(--card2);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-right:1px solid var(--line2);display:flex;flex-direction:column;z-index:200;overflow:hidden;box-shadow:var(--sh2);}
+    .sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);}
+    .sidebar::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 40% at 20% 15%,rgba(200,98,58,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(58,107,200,.06) 0%,transparent 60%);}
+    .sb-logo{padding:1.5rem 1.375rem 1.125rem;border-bottom:1px solid var(--line);position:relative;z-index:1;}
+    .sb-brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;margin-bottom:1.125rem;}
+    .sb-brandname{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;letter-spacing:-.02em;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sb-badge{display:inline-flex;align-items:center;gap:.28rem;font-size:.58rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.2rem .6rem;border-radius:100px;background:linear-gradient(135deg,rgba(200,98,58,.12),rgba(224,140,74,.12));border:1px solid rgba(200,98,58,.25);color:var(--orange);margin-left:auto;}
+    .sb-profile{display:flex;align-items:center;gap:.75rem;padding:.75rem .875rem;border-radius:100px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;transition:all var(--t);}
+    .sb-profile:hover{border-color:var(--orange);background:rgba(200,98,58,.06);transform:translateY(-1px);box-shadow:var(--sh1)}
+    .sb-av-wrap{position:relative;flex-shrink:0}
+    .sb-av{width:40px;height:40px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:white;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;overflow:hidden;box-shadow:0 2px 10px var(--glow);}
+    .sb-av img{width:100%;height:100%;object-fit:cover}
+    .sb-shield{position:absolute;bottom:-2px;right:-2px;width:15px;height:15px;background:var(--orange);border-radius:50%;border:2px solid var(--card);display:flex;align-items:center;justify-content:center;color:white;font-size:.4rem;}
+    .sb-meta{min-width:0}
+    .sb-meta strong{display:block;font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sb-meta span{font-size:.68rem;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase;}
+    .sb-nav{flex:1;padding:.875rem;overflow-y:auto;display:flex;flex-direction:column;gap:.15rem;position:relative;z-index:1;}
+    .sb-label{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:.625rem .625rem .15rem;}
+    .sb-item{display:flex;align-items:center;gap:.7rem;padding:.62rem .875rem;border-radius:100px;color:var(--ink2);text-decoration:none;font-size:.86rem;font-weight:500;transition:all var(--t);border:1px solid transparent;cursor:pointer;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+    .sb-item:hover,.sb-item.active{background:var(--bg2);color:var(--ink);border-color:var(--line2);box-shadow:var(--sh1);}
+    .sb-item.active{background:rgba(200,98,58,.08);border-color:rgba(200,98,58,.25);color:var(--orange);}
+    .sb-item i{width:17px;text-align:center;font-size:.8rem;color:var(--ink3);transition:color var(--t);}
+    .sb-item:hover i,.sb-item.active i{color:var(--orange)}
+    .sb-footer{padding:.875rem;border-top:1px solid var(--line);position:relative;z-index:1;}
+    .sb-theme{display:flex;align-items:center;justify-content:space-between;padding:.55rem .875rem;background:var(--bg2);border:1px solid var(--line);border-radius:100px;cursor:pointer;margin-bottom:.5rem;transition:all var(--t);}
+    .sb-theme:hover{border-color:var(--line2);box-shadow:var(--sh1)}
+    .sb-theme span{font-size:.8rem;font-weight:500;color:var(--ink2);display:flex;align-items:center;gap:.45rem}
+    .pill{width:36px;height:19px;background:var(--line2);border-radius:20px;position:relative;transition:background var(--t);flex-shrink:0}
+    .pill::after{content:'';position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform var(--t);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    [data-theme="dark"] .pill{background:var(--orange)}
+    [data-theme="dark"] .pill::after{transform:translateX(17px)}
+    .sb-out{display:flex;align-items:center;gap:.55rem;padding:.6rem .875rem;background:none;border:1px solid var(--line);border-radius:100px;color:var(--ink3);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all var(--t);width:100%;}
+    .sb-out:hover{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#ef4444}
+    .view{display:none}.view.active{display:block;animation:fadeUp .4s var(--ease) both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .main{margin-left:var(--sw);min-height:100vh;padding:2rem 2.25rem 0;position:relative;z-index:1}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;animation:fadeUp .6s var(--ease) both;}
+    .topbar-left h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.8vw,2rem);font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:.2rem;}
+    .topbar-left h1 span{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic;}
+    .topbar-left p{font-size:.82rem;color:var(--ink3);font-weight:300}
+    .topbar-right{display:flex;align-items:center;gap:.75rem}
+    .live-time{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500;color:var(--ink2);background:var(--card2);backdrop-filter:blur(10px);border:1px solid var(--line2);border-radius:100px;padding:.35rem 1rem;letter-spacing:.04em;}
+    .admin-chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:rgba(200,98,58,.1);color:var(--orange);border:1px solid rgba(200,98,58,.25);padding:.35rem .875rem;border-radius:100px;}
+    .top-av{width:38px;height:38px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:.9rem;cursor:pointer;overflow:hidden;border:2px solid var(--line2);transition:all var(--t);box-shadow:0 2px 10px var(--glow);}
+    .top-av:hover{border-color:var(--orange);transform:translateY(-1px)}
+    .stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:1.75rem;animation:fadeUp .5s var(--ease) .08s both;}
+    .stat-cell{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;transition:all var(--t);box-shadow:var(--sh1);position:relative;overflow:hidden;}
+    .stat-cell::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 20%,rgba(200,98,58,.06) 0%,transparent 60%);pointer-events:none;}
+    .stat-cell:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:var(--line2)}
+    .stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:#fff;margin-bottom:1rem;}
+    .sc-o .stat-icon{background:linear-gradient(135deg,var(--orange),var(--orange-l));box-shadow:0 2px 12px rgba(200,98,58,.3)}
+    .sc-b .stat-icon{background:linear-gradient(135deg,var(--blue),var(--blue-l));box-shadow:0 2px 12px rgba(58,107,200,.3)}
+    .sc-g .stat-icon{background:linear-gradient(135deg,#3a9c5a,#5ccf80);box-shadow:0 2px 12px rgba(58,156,90,.3)}
+    .sc-p .stat-icon{background:linear-gradient(135deg,#8b5cf6,#a78bfa);box-shadow:0 2px 12px rgba(139,92,246,.3)}
+    .stat-num{font-family:'Playfair Display',serif;font-size:2.25rem;font-weight:700;letter-spacing:-.04em;line-height:1;margin-bottom:.25rem;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stat-lbl{font-size:.72rem;color:var(--ink3);font-weight:500;letter-spacing:.03em}
+    .spin-sm{width:20px;height:20px;border:2px solid var(--line2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .grid-main{display:grid;grid-template-columns:1.4fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+    .sc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;box-shadow:var(--sh1);}
+    .sc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--line);}
+    .sc-hdr-left{display:flex;align-items:center;gap:.6rem}
+    .sc-hdr-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,rgba(200,98,58,.12),rgba(224,140,74,.12));border:1px solid rgba(200,98,58,.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:.8rem;}
+    .sc-hdr h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+    .sc-hdr-btn{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;color:var(--orange);border:1px solid rgba(200,98,58,.25);padding:.32rem .875rem;border-radius:100px;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t);}
+    .sc-hdr-btn:hover{background:rgba(200,98,58,.06)}
+    .ev-card{border:1px solid var(--line);border-radius:16px;margin-bottom:.75rem;transition:all var(--t);position:relative;overflow:hidden;background:var(--bg);}
+    .ev-card:hover{border-color:var(--line2);box-shadow:var(--sh2);transform:translateY(-2px)}
+    .ev-card-accent{height:2px;background:var(--grad);width:100%}
+    .ev-card-body{padding:1rem 1.125rem}
+    .ev-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.5rem}
+    .ev-card-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.3;flex:1;}
+    .ev-chips{display:flex;gap:.35rem;flex-wrap:wrap;flex-shrink:0}
+    .chip{display:inline-flex;align-items:center;gap:.2rem;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.2rem .6rem;border-radius:100px}
+    .chip-open{background:rgba(200,98,58,.1);color:var(--orange);border:1px solid rgba(200,98,58,.25)}
+    .chip-upcoming{background:rgba(58,107,200,.1);color:var(--blue);border:1px solid rgba(58,107,200,.25)}
+    .chip-completed{background:rgba(139,92,246,.1);color:#8b5cf6;border:1px solid rgba(139,92,246,.25)}
+    .chip-draft{background:rgba(26,20,16,.06);color:var(--ink3);border:1px solid var(--line2)}
+    .ev-meta{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.5rem}
+    .ev-meta span{font-size:.72rem;color:var(--ink3);display:flex;align-items:center;gap:.28rem}
+    .ev-meta i{color:var(--orange);font-size:.65rem}
+    .ev-desc{font-size:.78rem;color:var(--ink2);line-height:1.55;font-weight:300}
+    .reg-row{display:flex;align-items:center;gap:.875rem;padding:.875rem 0;border-bottom:1px solid var(--line);}
+    .reg-row:last-child{border-bottom:none}
+    .reg-av{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:rgba(200,98,58,.08);display:flex;align-items:center;justify-content:center;color:var(--orange);font-family:'Playfair Display',serif;font-weight:700;font-size:.9rem;border:1px solid rgba(200,98,58,.15);}
+    .reg-info{flex:1;min-width:0}
+    .reg-name{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:.15rem}
+    .reg-email{font-size:.72rem;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .reg-event{font-size:.7rem;color:var(--ink2);margin-top:.15rem;font-weight:500}
+    .reg-status{padding:.28rem .75rem;border-radius:100px;font-size:.62rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;}
+    .reg-status.confirmed{background:rgba(58,156,90,.1);color:var(--ag);border:1px solid rgba(58,156,90,.25)}
+    .reg-status.pending{background:rgba(200,98,58,.1);color:var(--orange);border:1px solid rgba(200,98,58,.25)}
+    .reg-status.rejected{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+    .ann{display:flex;gap:.875rem;padding:.875rem 1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.625rem;transition:all var(--t);background:var(--bg);}
+    .ann:hover{border-color:rgba(200,98,58,.2);box-shadow:var(--sh1);transform:translateX(2px)}
+    .ann-ico{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(200,98,58,.1),rgba(224,140,74,.1));border:1px solid rgba(200,98,58,.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:.8rem;flex-shrink:0;}
+    .ann h4{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;margin-bottom:.2rem}
+    .ann p{font-size:.77rem;color:var(--ink2);line-height:1.5;margin-bottom:.25rem;font-weight:300}
+    .ann-time{font-size:.67rem;color:var(--ink3)}
+    .gal-vp{overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 5%,#000 95%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,#000 5%,#000 95%,transparent 100%);margin-bottom:.5rem;}
+    .gal-track{display:flex;gap:14px;width:max-content;animation:gscroll 36s linear infinite;padding:4px 2px 8px;}
+    .gal-track:hover{animation-play-state:paused}
+    @keyframes gscroll{to{transform:translateX(-50%)}}
+    .gal-item{width:200px;height:130px;border-radius:14px;overflow:hidden;flex-shrink:0;border:1px solid var(--line);}
+    .gal-item img{width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease);display:block;}
+    .gal-item:hover img{transform:scale(1.07)}
+    .gal-ph{width:100%;height:100%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.75rem;}
+    .view-hdr{margin-bottom:1.75rem}
+    .view-hdr h2{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:.25rem;}
+    .view-hdr h2 em{font-style:italic;color:var(--orange)}
+    .view-hdr p{font-size:.82rem;color:var(--ink3);font-weight:300}
+    .ftabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+    .ftab{padding:.42rem 1.125rem;border-radius:100px;font-size:.77rem;font-weight:600;border:1px solid var(--line2);background:var(--bg2);color:var(--ink2);cursor:pointer;transition:all var(--t);font-family:'DM Sans',sans-serif;}
+    .ftab:hover,.ftab.active{background:var(--orange);color:#fff;border-color:var(--orange);box-shadow:0 2px 12px rgba(200,98,58,.3)}
+    .srch{position:relative}
+    .srch i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:.78rem;pointer-events:none}
+    .srch-inp{background:var(--card);border:1px solid var(--line2);border-radius:100px;padding:.5rem 1rem .5rem 2.125rem;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--ink);width:220px;outline:none;transition:border-color var(--t);box-shadow:var(--sh1);}
+    .srch-inp:focus{border-color:var(--orange)}
+    .tb{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem}
+    .rgc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.125rem 1.25rem;display:flex;align-items:center;gap:.875rem;transition:all var(--t);margin-bottom:.75rem;box-shadow:var(--sh1);}
+    .rgc:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+    .rgcav{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,rgba(200,98,58,.1),rgba(58,107,200,.1));flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:.95rem;border:1px solid var(--line2);}
+    .rgcif{flex:1;min-width:0}
+    .rgcnm{font-family:'Playfair Display',serif;font-weight:700;font-size:.92rem;margin-bottom:.25rem;color:var(--ink)}
+    .rgcmr{display:flex;gap:.875rem;flex-wrap:wrap}
+    .rgcmi{display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:var(--ink3)}
+    .rgcmi i{font-size:.65rem;color:var(--orange)}
+    .rgcev{font-size:.72rem;color:var(--ink2);margin-top:.25rem;font-weight:500}
+    .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+    .gal-grid-item{aspect-ratio:4/3;border-radius:16px;overflow:hidden;border:1px solid var(--line);position:relative;transition:all var(--t);box-shadow:var(--sh1);}
+    .gal-grid-item:hover{box-shadow:var(--sh2);transform:translateY(-3px)}
+    .gal-grid-item img{width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease);display:block;}
+    .gal-grid-item:hover img{transform:scale(1.06)}
+    .gal-caption{position:absolute;inset:0;top:auto;background:linear-gradient(transparent 30%,rgba(26,20,16,.65));color:#fff;font-size:.74rem;font-weight:500;padding:1.25rem .875rem .625rem;opacity:0;transition:opacity .24s;}
+    .gal-grid-item:hover .gal-caption{opacity:1}
+    .setcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;margin-bottom:1rem;box-shadow:var(--sh1);}
+    .setcard h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:1.25rem;padding-bottom:.875rem;border-bottom:1px solid var(--line);}
+    .ff-fld{margin-bottom:.875rem}
+    .ff-fld label{display:block;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.35rem;}
+    .ff-fld input{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:.6rem .875rem;font-family:'DM Sans',sans-serif;font-size:.84rem;color:var(--ink);outline:none;transition:border-color var(--t);}
+    .ff-fld input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(200,98,58,.08)}
+    .btn-p{display:inline-flex;align-items:center;gap:.4rem;background:var(--grad);color:#fff;border:none;border-radius:100px;padding:.6rem 1.25rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all var(--t);box-shadow:0 2px 14px var(--glow);}
+    .btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 22px var(--glow)}
+    .diag-wrap{margin-bottom:1rem}
+    .diag-panel{background:rgba(200,98,58,.05);border:1px solid rgba(200,98,58,.18);border-radius:14px;overflow:hidden;}
+    .diag-summary{display:flex;align-items:center;gap:.5rem;padding:.75rem 1rem;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--orange);list-style:none;user-select:none;}
+    .diag-summary::-webkit-details-marker{display:none}
+    .diag-body{padding:.25rem .875rem .875rem;}
+    .diag-ep{display:flex;align-items:center;gap:.5rem;padding:.35rem .625rem;border-radius:8px;margin-top:.35rem;font-size:.73rem;}
+    .diag-ep.ok{background:rgba(58,156,90,.08);color:var(--ag)}
+    .diag-ep.fail{background:rgba(239,68,68,.06);color:#ef4444}
+    .diag-ep.trying{background:rgba(58,107,200,.07);color:var(--blue)}
+    .diag-ep i{font-size:.65rem;width:13px;flex-shrink:0}
+    .diag-ep code{font-family:'DM Mono',monospace;font-size:.7rem;flex:1;word-break:break-all}
+    .diag-ep .diag-note{font-size:.67rem;opacity:.75;white-space:nowrap}
+    .empty{text-align:center;padding:2.5rem 1rem;color:var(--ink3);opacity:.5}
+    .empty i{display:block;font-size:2rem;margin-bottom:.75rem}
+    .empty p{font-size:.82rem;font-weight:300}
+    .skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:12px;}
+    @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
+    .loading{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:2rem;color:var(--ink3);font-size:.82rem}
+    .spin-i{width:16px;height:16px;border:2px solid var(--line2);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    .err-box{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:.875rem 1rem;color:#ef4444;font-size:.8rem;display:flex;align-items:center;gap:.6rem;margin-bottom:.875rem;}
+    .pg-wrap{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+    .pg-btn{padding:.38rem .875rem;border-radius:100px;border:1px solid var(--line2);background:var(--card);color:var(--ink2);font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all var(--t);}
+    .pg-btn.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+    .pg-btn:hover:not(.active){border-color:var(--orange);color:var(--orange)}
+    footer{background:var(--ink);color:rgba(245,240,234,0.8);padding:4rem 0 2rem;margin-left:var(--sw);position:relative;overflow:hidden;margin-top:3rem;}
+    [data-theme="dark"] footer{background:#0a0806}
+    footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+    .ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:3rem;margin-bottom:3rem}
+    .ft-sec h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#f5f0ea;margin-bottom:1rem}
+    .ft-sec h4{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange-l);margin-bottom:1rem}
+    .ft-sec p{font-size:.85rem;line-height:1.7;color:rgba(245,240,234,.55)}
+    .socials{display:flex;gap:.75rem;margin-top:1rem}
+    .socials a{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(245,240,234,.6);display:flex;align-items:center;justify-content:center;font-size:.85rem;text-decoration:none;transition:all var(--t);}
+    .socials a:hover{background:var(--orange);border-color:var(--orange);color:#fff;transform:translateY(-2px)}
+    .ft-sec ul{list-style:none}.ft-sec ul li{margin-bottom:.5rem}
+    .ft-sec ul li a{color:rgba(245,240,234,.55);text-decoration:none;font-size:.85rem;transition:color var(--t)}
+    .ft-sec ul li a:hover{color:var(--orange-l)}
+    .ft-contact li{display:flex;align-items:center;gap:.55rem;color:rgba(245,240,234,.55);font-size:.85rem;margin-bottom:.5rem;list-style:none}
+    .ft-contact li i{color:var(--orange-l);width:14px}
+    .nl-form{display:flex;gap:.5rem;margin-top:1rem}
+    .nl-form input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:.6rem 1rem;color:#f5f0ea;font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;transition:border-color var(--t);}
+    .nl-form input:focus{border-color:var(--orange-l)}.nl-form input::placeholder{color:rgba(245,240,234,.3)}
+    .nl-form button{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:.85rem;flex-shrink:0;transition:all var(--t);}
+    .nl-form button:hover{transform:scale(1.1)}
+    .ft-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:1.5rem;text-align:center;font-size:.8rem;color:rgba(245,240,234,.3)}
+    @media(max-width:1100px){.ft-grid{grid-template-columns:1fr 1fr;gap:2rem}.stat-strip{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){.grid-main{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:1.25rem}footer{margin-left:0}.stat-strip{grid-template-columns:1fr 1fr}}
+    @media(max-width:520px){.stat-strip{grid-template-columns:1fr}.ft-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-logo">
+    <a href="index.html" class="sb-brand">
+      <span class="sb-brandname">TechNova</span>
+      <span class="sb-badge"><i class="fas fa-shield-halved"></i> Admin</span>
+    </a>
+    <div class="sb-profile">
+      <div class="sb-av-wrap">
+        <div class="sb-av" id="sbAv">A</div>
+        <div class="sb-shield"><i class="fas fa-shield-halved"></i></div>
+      </div>
+      <div class="sb-meta"><strong id="sbName">Admin</strong><span>Admin Portal</span></div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-label">Navigation</span>
+    <button class="sb-item active" onclick="showView('dashboard')"><i class="fas fa-gauge-high"></i> Dashboard</button>
+    
+    <button class="sb-item" onclick="showView('events-view')"><i class="fas fa-calendar-days"></i> Events</button>
+    <button class="sb-item" onclick="showView('announcements')"><i class="fas fa-bullhorn"></i> Announcements</button>
+    <button class="sb-item" onclick="showView('gallery')"><i class="fas fa-images"></i> Gallery</button>
+    <span class="sb-label">Account</span>
+    <button class="sb-item" onclick="showView('settings')"><i class="fas fa-gear"></i> Profile</button>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-theme" id="themeRow">
+      <span><i class="fas fa-moon" id="themeIcon"></i> <span id="themeLabel">Dark Mode</span></span>
+      <div class="pill"></div>
+    </div>
+    <button class="sb-out" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</aside>
+
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Welcome back, <span id="userGreeting">Admin</span> &#128075;</h1>
+        <p id="todayDate">Loading&hellip;</p>
+      </div>
+      <div class="topbar-right">
+        <div class="live-time" id="liveTime">--:--</div>
+        <span class="admin-chip"><i class="fas fa-shield-halved"></i> Admin</span>
+        <div class="top-av" id="topAv">A</div>
+      </div>
+    </div>
+    <div class="stat-strip">
+      <div class="stat-cell sc-o"><div class="stat-icon"><i class="fas fa-calendar-days"></i></div><div class="stat-num" id="statEvents"><div class="spin-sm"></div></div><div class="stat-lbl">Total Events</div></div>
+      <div class="stat-cell sc-b"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-num" id="statRegs"><div class="spin-sm"></div></div><div class="stat-lbl">Registrations</div></div>
+      <div class="stat-cell sc-g"><div class="stat-icon"><i class="fas fa-calendar-check"></i></div><div class="stat-num" id="statUpcoming"><div class="spin-sm"></div></div><div class="stat-lbl">Upcoming Events</div></div>
+      <div class="stat-cell sc-p"><div class="stat-icon"><i class="fas fa-bullhorn"></i></div><div class="stat-num" id="statAnn"><div class="spin-sm"></div></div><div class="stat-lbl">Announcements</div></div>
+    </div>
+    <div class="grid-main">
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-left"><div class="sc-hdr-icon"><i class="fas fa-calendar-alt"></i></div><h2>Upcoming Events</h2></div>
+          <button class="sc-hdr-btn" onclick="showView('events-view')">View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i></button>
+        </div>
+        <div id="eventsContainer"><div class="skel" style="height:90px;margin-bottom:.75rem"></div><div class="skel" style="height:90px;margin-bottom:.75rem"></div><div class="skel" style="height:90px"></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1.25rem">
+        <div class="sc">
+          <div class="sc-hdr">
+            <div class="sc-hdr-left"><div class="sc-hdr-icon"><i class="fas fa-user-plus"></i></div><h2>Recent Registrations</h2></div>
+            <button class="sc-hdr-btn" onclick="showView('registrations')">View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i></button>
+          </div>
+          <!-- Skeletons shown until data loads -->
+          <div id="regsContainer">
+            <div class="skel" style="height:56px;margin-bottom:.625rem"></div>
+            <div class="skel" style="height:56px;margin-bottom:.625rem"></div>
+            <div class="skel" style="height:56px"></div>
+          </div>
+        </div>
+        <div class="sc" style="flex:1">
+          <div class="sc-hdr">
+            <div class="sc-hdr-left"><div class="sc-hdr-icon"><i class="fas fa-bullhorn"></i></div><h2>Announcements</h2></div>
+            <button class="sc-hdr-btn" onclick="showView('announcements')">View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i></button>
+          </div>
+          <div id="annContainer"><div class="skel" style="height:64px;margin-bottom:.5rem"></div><div class="skel" style="height:64px"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sc" style="margin-bottom:1.75rem">
+      <div class="sc-hdr">
+        <div class="sc-hdr-left"><div class="sc-hdr-icon"><i class="fas fa-images"></i></div><h2>Gallery Highlights</h2></div>
+        <button class="sc-hdr-btn" onclick="showView('gallery')">Full Gallery <i class="fas fa-arrow-right" style="font-size:.65rem"></i></button>
+      </div>
+      <div class="gal-vp"><div class="gal-track" id="galTrack"><div class="loading"><div class="spin-i"></div>Loading gallery&hellip;</div></div></div>
+    </div>
+  </div>
+
+  <!-- REGISTRATIONS -->
+  <div class="view" id="view-registrations">
+    <div class="view-hdr"><h2><em>Registrations</em></h2><p>All student event registrations.</p></div>
+    <div class="tb">
+      <div class="ftabs" id="regTabs">
+        <button class="ftab active" onclick="setRegFilter('all',this)">All</button>
+        <button class="ftab" onclick="setRegFilter('pending',this)">Pending</button>
+        <button class="ftab" onclick="setRegFilter('confirmed',this)">Confirmed</button>
+        <button class="ftab" onclick="setRegFilter('rejected',this)">Rejected</button>
+      </div>
+      <div class="srch"><i class="fas fa-magnifying-glass"></i><input class="srch-inp" type="text" placeholder="Search name or email&hellip;" oninput="searchRegs(this.value)" id="regSearch"></div>
+    </div>
+    <div class="diag-wrap" id="diagWrap" style="display:none">
+      <details>
+        <summary class="diag-summary"><i class="fas fa-stethoscope"></i> API Diagnostics <span style="font-weight:400;opacity:.6;margin-left:.25rem;font-size:.7rem">(click to expand)</span></summary>
+        <div class="diag-panel"><div class="diag-body" id="diagList"></div></div>
+      </details>
+    </div>
+    <div id="regList"><div class="loading"><div class="spin-i"></div>Loading registrations&hellip;</div></div>
+    <div class="pg-wrap" id="regPagination"></div>
+  </div>
+
+  <!-- EVENTS -->
+  <div class="view" id="view-events-view">
+    <div class="view-hdr"><h2>All <em>Events</em></h2><p>All club events managed by the Events team.</p></div>
+    <div class="ftabs" id="evTabs">
+      <button class="ftab active" onclick="setEvFilter('',this)">All</button>
+      <button class="ftab" onclick="setEvFilter('open',this)">Open</button>
+      <button class="ftab" onclick="setEvFilter('upcoming',this)">Upcoming</button>
+      <button class="ftab" onclick="setEvFilter('completed',this)">Completed</button>
+      <button class="ftab" onclick="setEvFilter('draft',this)">Draft</button>
+    </div>
+    <div id="allEventsContainer"><div class="skel" style="height:90px;margin-bottom:.75rem;border-radius:14px"></div><div class="skel" style="height:90px;margin-bottom:.75rem;border-radius:14px"></div><div class="skel" style="height:90px;border-radius:14px"></div></div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div class="view" id="view-announcements">
+    <div class="view-hdr"><h2>Global <em>Announcements</em></h2><p>Posted by the Events team and visible to all students.</p></div>
+    <div id="allAnnContainer"><div class="loading"><div class="spin-i"></div>Loading&hellip;</div></div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="view" id="view-gallery">
+    <div class="view-hdr"><h2>Gallery <em>Highlights</em></h2><p>Photos captured across all TechNova events.</p></div>
+    <div class="gal-grid" id="galGrid">
+      <div class="skel" style="aspect-ratio:4/3;border-radius:14px"></div><div class="skel" style="aspect-ratio:4/3;border-radius:14px"></div>
+      <div class="skel" style="aspect-ratio:4/3;border-radius:14px"></div><div class="skel" style="aspect-ratio:4/3;border-radius:14px"></div>
+      <div class="skel" style="aspect-ratio:4/3;border-radius:14px"></div><div class="skel" style="aspect-ratio:4/3;border-radius:14px"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="view" id="view-settings">
+    <div class="view-hdr"><h2>Account <em>Profile</em></h2><p>Manage your admin account and preferences.</p></div>
+    <div class="setcard">
+      <h3>Admin Profile</h3>
+      <div style="display:flex;gap:1.25rem;align-items:flex-start;margin-bottom:1.25rem">
+        <div id="setAv" style="width:72px;height:72px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;overflow:hidden;box-shadow:0 4px 16px var(--glow);flex-shrink:0">A</div>
+        <div style="flex:1">
+          <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:.15rem" id="setPnm">Admin</div>
+          <div style="font-size:.77rem;color:var(--ink3);margin-bottom:.875rem" id="setPem">&mdash;</div>
+          <input type="file" id="profilePhotoInput" accept="image/*" style="font-size:.78rem;color:var(--ink2)">
+          <div style="font-size:.72rem;color:var(--ink3);margin-top:.25rem">Max 5MB &middot; JPG / PNG / WEBP</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.875rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:170px"><div class="ff-fld"><label>Display Name</label><input type="text" id="setN" placeholder="Your name"></div></div>
+        <div style="flex:1;min-width:170px"><div class="ff-fld"><label>Email</label><input type="email" id="setE" placeholder="your@email.com"></div></div>
+      </div>
+      <div class="ff-fld"><label>LinkedIn Profile</label><input type="url" id="setLI" placeholder="https://linkedin.com/in/yourprofile"></div>
+      <button class="btn-p" onclick="savePrf()"><i class="fas fa-check"></i> Save Changes</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div style="max-width:1200px;margin:0 auto;padding:0 2rem">
+    <div class="ft-grid">
+      <div class="ft-sec">
+        <h3>TechNova</h3>
+        <p>Empowering innovation and building a community of tech enthusiasts dedicated to learning and growth.</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      <div class="ft-sec"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="events.html">Events</a></li><li><a href="index.html#team">Team</a></li><li><a href="resources.html">Resources</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+      <div class="ft-sec"><h4>Contact Us</h4><ul class="ft-contact"><li><i class="fas fa-envelope"></i> info@clustercore.com</li><li><i class="fas fa-phone"></i> +91 98765 43210</li><li><i class="fas fa-map-marker-alt"></i> Tech Building, Room 301</li></ul></div>
+      <div class="ft-sec"><h4>Newsletter</h4><p>Stay updated with our latest events and announcements.</p><form class="nl-form" onsubmit="return false"><input type="email" placeholder="Enter your email" aria-label="Email"><button type="submit"><i class="fas fa-paper-plane"></i></button></form></div>
+    </div>
+    <div class="ft-bottom"><p>&copy; 2026 ClustrCore. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var API = 'http://localhost:5000/api';
+
+  /* ── AUTH ── */
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem('user') || 'null'); } catch (e) {}
+  var uname   = user ? (user.name || (user.email ? user.email.split('@')[0] : 'Admin')) : 'Admin';
+  var initial = uname.charAt(0).toUpperCase();
+
+  document.getElementById('userGreeting').textContent = uname;
+  document.getElementById('sbName').textContent       = uname;
+  document.getElementById('sbAv').textContent         = initial;
+  document.getElementById('topAv').textContent        = initial;
+  document.getElementById('setAv').textContent        = initial;
+  document.getElementById('setPnm').textContent       = uname;
+  document.getElementById('setPem').textContent       = (user && user.email) ? user.email : '—';
+  document.getElementById('setN').value               = uname;
+  document.getElementById('setE').value               = (user && user.email) ? user.email : '';
+
+  /* ── VIEW SWITCHING ── */
+  var VIEW_ORDER = ['dashboard', 'registrations', 'events-view', 'announcements', 'gallery', 'settings'];
+  window.showView = function (id) {
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    var el = document.getElementById('view-' + id);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.sb-item').forEach(function (i) { i.classList.remove('active'); });
+    var idx = VIEW_ORDER.indexOf(id);
+    if (idx !== -1) {
+      var items = document.querySelectorAll('.sb-item');
+      if (items[idx]) items[idx].classList.add('active');
+    }
+    if (id === 'registrations' && !window._regsLoaded)   { window._regsLoaded   = true; loadRegistrations(); }
+    if (id === 'events-view'   && !window._eventsLoaded) { window._eventsLoaded = true; loadAllEvents(); }
+    if (id === 'announcements' && !window._annLoaded)    { window._annLoaded    = true; loadAllAnn(); }
+    if (id === 'gallery'       && !window._galLoaded)    { window._galLoaded    = true; loadGalleryGrid(); }
+  };
+
+  /* ── THEME ── */
+  var html = document.documentElement;
+  applyTheme(localStorage.getItem('clustr-theme') || 'light');
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    localStorage.setItem('clustr-theme', t);
+    document.getElementById('themeIcon').className    = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    document.getElementById('themeLabel').textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+  }
+  window.applyTheme = applyTheme;
+  document.getElementById('themeRow').addEventListener('click', function () {
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ── CLOCK ── */
+  function tick() {
+    var n = new Date();
+    document.getElementById('liveTime').textContent =
+      String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 10000);
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  /* ── AUTH HEADERS ── */
+  function authHeaders() {
+    var h = { 'Content-Type': 'application/json' };
+    var uid = user && (user._id || user.id);
+    if (uid) h['x-user-id'] = uid;
+    var tok = (user && user.token) || localStorage.getItem('clustr-token');
+    if (tok) h['Authorization'] = 'Bearer ' + tok;
+    return h;
+  }
+
+  /* ── API GET ── */
+  function apiGet(path) {
+    return fetch(API + path, { headers: authHeaders() }).then(function (r) {
+      if (!r.ok) return r.json().catch(function(){return{};}).then(function(d){ throw new Error(d.message || ('HTTP ' + r.status)); });
+      return r.json();
+    });
+  }
+
+  /* ── HELPERS ── */
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function emptyHTML(icon, msg) { return '<div class="empty"><i class="fas '+icon+'"></i><p>'+msg+'</p></div>'; }
+  function errBox(msg) { return '<div class="err-box"><i class="fas fa-triangle-exclamation"></i>'+esc(msg)+'</div>'; }
+  function statusChip(s) {
+    var map={open:'chip-open',upcoming:'chip-upcoming',completed:'chip-completed',draft:'chip-draft'};
+    var cls=map[(s||'').toLowerCase()]||'chip-draft';
+    return '<span class="chip '+cls+'">'+esc(s||'—')+'</span>';
+  }
+
+  /* ── NORMALISE REGISTRATION RECORD ──
+     Handles all the different shapes different backend endpoints return. */
+  function normaliseReg(r) {
+    var evts = '';
+    if (Array.isArray(r.events))          evts = r.events.map(function(e){ return (typeof e==='object'&&e!==null)?(e.title||e.name||JSON.stringify(e)):String(e); }).join(', ');
+    else if (Array.isArray(r.eventNames)) evts = r.eventNames.join(', ');
+    else if (r.eventName)                 evts = r.eventName;
+    else if (r.eventTitle)                evts = r.eventTitle;
+    else if (r.event && r.event.title)    evts = r.event.title;
+    else if (r.event && r.event.name)     evts = r.event.name;
+    return {
+      name:   r.name   || r.studentName || r.fullName  || r.username || '—',
+      email:  r.email  || r.studentEmail|| r.mail       || '—',
+      phone:  r.phone  || r.phone_number|| r.mobile     || r.contact  || '',
+      course: r.course || r.branch      || r.department || r.program  || '',
+      year:   r.year   || r.semester    || '',
+      events: evts,
+      status: r.status || r.registrationStatus || 'pending'
+    };
+  }
+
+  function extractArray(data) {
+    if (Array.isArray(data))                  return data;
+    if (Array.isArray(data.registrations))    return data.registrations;
+    if (Array.isArray(data.students))         return data.students;
+    if (Array.isArray(data.data))             return data.data;
+    if (Array.isArray(data.results))          return data.results;
+    if (Array.isArray(data.items))            return data.items;
+    if (Array.isArray(data.list))             return data.list;
+    return [];
+  }
+  function extractPages(data) { return data.pages || data.totalPages || data.pageCount || data.total_pages || 1; }
+  function extractTotal(data) { return data.total || data.totalCount || data.count || data.totalItems || null; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     REGISTRATION ENDPOINT WATERFALL
+     ─ Shared by both the dashboard widget AND the full Reg view.
+     ─ Prioritises admin endpoint, but also tries the events-team
+       endpoint pattern so admin sees the same data the portal shows.
+  ═══════════════════════════════════════════════════════════════ */
+  var REG_ENDPOINTS = [
+    '/admin/registrations',
+    '/registrations',
+    '/events/registrations',
+    '/tech/registrations',
+    '/digital/registrations',
+    '/students',
+    '/users/registrations'
+  ];
+
+  /* Module-level state — single declaration each, no duplicates. */
+  var regFilter          = 'all';
+  var regSearch          = '';
+  var regPage            = 1;
+  var regDebounceTimer   = null;
+  var regWorkingEndpoint = null;  /* cached once a working endpoint is confirmed */
+  var diagLog            = [];
+
+  /* ── Diagnostics panel ── */
+  function diagAdd(ep, state, note) { diagLog.push({ep:ep, state:state, note:note}); renderDiag(); }
+  function diagUpdate(ep, state, note) {
+    for (var i = diagLog.length - 1; i >= 0; i--) {
+      if (diagLog[i].ep === ep) { diagLog[i].state = state; diagLog[i].note = note; break; }
+    }
+    renderDiag();
+  }
+  function renderDiag() {
+    var wrap = document.getElementById('diagWrap');
+    var list = document.getElementById('diagList');
+    if (!wrap || !list) return;
+    wrap.style.display = diagLog.length ? '' : 'none';
+    var icons = {ok:'fa-circle-check', fail:'fa-circle-xmark', trying:'fa-circle-notch fa-spin'};
+    list.innerHTML = diagLog.map(function(d){
+      return '<div class="diag-ep '+d.state+'">'+
+        '<i class="fas '+(icons[d.state]||'fa-circle')+'"></i>'+
+        '<code>'+esc(API+d.ep)+'</code>'+
+        '<span class="diag-note">'+esc(d.note)+'</span></div>';
+    }).join('');
+  }
+
+  /**
+   * tryRegEndpoints(qs, onSuccess, onFailure, silent)
+   *
+   * Walks REG_ENDPOINTS until a 200 with parseable array data is found.
+   * Uses the cached working endpoint after the first successful call.
+   *
+   * onSuccess(rawItems, totalPages, totalCount)
+   * silent = true → skip diagnostics panel (used for dashboard widget)
+   */
+  function tryRegEndpoints(qs, onSuccess, onFailure, silent) {
+    var endpoints = regWorkingEndpoint ? [regWorkingEndpoint] : REG_ENDPOINTS;
+    var idx = 0;
+
+    if (!silent) { diagLog = []; renderDiag(); }
+
+    (function tryNext() {
+      if (idx >= endpoints.length) { onFailure(); return; }
+      var ep  = endpoints[idx++];
+      var url = API + ep + (qs || '');
+
+      if (!silent) diagAdd(ep, 'trying', 'requesting…');
+
+      fetch(url, { headers: authHeaders() })
+        .then(function(res) {
+          var s = res.status;
+          if (s === 401 || s === 403 || s === 404) {
+            if (!silent) diagUpdate(ep, 'fail', {401:'Unauthorized',403:'Forbidden',404:'Not Found'}[s]);
+            tryNext(); return null;
+          }
+          if (!res.ok) {
+            if (!silent) diagUpdate(ep, 'fail', 'HTTP ' + s);
+            tryNext(); return null;
+          }
+          return res.json().then(function(d){ return {data:d, ep:ep}; });
+        })
+        .then(function(result) {
+          if (!result) return;
+          var items = extractArray(result.data);
+          var pages = extractPages(result.data);
+          var total = extractTotal(result.data);
+
+          /* Skip empty responses unless this is already the confirmed endpoint */
+          if (items.length === 0 && !regWorkingEndpoint) {
+            if (!silent) diagUpdate(ep, 'fail', 'Empty — trying next');
+            tryNext(); return;
+          }
+
+          if (!silent) diagUpdate(ep, 'ok', 'OK — ' + items.length + ' record(s)');
+          regWorkingEndpoint = ep;
+          onSuccess(items, pages, total);
+        })
+        .catch(function(err) {
+          if (!silent) diagUpdate(ep, 'fail', 'Network: ' + (err.message || String(err)));
+          tryNext();
+        });
+    })();
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     DASHBOARD
+  ═══════════════════════════════════════════════════════════════ */
+  function loadDashboard() {
+    Promise.all([apiGet('/events/public'), apiGet('/events/public/announcements')])
+      .then(function (res) {
+        var events = res[0], anns = res[1];
+        document.getElementById('statEvents').textContent   = events.length;
+        document.getElementById('statUpcoming').textContent = events.filter(function(e){ return (e.status||'').toLowerCase()==='upcoming'; }).length;
+        document.getElementById('statAnn').textContent      = anns.length;
+        renderDashEvents(events);
+        renderDashAnns(anns);
+        loadGalleryStrip();
+        loadDashboardRegs();
+      })
+      .catch(function () {
+        ['statEvents','statUpcoming','statAnn'].forEach(function(id){ document.getElementById(id).textContent='—'; });
+        document.getElementById('eventsContainer').innerHTML = errBox('Could not reach server. Is the backend running?');
+        document.getElementById('annContainer').innerHTML    = errBox('Could not load announcements.');
+        loadGalleryStrip();
+        loadDashboardRegs();
+      });
+  }
+
+  /* ── Dashboard: Recent Registrations widget ── */
+  function loadDashboardRegs() {
+    var c = document.getElementById('regsContainer');
+    /* Show skeletons while the waterfall runs */
+    c.innerHTML = '<div class="skel" style="height:56px;margin-bottom:.625rem"></div>' +
+                  '<div class="skel" style="height:56px;margin-bottom:.625rem"></div>' +
+                  '<div class="skel" style="height:56px"></div>';
+
+    tryRegEndpoints(
+      '?page=1&limit=50',
+      function(rawItems, pages, total) {
+        /* Update stat badge */
+        var statEl = document.getElementById('statRegs');
+        if (statEl && statEl.innerHTML.indexOf('spin-sm') !== -1) {
+          statEl.textContent = (total !== null) ? total : (pages > 1 ? rawItems.length + '+' : rawItems.length);
+        }
+        renderDashRegs(rawItems.map(normaliseReg).slice(0, 5));
+      },
+      function() {
+        /* Graceful fallback */
+        c.innerHTML = '<div style="padding:.875rem 0;font-size:.8rem;color:var(--ink3);display:flex;align-items:center;gap:.5rem">' +
+          '<i class="fas fa-info-circle" style="color:var(--blue)"></i>' +
+          'Registrations unavailable.&nbsp;' +
+          '<a onclick="showView(\'registrations\')" style="color:var(--orange);cursor:pointer;font-weight:600">Try full view &rarr;</a></div>';
+        var statEl = document.getElementById('statRegs');
+        if (statEl && statEl.innerHTML.indexOf('spin-sm') !== -1) statEl.textContent = '—';
+      },
+      true  /* silent — don't touch the diag panel */
+    );
+  }
+
+  function renderDashRegs(items) {
+    var c = document.getElementById('regsContainer');
+    if (!items.length) {
+      c.innerHTML = '<div style="padding:.875rem 0;font-size:.8rem;color:var(--ink3)">No registrations found.</div>';
+      return;
+    }
+    c.innerHTML = items.map(function(r){
+      return '<div class="reg-row">' +
+        '<div class="reg-av">'+esc((r.name||'?').charAt(0).toUpperCase())+'</div>' +
+        '<div class="reg-info">' +
+          '<div class="reg-name">'+esc(r.name)+'</div>' +
+          '<div class="reg-email">'+esc(r.email)+'</div>' +
+          (r.events ? '<div class="reg-event"><i class="fas fa-calendar" style="color:var(--orange);font-size:.6rem;margin-right:.25rem"></i>'+esc(r.events)+'</div>' : '') +
+        '</div>' +
+        '<span class="reg-status '+esc(r.status)+'">'+esc(r.status)+'</span></div>';
+    }).join('');
+  }
+
+  function renderDashEvents(events) {
+    var c = document.getElementById('eventsContainer');
+    if (!events.length) { c.innerHTML = emptyHTML('fa-calendar-xmark','No upcoming events.'); return; }
+    c.innerHTML = events.slice(0,4).map(function(e){
+      return '<div class="ev-card"><div class="ev-card-accent"></div><div class="ev-card-body">'+
+        '<div class="ev-card-top"><div class="ev-card-title">'+esc(e.title)+'</div>'+
+        '<div class="ev-chips">'+statusChip(e.status)+'</div></div>'+
+        ((e.date||e.time)?'<div class="ev-meta">'+
+          (e.date?'<span><i class="fas fa-calendar"></i>'+esc(e.date)+'</span>':'')+
+          (e.time?'<span><i class="fas fa-clock"></i>'+esc(e.time)+'</span>':'')+
+          (e.venue?'<span><i class="fas fa-location-dot"></i>'+esc(e.venue)+'</span>':'')+
+        '</div>':'')+
+        (e.description?'<div class="ev-desc">'+esc(e.description).slice(0,100)+'&hellip;</div>':'')+
+        '</div></div>';
+    }).join('');
+  }
+
+  function renderDashAnns(anns) {
+    var c = document.getElementById('annContainer');
+    if (!anns.length) { c.innerHTML = emptyHTML('fa-bell-slash','No announcements yet.'); return; }
+    c.innerHTML = anns.slice(0,3).map(function(a){
+      var body = a.body||a.content||'';
+      return '<div class="ann"><div class="ann-ico"><i class="fas fa-'+(a.icon||'bullhorn')+'"></i></div>'+
+        '<div><h4>'+esc(a.title)+'</h4>'+
+        '<p>'+esc(body.slice(0,100))+(body.length>100?'&hellip;':'')+'</p>'+
+        '<span class="ann-time">'+esc(a.date||'')+(a.author?' &middot; '+esc(a.author):'')+'</span></div></div>';
+    }).join('');
+  }
+
+  /* ── Gallery strip ── */
+  var PLACEHOLDERS = ['🎉','🏆','👨‍💻','🎤','🚀','🎨','💡','🔬'];
+  function loadGalleryStrip() {
+    var track = document.getElementById('galTrack');
+    apiGet('/events/public/gallery').then(function(photos){
+      if (!photos||!photos.length) { track.innerHTML = makePlaceholderTrack(); return; }
+      var doubled = photos.concat(photos);
+      track.innerHTML = doubled.map(function(p){
+        return '<div class="gal-item"><img src="'+esc(p.url||'')+'" alt="'+esc(p.caption||'')+'" loading="lazy"></div>';
+      }).join('');
+    }).catch(function(){ track.innerHTML = makePlaceholderTrack(); });
+  }
+  function makePlaceholderTrack() {
+    return PLACEHOLDERS.concat(PLACEHOLDERS).map(function(e){
+      return '<div class="gal-item"><div class="gal-ph">'+e+'</div></div>';
+    }).join('');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     REGISTRATIONS VIEW — full page
+  ═══════════════════════════════════════════════════════════════ */
+  function loadRegistrations() {
+    var el = document.getElementById('regList');
+    el.innerHTML = '<div class="loading"><div class="spin-i"></div>Loading registrations&hellip;</div>';
+
+    var qs = '?page='+regPage+'&limit=50';
+    if (regFilter !== 'all') qs += '&status='  + encodeURIComponent(regFilter);
+    if (regSearch)           qs += '&search='  + encodeURIComponent(regSearch);
+
+    tryRegEndpoints(qs,
+      function(rawItems, pages, total) {
+        var items = rawItems.map(normaliseReg);
+        /* Client-side fallback filter if server ignores params */
+        if (regFilter !== 'all') items = items.filter(function(r){ return r.status.toLowerCase()===regFilter; });
+        if (regSearch) {
+          var q = regSearch.toLowerCase();
+          items = items.filter(function(r){ return r.name.toLowerCase().indexOf(q)!==-1 || r.email.toLowerCase().indexOf(q)!==-1; });
+        }
+        renderRegList(items);
+        renderRegPagination(pages);
+        var statEl = document.getElementById('statRegs');
+        if (statEl && statEl.innerHTML.indexOf('spin-sm')!==-1) {
+          statEl.textContent = (total!==null)?total:(pages>1?rawItems.length+'+':rawItems.length);
+        }
+      },
+      function() {
+        document.getElementById('regList').innerHTML =
+          '<div style="text-align:center;padding:2.5rem 1rem">'+
+          errBox('No registration endpoint responded. Expand API Diagnostics above for details.')+
+          '<p style="font-size:.8rem;color:var(--ink3);line-height:2;margin-top:.5rem">'+
+          '<strong>Common fixes:</strong><br>'+
+          '1. Confirm backend is running at <code style="font-size:.75rem">'+esc(API)+'</code><br>'+
+          '2. Check your auth token has admin permissions<br>'+
+          '3. Ask your backend developer which endpoint serves registrations</p></div>';
+        var statEl = document.getElementById('statRegs');
+        if (statEl && statEl.innerHTML.indexOf('spin-sm')!==-1) statEl.textContent='—';
+      }
+    );
+  }
+
+  function renderRegList(items) {
+    var el = document.getElementById('regList');
+    if (!items.length) { el.innerHTML = emptyHTML('fa-user-check','No registrations found.'); return; }
+    el.innerHTML = items.map(function(r){
+      return '<div class="rgc">'+
+        '<div class="rgcav"><i class="fas fa-user"></i></div>'+
+        '<div class="rgcif">'+
+          '<div class="rgcnm">'+esc(r.name)+'</div>'+
+          '<div class="rgcmr">'+
+            '<span class="rgcmi"><i class="fas fa-envelope"></i>'+esc(r.email)+'</span>'+
+            (r.course?'<span class="rgcmi"><i class="fas fa-graduation-cap"></i>'+esc(r.course)+(r.year?' &middot; Yr '+esc(r.year):'')+'</span>':'')+
+            (r.phone?'<span class="rgcmi"><i class="fas fa-phone"></i>'+esc(r.phone)+'</span>':'')+
+          '</div>'+
+          (r.events?'<div class="rgcev"><i class="fas fa-calendar" style="color:var(--orange);margin-right:.25rem;font-size:.62rem"></i>'+esc(r.events)+'</div>':'')+
+        '</div>'+
+        '<span class="reg-status '+esc(r.status)+'">'+esc(r.status)+'</span></div>';
+    }).join('');
+  }
+
+  function renderRegPagination(pages) {
+    var el = document.getElementById('regPagination');
+    if (pages<=1) { el.innerHTML=''; return; }
+    var h='';
+    for (var i=1;i<=pages;i++) h+='<button class="pg-btn'+(i===regPage?' active':'')+'" onclick="window._regGo('+i+')">'+i+'</button>';
+    el.innerHTML=h;
+  }
+  window._regGo=function(p){regPage=p;loadRegistrations();};
+
+  window.setRegFilter=function(f,btn){
+    regFilter=f; regPage=1;
+    document.querySelectorAll('#regTabs .ftab').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    loadRegistrations();
+  };
+  window.searchRegs=function(v){
+    regSearch=v; regPage=1;
+    clearTimeout(regDebounceTimer);
+    regDebounceTimer=setTimeout(loadRegistrations,350);
+  };
+
+  /* ═══════════════════════════════════════════════════════════════
+     EVENTS, ANNOUNCEMENTS, GALLERY VIEWS
+  ═══════════════════════════════════════════════════════════════ */
+  var allEventsRaw=[], evFilter='';
+  function loadAllEvents() {
+    var c=document.getElementById('allEventsContainer');
+    apiGet('/events/public').then(function(events){allEventsRaw=events;renderAllEvents();})
+      .catch(function(){c.innerHTML=errBox('Could not load events.');});
+  }
+  function renderAllEvents() {
+    var c=document.getElementById('allEventsContainer');
+    var filtered=evFilter?allEventsRaw.filter(function(e){return(e.status||'').toLowerCase()===evFilter;}):allEventsRaw;
+    if (!filtered.length){c.innerHTML=emptyHTML('fa-calendar-days','No events found.');return;}
+    c.innerHTML=filtered.map(function(e){
+      var fee=e.registrationFee||0;
+      return '<div class="ev-card"><div class="ev-card-accent"></div><div class="ev-card-body">'+
+        '<div class="ev-card-top"><div class="ev-card-title">'+esc(e.title)+'</div>'+
+        '<div class="ev-chips">'+statusChip(e.status)+
+          (fee>0?'<span class="chip" style="background:rgba(200,98,58,.08);color:var(--orange);border:1px solid rgba(200,98,58,.2)">&#8377;'+fee+'</span>':'<span class="chip" style="background:rgba(58,156,90,.1);color:var(--ag);border:1px solid rgba(58,156,90,.25)">Free</span>')+
+        '</div></div>'+
+        '<div class="ev-meta">'+
+          (e.date?'<span><i class="fas fa-calendar"></i>'+esc(e.date)+'</span>':'')+
+          (e.time?'<span><i class="fas fa-clock"></i>'+esc(e.time)+'</span>':'')+
+          (e.venue?'<span><i class="fas fa-location-dot"></i>'+esc(e.venue)+'</span>':'')+
+          (e.category?'<span><i class="fas fa-tag"></i>'+esc(e.category)+'</span>':'')+
+        '</div>'+
+        (e.description?'<div class="ev-desc">'+esc(e.description).slice(0,140)+(e.description.length>140?'&hellip;':'')+'</div>':'')+
+        '</div></div>';
+    }).join('');
+  }
+  window.setEvFilter=function(f,btn){
+    evFilter=f;
+    document.querySelectorAll('#evTabs .ftab').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    renderAllEvents();
+  };
+
+  function loadAllAnn() {
+    var el=document.getElementById('allAnnContainer');
+    apiGet('/events/public/announcements').then(function(anns){
+      if (!anns.length){el.innerHTML=emptyHTML('fa-bullhorn','No announcements yet.');return;}
+      el.innerHTML=anns.map(function(a){
+        var body=a.body||a.content||'';
+        return '<div class="ann"><div class="ann-ico"><i class="fas fa-'+(a.icon||'bullhorn')+'"></i></div>'+
+          '<div><h4>'+esc(a.title)+'</h4><p>'+esc(body)+'</p>'+
+          '<span class="ann-time">'+esc(a.date||'')+(a.author?' &middot; '+esc(a.author):'')+'</span></div></div>';
+      }).join('');
+    }).catch(function(){el.innerHTML=errBox('Could not load announcements.');});
+  }
+
+  var GAL_EMOJIS=['🎉','🏆','👨‍💻','🎤','🚀','🎨','💡','🔬','🌟','🎯','🤖','⚡'];
+  function loadGalleryGrid() {
+    var grid=document.getElementById('galGrid');
+    apiGet('/events/public/gallery').then(function(photos){
+      if (!photos||!photos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><i class="fas fa-images"></i><p>No gallery photos yet.</p></div>';return;}
+      grid.innerHTML=photos.map(function(p){
+        return '<div class="gal-grid-item"><img src="'+esc(p.url||'')+'" alt="'+esc(p.caption||'')+'" loading="lazy">'+
+          '<div class="gal-caption">'+esc(p.caption||'')+'</div></div>';
+      }).join('');
+    }).catch(function(){
+      grid.innerHTML=GAL_EMOJIS.map(function(e){
+        return '<div class="gal-grid-item"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.25rem;background:var(--bg2)">'+e+'</div></div>';
+      }).join('');
+    });
+  }
+
+  /* ── SETTINGS ── */
+  window.savePrf=function(){
+    var n=document.getElementById('setN').value.trim();
+    if (n) {
+      ['userGreeting','sbName','setPnm'].forEach(function(id){document.getElementById(id).textContent=n;});
+      ['sbAv','topAv','setAv'].forEach(function(id){document.getElementById(id).textContent=n.charAt(0).toUpperCase();});
+      try{var u=JSON.parse(localStorage.getItem('user')||'{}');u.name=n;localStorage.setItem('user',JSON.stringify(u));}catch(e){}
+    }
+    var e=document.getElementById('setE').value.trim();
+    if (e) document.getElementById('setPem').textContent=e;
+    showToast('Profile updated','success');
+  };
+  document.getElementById('profilePhotoInput').addEventListener('change',function(e){
+    var f=e.target.files[0]; if (!f) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var url=ev.target.result;
+      ['sbAv','topAv','setAv'].forEach(function(id){
+        document.getElementById(id).innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
+      });
+    };
+    reader.readAsDataURL(f);
+  });
+
+  window.showToast=function(){};
+
+  /* ── LOGOUT ── */
+  window.logout=function(){
+    if (confirm('Sign out of TechNova Admin?')) {
+      localStorage.removeItem('user');
+      window.location.href='index.html';
+    }
+  };
+
+  /* ── INIT ── */
+  loadDashboard();
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Chatbot - Ask Us Anything!</title>
+    <link rel="stylesheet" href="css/student-chatbot.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+</head>
+<body>
+
+   
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="bot-avatar">🤖</div>
+            <div class="header-info">
+                <h2>Club Assistant</h2>
+                <p><span class="online-dot"></span>Online • Instant replies</p>
+            </div>
+        </div>
+
+        <div class="messages-area" id="messagesArea">
+            <div class="message bot hidden" id="typingIndicator">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type your question..." autocomplete="off">
+            <button id="sendButton">
+                <svg class="send-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="chat-footer">
+            Powered by AI • Quick responses 24/7
+        </div>
+    </div>
+
+    <script src="js/faq-data.js"></script>
+    <script src="js/student-chatbot.js"></script>
+
+    <script>
+        // Apply saved theme on load
+        (function() {
+            const saved = localStorage.getItem('clustrcore-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+
+        // Toggle button
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('clustrcore-theme', next);
+        });
+    </script>
+</body>
+</html>

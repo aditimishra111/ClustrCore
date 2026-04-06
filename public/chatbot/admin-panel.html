@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Student Query Manager</title>
+    <link rel="stylesheet" href="css/admin-panel.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👥</text></svg>">
+</head>
+<body>
+
+    
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="header-icon">💬</div>
+                    <div>
+                        <h1>Student Query Manager</h1>
+                        <p>Manage and respond to student questions</p>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-card pending">
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-number" id="pendingCount">0</div>
+                    </div>
+                    <div class="stat-card answered">
+                        <div class="stat-label">Answered</div>
+                        <div class="stat-number" id="answeredCount">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" id="pendingTab">
+                <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Pending Questions (<span id="pendingTabCount">0</span>)
+            </button>
+            <button class="tab-button" id="answeredTab">
+                <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Answered Questions (<span id="answeredTabCount">0</span>)
+            </button>
+        </div>
+
+        <div class="questions-container" id="pendingContainer">
+            <div class="empty-state">
+                <div class="empty-icon">⏰</div>
+                <h3>Loading questions...</h3>
+                <p>Please wait</p>
+            </div>
+        </div>
+
+        <div class="questions-container hidden" id="answeredContainer">
+            <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <h3>Loading questions...</h3>
+                <p>Please wait</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/faq-data.js"></script>
+    <script src="js/admin-panel.js"></script>
+
+    <script>
+        // Apply saved theme on load
+        (function() {
+            const saved = localStorage.getItem('clustrcore-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+
+        // Toggle button
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('clustrcore-theme', next);
+        });
+
+        // Login credentials
+        const ADMIN_CREDENTIALS = { username: 'admin', password: 'club2024' };
+
+        window.onload = function() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (isLoggedIn === 'true') {
+                showAdminPanel();
+            }
+        };
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminPanel();
+            } else {
+                errorMessage.classList.add('show');
+                setTimeout(() => errorMessage.classList.remove('show'), 3000);
+            }
+            return false;
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContainer').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+        }
+
+        function handleLogout() {
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            const dialog = document.createElement('div');
+            dialog.className = 'confirm-dialog';
+            dialog.innerHTML = `
+                <div class="confirm-content">
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to logout?</p>
+                    <div class="confirm-actions">
+                        <button class="btn btn-secondary" onclick="this.closest('.confirm-overlay').remove()">Cancel</button>
+                        <button class="btn btn-primary" onclick="confirmLogout()">Logout</button>
+                    </div>
+                </div>
+            `;
+            overlay.appendChild(dialog);
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.classList.add('show'), 10);
+        }
+
+        function confirmLogout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+    </script>
+</body>
+</html>

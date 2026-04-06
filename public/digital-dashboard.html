@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital — TechNova</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg:#f8f6fc; --bg2:#f0eaf8; --bg3:#e8e0f2;
+      --card:#ffffff; --card2:rgba(255,255,255,0.72);
+      --ink:#18111f; --ink2:#4a3f5c; --ink3:#8b7fa0;
+      --a:#7c3aed; --ag:#3a9c5a; --ar:#ef4444; --ay:#f59e0b;
+      --glow:rgba(124,58,237,.20);
+      --grad:linear-gradient(135deg,#7c3aed 0%,#a78bfa 100%);
+      --grad-text:linear-gradient(90deg,#7c3aed 0%,#a78bfa 60%,#c4b5fd 100%);
+      --line:rgba(24,17,31,.08); --line2:rgba(24,17,31,.15);
+      --sh1:0 1px 4px rgba(24,17,31,.06),0 4px 16px rgba(24,17,31,.06);
+      --sh2:0 8px 32px rgba(24,17,31,.10),0 2px 8px rgba(24,17,31,.06);
+      --sh3:0 24px 64px rgba(24,17,31,.14),0 4px 16px rgba(24,17,31,.08);
+      --sw:268px; --ease:cubic-bezier(.4,0,.2,1); --t:.3s; --r:16px;
+    }
+    [data-theme="dark"] {
+      --bg:#0e0b14; --bg2:#16111f; --bg3:#1e1729;
+      --card:#1c1626; --card2:rgba(28,22,38,.82);
+      --ink:#f2ecff; --ink2:#a898c0; --ink3:#6a5e80;
+      --a:#a78bfa; --ag:#5ccf80; --glow:rgba(167,139,250,.18);
+      --line:rgba(242,236,255,.07); --line2:rgba(242,236,255,.14);
+      --sh1:0 1px 4px rgba(0,0,0,.30),0 4px 16px rgba(0,0,0,.25);
+      --sh2:0 8px 32px rgba(0,0,0,.40),0 2px 8px rgba(0,0,0,.30);
+      --sh3:0 24px 64px rgba(0,0,0,.55),0 4px 16px rgba(0,0,0,.40);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);color:var(--ink);
+      min-height:100vh;display:flex;overflow-x:hidden;
+      transition:background var(--t),color var(--t);
+    }
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.022;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    img{max-width:100%;height:auto;display:block}
+    a{text-decoration:none;color:inherit}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--bg2)}
+    ::-webkit-scrollbar-thumb{background:var(--a);border-radius:3px}
+
+    .sidebar{
+      position:fixed;left:0;top:0;width:var(--sw);height:100vh;
+      background:var(--card2);
+      backdrop-filter:blur(24px) saturate(180%);
+      -webkit-backdrop-filter:blur(24px) saturate(180%);
+      border-right:1px solid var(--line2);
+      display:flex;flex-direction:column;z-index:200;overflow:hidden;
+      box-shadow:var(--sh2);
+    }
+    .sidebar::after{
+      content:'';position:absolute;top:-80px;left:-60px;
+      width:280px;height:280px;border-radius:50%;
+      background:radial-gradient(circle,rgba(124,58,237,.12) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);z-index:1}
+
+    .sb-hdr{padding:1.625rem 1.375rem 1.25rem;border-bottom:1px solid var(--line);position:relative;z-index:1}
+    .sb-logo{display:flex;align-items:center;gap:.55rem;text-decoration:none;margin-bottom:1.125rem}
+    .sb-brand{
+      font-family:'Playfair Display',serif;
+      font-weight:700;font-size:1.1rem;letter-spacing:-.02em;
+      background:var(--grad-text);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .sb-user{display:flex;align-items:center;gap:.7rem}
+    .sb-av{
+      width:38px;height:38px;border-radius:11px;
+      background:var(--grad);
+      display:flex;align-items:center;justify-content:center;
+      color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;
+      flex-shrink:0;overflow:hidden;
+      box-shadow:0 2px 12px var(--glow);
+    }
+    .sb-av img{width:100%;height:100%;object-fit:cover}
+    .sb-meta strong{display:block;font-size:.86rem;font-weight:600;letter-spacing:-.01em}
+    .sb-meta span{font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
+
+    .sb-nav{flex:1;padding:1rem .875rem;overflow-y:auto;position:relative;z-index:1}
+    .nav-lbl{
+      font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--ink3);padding:0 .6rem;margin:.625rem 0 .25rem;
+      font-family:'DM Mono',monospace;
+    }
+    .nav-item{
+      display:flex;align-items:center;gap:.75rem;
+      padding:.625rem .75rem;border-radius:11px;
+      color:var(--ink2);text-decoration:none;
+      font-size:.84rem;font-weight:500;
+      transition:all var(--t);margin-bottom:3px;
+      border:1px solid transparent;cursor:pointer;
+      background:none;width:100%;text-align:left;
+      position:relative;font-family:'DM Sans',sans-serif;
+    }
+    .nav-item::before{
+      content:'';position:absolute;left:0;top:22%;bottom:22%;
+      width:3px;border-radius:0 3px 3px 0;
+      background:var(--a);transform:scaleY(0);
+      transition:transform var(--t);
+    }
+    .nav-item:hover,.nav-item.active{background:var(--bg2);color:var(--ink);border-color:var(--line);}
+    .nav-item.active{background:rgba(124,58,237,.07);border-color:rgba(124,58,237,.18);}
+    .nav-item.active::before,.nav-item:hover::before{transform:scaleY(1)}
+    .nav-item i{width:18px;text-align:center;font-size:.82rem;color:var(--ink3);transition:color var(--t)}
+    .nav-item:hover i,.nav-item.active i{color:var(--a)}
+
+    .sb-footer{padding:.875rem;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:.5rem;position:relative;z-index:1}
+    .theme-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.6rem .8rem;background:var(--bg2);
+      border:1px solid var(--line);border-radius:11px;
+      cursor:pointer;transition:all var(--t);
+    }
+    .theme-row:hover{border-color:rgba(124,58,237,.3)}
+    .theme-lbl{font-size:.8rem;font-weight:500;color:var(--ink2);display:flex;align-items:center;gap:.5rem}
+    .pill{width:38px;height:20px;background:var(--line2);border-radius:20px;position:relative;transition:background var(--t)}
+    .pill::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform var(--t);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    [data-theme="dark"] .pill{background:var(--a)}
+    [data-theme="dark"] .pill::after{transform:translateX(18px)}
+    .logout-btn{
+      display:flex;align-items:center;gap:.6rem;
+      padding:.625rem .8rem;background:none;
+      border:1px solid var(--line);border-radius:11px;
+      color:var(--ink3);font-family:'DM Sans',sans-serif;
+      font-size:.82rem;font-weight:500;cursor:pointer;
+      transition:all var(--t);width:100%;
+    }
+    .logout-btn:hover{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#ef4444}
+
+    .main{
+      margin-left:var(--sw);min-height:100vh;
+      padding:2rem 2rem 5rem;width:100%;
+      position:relative;z-index:1;
+    }
+    .main::before{
+      content:'';position:fixed;top:0;right:0;
+      width:600px;height:600px;
+      background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(124,58,237,.07) 0%,transparent 60%);
+      pointer-events:none;z-index:0;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+    .tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .4s var(--ease) both}
+
+    .topbar{
+      background:var(--card2);
+      backdrop-filter:blur(20px) saturate(160%);
+      -webkit-backdrop-filter:blur(20px) saturate(160%);
+      border:1px solid var(--line2);border-radius:20px;
+      padding:1.25rem 1.625rem;
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:2rem;box-shadow:var(--sh1);
+      animation:fadeDown .5s var(--ease) both;
+      position:relative;overflow:hidden;
+    }
+    .topbar::before{
+      content:'';position:absolute;top:-40px;right:-40px;
+      width:200px;height:200px;border-radius:50%;
+      background:radial-gradient(circle,rgba(124,58,237,.09) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .topbar h1{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,2.8vw,1.7rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:.2rem;}
+    .topbar h1 span{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .topbar p{font-size:.8rem;color:var(--ink3);font-weight:300;letter-spacing:.01em}
+    .team-chip{
+      display:inline-flex;align-items:center;gap:.4rem;
+      font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      padding:.35rem 1rem;border-radius:100px;
+      background:rgba(124,58,237,.1);color:var(--a);
+      border:1px solid rgba(124,58,237,.25);
+    }
+    .team-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--a);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+
+    .sc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;box-shadow:var(--sh1);margin-bottom:1.25rem;transition:box-shadow var(--t);}
+    .sc:hover{box-shadow:var(--sh2)}
+    .sc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--line)}
+    .sc-hdr-l{display:flex;align-items:center;gap:.6rem}
+    .sc-hdr h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;letter-spacing:-.01em;}
+    .sc-hdr i{font-size:.85rem;color:var(--a)}
+
+    .btn{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;padding:.45rem 1rem;border-radius:100px;border:none;cursor:pointer;transition:all var(--t);font-family:'DM Sans',sans-serif;text-decoration:none;position:relative;overflow:hidden;}
+    .btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);opacity:0;transition:opacity var(--t)}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:hover::before{opacity:1}
+    .btn-p{background:var(--grad);color:#fff;box-shadow:0 2px 12px var(--glow)}
+    .btn-p:hover{box-shadow:0 4px 20px var(--glow)}
+    .btn-g{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.25)}
+    .btn-g:hover{background:rgba(58,156,90,.2)}
+    .btn-o{background:transparent;border:1px solid var(--line2);color:var(--ink2)}
+    .btn-o:hover{border-color:var(--a);color:var(--a)}
+    .btn-r{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.25)}
+    .btn-r:hover{background:rgba(239,68,68,.18)}
+    .btn-sm{padding:.3rem .7rem;font-size:.72rem}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+    .search-bar{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+    .search-input{flex:1;min-width:180px;padding:.6rem 1rem;background:var(--bg2);border:1px solid var(--line);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);outline:none;transition:all var(--t);}
+    .search-input:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--glow)}
+    .search-input::placeholder{color:var(--ink3)}
+    select.search-input{cursor:pointer;appearance:none}
+
+    .tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;font-size:.82rem}
+    thead th{background:var(--bg2);padding:.75rem 1rem;text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--line);white-space:nowrap;font-family:'DM Mono',monospace;}
+    tbody td{padding:.8rem 1rem;border-bottom:1px solid var(--line);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover td{background:var(--bg2)}
+
+    .badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.22rem .55rem;border-radius:5px;font-family:'DM Mono',monospace;}
+    .badge-green{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.2)}
+    .badge-purple{background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.2)}
+    .badge-yellow{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-red{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+    .badge-gray{background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+    .badge-pending{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-approved{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.2)}
+    .badge-attended{background:rgba(124,58,237,.1);color:var(--a);border:1px solid rgba(124,58,237,.2)}
+    .badge-rejected{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+    .badge-waitlisted{background:rgba(245,158,11,.08);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-draft,.badge-closed{background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+    .badge-open{background:rgba(58,156,90,.1);color:#3a9c5a;border:1px solid rgba(58,156,90,.2)}
+    .badge-completed{background:rgba(124,58,237,.1);color:var(--a);border:1px solid rgba(124,58,237,.2)}
+    .badge-normal{background:var(--bg2);color:var(--ink3);border:1px solid var(--line)}
+    .badge-important{background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2)}
+    .badge-urgent{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+
+    .compose{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:1.375rem}
+    .compose label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.38rem;margin-top:1rem;font-family:'DM Mono',monospace;}
+    .compose label:first-child{margin-top:0}
+    .compose input,.compose select,.compose textarea{width:100%;padding:.65rem 1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none;transition:all var(--t);resize:vertical;}
+    .compose input:focus,.compose select:focus,.compose textarea:focus{border-color:var(--a);box-shadow:0 0 0 3px var(--glow)}
+    .compose input::placeholder,.compose textarea::placeholder{color:var(--ink3)}
+
+    .ev-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+    .ev-pill{padding:.38rem 1rem;border-radius:100px;border:1px solid var(--line);font-size:.78rem;font-weight:500;cursor:pointer;transition:all var(--t);background:var(--bg2);color:var(--ink2);}
+    .ev-pill:hover{border-color:var(--a);color:var(--a)}
+    .ev-pill.active{background:var(--a);color:#fff;border-color:var(--a);box-shadow:0 2px 10px var(--glow)}
+    .ev-pill-skel{height:36px;border-radius:100px}
+
+    .file-drop{border:2px dashed var(--line2);border-radius:14px;padding:1.75rem;text-align:center;cursor:pointer;transition:all var(--t);position:relative;}
+    .file-drop:hover,.file-drop.dragging{border-color:var(--a);background:rgba(124,58,237,.04)}
+    .file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .file-drop i{font-size:1.6rem;color:var(--a);margin-bottom:.6rem;display:block}
+    .file-drop p{font-size:.82rem;color:var(--ink2)}
+    .file-drop small{font-size:.7rem;color:var(--ink3)}
+    .file-info{background:var(--bg2);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:.65rem 1rem;display:flex;align-items:center;gap:.65rem;margin-top:.75rem;}
+    .file-info i{color:var(--a)}
+    .file-info p{font-size:.8rem;font-weight:500;flex:1;color:var(--ink)}
+    .file-info span{font-size:.7rem;color:var(--ink3)}
+
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:.875rem}
+    .gallery-item{border-radius:14px;overflow:hidden;aspect-ratio:1;background:var(--bg2);border:1px solid var(--line);position:relative;cursor:zoom-in}
+    .gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease)}
+    .gallery-item:hover img{transform:scale(1.09)}
+    .gallery-item-cap{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0,rgba(0,0,0,.75),transparent);padding:.6rem .7rem;font-size:.67rem;color:rgba(255,255,255,.9);opacity:0;transition:opacity var(--t)}
+    .gallery-item:hover .gallery-item-cap{opacity:1}
+
+    .ann-card{padding:1rem 1.125rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.75rem;transition:all var(--t);position:relative;}
+    .ann-card:hover{background:var(--bg2);transform:translateX(3px)}
+    .ann-card.pinned{border-color:rgba(124,58,237,.28);background:rgba(124,58,237,.03)}
+    .ann-card-hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.35rem}
+    .ann-card-title{font-size:.9rem;font-weight:600;font-family:'Playfair Display',serif;letter-spacing:-.01em}
+    .ann-card-body{font-size:.82rem;color:var(--ink2);line-height:1.65}
+    .ann-meta{display:flex;gap:.75rem;margin-top:.5rem;flex-wrap:wrap}
+    .ann-meta span{font-size:.7rem;color:var(--ink3);display:flex;align-items:center;gap:.25rem}
+
+    .ev-row{display:flex;align-items:center;gap:1rem;padding:.875rem 1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.625rem;transition:all var(--t);}
+    .ev-row:hover{background:var(--bg2);transform:translateX(3px);border-color:rgba(124,58,237,.2)}
+    .ev-date-box{width:48px;height:48px;border-radius:12px;background:var(--grad);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 3px 10px var(--glow);}
+    .ev-date-box .day{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;line-height:1}
+    .ev-date-box .mon{font-size:.52rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.85}
+
+    .member-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.125rem;display:flex;align-items:center;gap:.875rem;transition:all var(--t);}
+    .member-card:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:rgba(124,58,237,.2)}
+    .m-av-wrap{position:relative;flex-shrink:0}
+    .m-av{width:46px;height:46px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;overflow:hidden;box-shadow:0 2px 10px var(--glow);}
+    .m-av img{width:100%;height:100%;object-fit:cover}
+    .m-name{font-size:.88rem;font-weight:600;display:flex;align-items:center;gap:.4rem;margin-bottom:.18rem;letter-spacing:-.01em}
+    .you-dot{width:7px;height:7px;border-radius:50%;background:#3a9c5a;box-shadow:0 0 6px #3a9c5a}
+    .m-role{font-size:.72rem;color:var(--ink3)}
+
+    .history-item{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:.875rem 1.125rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.625rem;transition:all var(--t);}
+    .history-item:hover{border-color:rgba(124,58,237,.2);transform:translateX(2px)}
+    .history-item-info h4{font-size:.87rem;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+    .history-item-info p{font-size:.7rem;color:var(--ink3);margin-top:.18rem}
+    .history-item-right{display:flex;align-items:center;gap:.65rem;flex-shrink:0}
+
+    .tab-bar{display:flex;gap:.4rem;margin-bottom:1.375rem;flex-wrap:wrap}
+    .tab-btn{padding:.42rem 1.1rem;border-radius:100px;border:1px solid var(--line);background:var(--card);color:var(--ink2);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:all var(--t);}
+    .tab-btn.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 2px 12px var(--glow)}
+
+    .ws-tab-bar{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:1.625rem;overflow-x:auto;}
+    .ws-tab{padding:.75rem 1.25rem;font-size:.83rem;font-weight:600;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+    .ws-tab:hover{color:var(--ink2)}
+    .ws-tab.active{color:var(--a);border-bottom-color:var(--a)}
+    .ws-panel{display:none}.ws-panel.active{display:block;animation:fadeUp .25s var(--ease) both}
+
+    .pagination{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.125rem;border-top:1px solid var(--line)}
+    .pag-info{font-size:.7rem;color:var(--ink3);font-family:'DM Mono',monospace}
+    .pag-btns{display:flex;gap:.4rem}
+    .pag-btn{background:var(--bg2);border:1px solid var(--line);color:var(--ink2);width:30px;height:30px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:all var(--t);}
+    .pag-btn:hover,.pag-btn.active{border-color:var(--a);color:var(--a)}
+    .pag-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    .dash-grid-2{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+    .two-col-lg{display:grid;grid-template-columns:1.1fr .9fr;gap:1.5rem;align-items:start}
+
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+    .lightbox.show{opacity:1;pointer-events:all}
+    .lightbox img{max-width:88vw;max-height:82vh;border-radius:12px}
+    .lightbox-close{position:fixed;top:1.25rem;right:1.25rem;width:38px;height:38px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;cursor:pointer;color:white;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background var(--t)}
+    .lightbox-close:hover{background:rgba(255,255,255,.2)}
+
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--t)}
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--card);border:1px solid var(--line);border-radius:24px;width:100%;max-width:500px;padding:2rem;box-shadow:var(--sh3);transform:translateY(20px) scale(.97);transition:transform var(--t);max-height:90vh;overflow-y:auto;}
+    .modal-overlay.open .modal{transform:translateY(0) scale(1)}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.375rem}
+    .modal-hdr h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+    .modal-x{width:32px;height:32px;background:var(--bg2);border:1px solid var(--line);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--ink2);transition:all var(--t)}
+    .modal-x:hover{background:#fee2e2;color:#ef4444}
+    .modal-footer{display:flex;gap:.65rem;justify-content:flex-end;margin-top:1.375rem}
+
+    .no-data{text-align:center;padding:3rem 1rem;color:var(--ink3);font-size:.86rem}
+    .no-data i{display:block;font-size:2.2rem;margin-bottom:.625rem;opacity:.28}
+    .loading{text-align:center;padding:2.5rem;color:var(--ink3);font-size:.85rem}
+    .loading i{animation:spin .8s linear infinite;display:inline-block;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:10px}
+    @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
+
+    @media(max-width:900px){.dash-grid-2,.two-col,.two-col-lg{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:1.25rem}}
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sb-hdr">
+    <a href="portal.html" class="sb-logo"><span class="sb-brand">TechNova</span></a>
+    <div class="sb-user">
+      <div class="sb-av" id="sbAv">D</div>
+      <div class="sb-meta"><strong id="sbName">Member</strong><span id="sbRole">Digital</span></div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <p class="nav-lbl">Main</p>
+    <button class="nav-item active" onclick="switchTab('overview')">       <i class="fas fa-home"></i>          Dashboard</button>
+    <button class="nav-item"        onclick="switchTab('events')">          <i class="fas fa-calendar-alt"></i>  All Events</button>
+    <button class="nav-item"        onclick="switchTab('merch')">           <i class="fas fa-shirt"></i>         Merch</button>
+    <button class="nav-item"        onclick="switchTab('resources-global')"><i class="fas fa-folder-open"></i>   Resources</button>
+    <p class="nav-lbl" style="margin-top:.875rem">Info</p>
+    <button class="nav-item"        onclick="switchTab('announcements')">   <i class="fas fa-bullhorn"></i>      Announcements</button>
+    <button class="nav-item"        onclick="switchTab('members')">         <i class="fas fa-users"></i>         Team Members</button>
+    <button class="nav-item"        onclick="switchTab('profile')">          <i class="fas fa-user"></i>          Profile</button>
+  </nav>
+  <div class="sb-footer">
+    <div class="theme-row" id="themeRow">
+      <span class="theme-lbl"><i class="fas fa-moon" id="themeIcon"></i> <span id="themeLbl">Dark Mode</span></span>
+      <div class="pill"></div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>Welcome, <span id="dashGreet">Member</span> 👋</h1>
+      <p id="dashSub">Digital Team Dashboard</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <span class="team-chip"><i class="fas fa-wand-magic-sparkles"></i> Digital</span>
+      <div class="sb-av" id="topAv" style="width:38px;height:38px;font-size:.85rem;border-radius:50%">D</div>
+    </div>
+  </div>
+
+  <!-- ══ OVERVIEW ══ -->
+  <div id="tab-overview" class="tab-panel active">
+    <div class="dash-grid-2">
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-l"><i class="fas fa-calendar-alt"></i><h2>Events — Click to Manage</h2></div>
+          <button class="btn btn-p btn-sm" onclick="switchTab('events')">View All</button>
+        </div>
+        <div id="overviewEventsGrid"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+      </div>
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-l"><i class="fas fa-bullhorn"></i><h2>Announcements</h2></div>
+          <button class="btn btn-o btn-sm" onclick="switchTab('announcements')">See All</button>
+        </div>
+        <div id="annPreviewContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-user-check"></i><h2>Recent Registrations</h2></div>
+        <button class="btn btn-o btn-sm" onclick="loadRecentRegistrations()">Refresh</button>
+      </div>
+      <div id="recentRegsGrid"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ ALL EVENTS ══ -->
+  <div id="tab-events" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-calendar-alt"></i><h2>All Events</h2></div>
+        <span style="font-size:.78rem;color:var(--ink3)">Click any event to open its workspace</span>
+      </div>
+      <div id="allEventsGrid"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ EVENT WORKSPACE ══ -->
+  <div id="tab-workspace" class="tab-panel">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+      <button class="btn btn-o btn-sm" onclick="backToEvents()"><i class="fas fa-arrow-left"></i> Back</button>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700" id="wsEventTitle">Event</div>
+        <div style="font-size:.72rem;color:var(--ink3)">Event workspace</div>
+      </div>
+    </div>
+    <div class="ws-tab-bar" id="wsTabs">
+      <button class="ws-tab active" onclick="showWsPanel('regs')"><i class="fas fa-users"></i> Registrations</button>
+      <button class="ws-tab" onclick="showWsPanel('resources')"><i class="fas fa-paper-plane"></i> Resources</button>
+      <button class="ws-tab" onclick="showWsPanel('report')"><i class="fas fa-file-alt"></i> Report</button>
+      <button class="ws-tab" onclick="showWsPanel('gallery')"><i class="fas fa-images"></i> Gallery</button>
+    </div>
+
+    <!-- REGISTRATIONS -->
+    <div class="ws-panel active" id="ws-regs">
+      <div class="search-bar">
+        <input type="text" class="search-input" id="regSearch" placeholder="Search name, email, dept…" oninput="debounceRegs()" style="max-width:320px">
+        <select class="search-input" id="regStatusFilter" onchange="loadEventRegs()" style="max-width:180px">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="attended">Attended</option>
+          <option value="rejected">Rejected</option>
+          <option value="waitlisted">Waitlisted</option>
+        </select>
+        <button class="btn btn-o btn-sm" onclick="exportRegCSV()"><i class="fas fa-download"></i> CSV</button>
+      </div>
+      <div class="sc" style="padding:0;overflow:hidden">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Dept / Year</th><th>Status</th><th>Cert</th><th>Date</th></tr></thead>
+            <tbody id="regsTableBody"><tr><td colspan="8"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span class="pag-info" id="regPagInfo">—</span>
+          <div class="pag-btns">
+            <button class="pag-btn" id="regPrevBtn" onclick="changeRegPage(-1)" disabled><i class="fas fa-chevron-left"></i></button>
+            <button class="pag-btn" id="regNextBtn" onclick="changeRegPage(1)"  disabled><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="ws-panel" id="ws-resources">
+      <div class="two-col-lg">
+        <div class="sc">
+          <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-paper-plane"></i><h2>Send Resource to Students</h2></div></div>
+          <div class="compose" style="margin-top:0;background:transparent;border:none;padding:0">
+            <label>Upload File</label>
+            <div class="file-drop" id="fileDrop">
+              <input type="file" id="resourceFile" accept=".pdf,.ppt,.pptx,.doc,.docx,.jpg,.jpeg,.png,.zip">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <p>Drop file or click to browse</p>
+              <small>PDF, PPT, DOCX, Images, ZIP · Max 10MB</small>
+            </div>
+            <div class="file-info" id="fileInfo" style="display:none">
+              <i class="fas fa-file"></i><p id="fileName">—</p><span id="fileSize">—</span>
+            </div>
+            <label>Email Subject *</label>
+            <input type="text" id="resSubject" placeholder="e.g. Study material for the event" style="width:100%;padding:.6rem .85rem;background:var(--card);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none">
+            <label>Message *</label>
+            <textarea id="resMessage" rows="4" placeholder="Write your message to students…" style="width:100%;padding:.6rem .85rem;background:var(--card);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none;resize:vertical"></textarea>
+            <div style="margin-top:1rem">
+              <button class="btn btn-p" id="sendResBtn" onclick="sendResource()"><i class="fas fa-paper-plane"></i> Send to All Approved Students</button>
+            </div>
+          </div>
+        </div>
+        <div class="sc">
+          <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-history"></i><h2>Sent Resources</h2></div></div>
+          <div id="resourceHistoryList"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div class="ws-panel" id="ws-report">
+      <div class="two-col">
+        <div class="sc">
+          <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-envelope"></i><h2>Email Report to Faculty</h2></div></div>
+          <div class="compose" style="background:transparent;border:none;padding:0">
+            <label>Faculty Name</label>
+            <input type="text" id="facName" placeholder="Dr. Sharma" style="width:100%;padding:.6rem .85rem;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none">
+            <label>Faculty Email *</label>
+            <input type="email" id="facEmail" placeholder="faculty@college.edu" style="width:100%;padding:.6rem .85rem;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none">
+            <label>Custom Message (Optional)</label>
+            <textarea id="reportMessage" rows="4" placeholder="Add any additional notes…" style="width:100%;padding:.6rem .85rem;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none;resize:vertical"></textarea>
+            <label>Attach Files (Optional)</label>
+            <input type="file" id="reportFiles" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip" style="width:100%;padding:.6rem .85rem;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none">
+            <div style="background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:.875rem 1rem;margin:1.25rem 0;font-size:.78rem;color:var(--ink2);line-height:1.7" id="reportSnapshot"><div class="loading"><i class="fas fa-spinner"></i>Loading stats…</div></div>
+            <button class="btn btn-p" id="sendReportBtn" onclick="sendReport()"><i class="fas fa-envelope"></i> Email Report</button>
+          </div>
+        </div>
+        <div class="sc">
+          <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-history"></i><h2>Report History</h2></div></div>
+          <div id="reportHistoryList"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="ws-panel" id="ws-gallery">
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-l"><i class="fas fa-images"></i><h2>Event Gallery</h2></div>
+          <span style="font-size:.72rem;color:var(--ink3)" id="galleryCount">—</span>
+        </div>
+        <div class="gallery-grid" id="galleryGrid"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS (per event) -->
+    <div class="ws-panel" id="ws-ann-ws">
+      <div id="wsAnnList"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ GLOBAL RESOURCES ══ -->
+  <div id="tab-resources-global" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr">
+        <div class="sc-hdr-l"><i class="fas fa-folder-open"></i><h2>All Resources Sent</h2></div>
+        <span style="font-size:.72rem;color:var(--ink3)" id="globalResCount">—</span>
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--line)">
+        <select class="search-input" id="globalResEventFilter" onchange="loadGlobalResources()" style="max-width:280px">
+  <option value="">All Events</option>
+</select>
+
+<span style="font-size:.75rem;color:var(--ink3)">
+Filter by event to see resources sent to that event's students
+</span>
+</div>
+
+<!-- Upload Resource Box -->
+<div id="uploadResourceBox" style="display:none;margin-top:1rem">
+
+  <div class="compose">
+
+    <label>Upload File</label>
+    <input type="file" id="globalResourceFile">
+
+    <label>Subject</label>
+    <input type="text" id="globalResourceSubject" placeholder="Resource title">
+
+    <label>Message</label>
+    <textarea id="globalResourceMessage" rows="3" placeholder="Optional message"></textarea>
+
+    <button class="btn btn-p" onclick="uploadGlobalResource()">
+      <i class="fas fa-upload"></i> Upload Resource
+    </button>
+
+  </div>
+
+</div>
+
+
+        
+      </div>
+      <div id="globalResourcesList"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ MERCHANDISE ══ -->
+  <div id="tab-merch" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-shirt"></i><h2>Merchandise Catalog</h2></div></div>
+      <div class="compose" style="margin-top:0;background:transparent;border:none;padding:0">
+        <label>Item Name *</label><input type="text" id="merchName" placeholder="e.g. TechNova Hoodie">
+        <label>Description</label><textarea id="merchDesc" rows="3" placeholder="Product details"></textarea>
+        <label>Price (INR) *</label><input type="number" id="merchPrice" min="0" step="1" placeholder="399">
+        <label>Tag</label><input type="text" id="merchTag" placeholder="Bestseller, Limited, New...">
+        <label>In stock</label><select id="merchStock"><option value="true">Yes</option><option value="false">No</option></select>
+        <label>Photo *</label>
+        <div class="file-drop" id="merchPhotoDrop">
+          <input type="file" id="merchPhoto" accept="image/*">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drop product photo or click to browse</p>
+          <small>JPEG/PNG, max 5MB</small>
+        </div>
+        <div class="file-info" id="merchPhotoInfo" style="display:none"><i class="fas fa-image"></i><p id="merchPhotoName">—</p><span id="merchPhotoSize">—</span></div>
+        <div style="margin-top:1rem"><button class="btn btn-p" id="addMerchBtn" onclick="addMerch()"><i class="fas fa-plus-circle"></i> Add Merch Item</button></div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-list"></i><h2>Existing Merch Items</h2></div></div>
+      <div id="merchAdminList"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ ANNOUNCEMENTS ══ -->
+  <div id="tab-announcements" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-bullhorn"></i><h2>All Announcements</h2></div></div>
+      <div id="annContainer"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ══ TEAM MEMBERS ══ -->
+  <div id="tab-members" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-users"></i><h2>Digital Team Members</h2></div></div>
+      <div id="membersContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.875rem">
+        <div class="skel" style="height:80px;border-radius:10px"></div>
+        <div class="skel" style="height:80px;border-radius:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE ══ -->
+  <div id="tab-profile" class="tab-panel">
+    <div class="sc">
+      <div class="sc-hdr"><div class="sc-hdr-l"><i class="fas fa-user"></i><h2>My Profile</h2></div></div>
+      <div style="display:flex;gap:1.5rem;align-items:flex-start">
+        <div id="profileAv" style="width:80px;height:80px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;overflow:hidden;flex-shrink:0;box-shadow:0 4px 20px var(--glow)"></div>
+        <div style="flex:1">
+          <!-- Name / role / email from session — always visible -->
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:.25rem" id="profileNameDisplay"></h3>
+          <p style="color:var(--ink3);font-size:.85rem;margin-bottom:.1rem" id="profileRoleDisplay">Digital Team Member</p>
+          <p style="color:var(--ink3);font-size:.8rem;margin-bottom:1rem" id="profileEmailDisplay"></p>
+
+          <label style="display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.35rem;font-family:'DM Mono',monospace">Profile Photo</label>
+          <input type="file" id="profilePhotoInput" accept="image/*" style="margin-bottom:.5rem">
+          <small style="color:var(--ink3);font-size:.75rem;display:block;margin-bottom:1rem">Upload a new profile photo (max 5MB, JPG/PNG/WEBP)</small>
+
+          <label style="display:block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.35rem;font-family:'DM Mono',monospace">LinkedIn Profile</label>
+          <input id="profileLinkedin" placeholder="https://linkedin.com/in/yourprofile" style="margin-bottom:.75rem;width:100%;max-width:400px;padding:.6rem .85rem;background:var(--bg2);border:1px solid var(--line);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--ink);outline:none">
+          <br>
+          <button class="btn btn-p" onclick="updateProfile()" style="margin-top:.25rem"><i class="fas fa-save"></i> Update Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close"><i class="fas fa-times"></i></button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+(() => {
+  const API = 'http://localhost:5000/api';
+  const session = JSON.parse(localStorage.getItem('clustr-team-session') || 'null');
+  if (!session || session.team !== 'digital') { window.location.href = 'portal.html'; return; }
+  const user = session.user;
+  const H = () => ({ 'Content-Type': 'application/json', 'x-user-id': user.id });
+
+  /* ── Theme ── */
+  const html = document.documentElement;
+  applyTheme(localStorage.getItem('clustr-theme') || 'light');
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    localStorage.setItem('clustr-theme', t);
+    document.getElementById('themeIcon').className  = t === 'dark' ? 'fas fa-sun'  : 'fas fa-moon';
+    document.getElementById('themeLbl').textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+  }
+  document.getElementById('themeRow').addEventListener('click', () =>
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+  /* ── User info ── */
+  const init = user.name[0].toUpperCase();
+  const savedPhoto = localStorage.getItem(`clustr-photo-${user.id}`);
+  ['sbAv','topAv'].forEach(id => {
+    const el = document.getElementById(id);
+    if (savedPhoto) el.innerHTML = `<img src="${savedPhoto}" alt="">`;
+    else el.textContent = init;
+  });
+  document.getElementById('sbName').textContent    = user.name;
+  document.getElementById('sbRole').textContent    = user.teamRole || 'Digital';
+  document.getElementById('dashGreet').textContent = user.name;
+  document.getElementById('dashSub').textContent   =
+    `Digital Team — ${new Date().toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})}`;
+
+  /* ── Load photo from API if not in localStorage ── */
+  if (!savedPhoto) {
+    fetch(`${API}/team/profile/${user.id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data?.user?.photo || !data?.user?.photoMime) return;
+        const photoSrc = `data:${data.user.photoMime};base64,${data.user.photo}`;
+        localStorage.setItem(`clustr-photo-${user.id}`, photoSrc);
+        ['sbAv','topAv'].forEach(id => {
+          document.getElementById(id).innerHTML = `<img src="${photoSrc}" alt="">`;
+        });
+      })
+      .catch(() => {}); // silently ignore errors
+  }
+
+  /* ── State ── */
+  let allEvents=[], currentEventId=null, currentEventTitle='';
+  let regPage=1, regTotalPages=1, allRegsCache=[], regSearchTimer=null;
+
+  /* ── Tab switching ── */
+  const NAV_BTNS = document.querySelectorAll('.nav-item');
+  window.switchTab = (name) => {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`tab-${name}`).classList.add('active');
+    NAV_BTNS.forEach(n => n.classList.remove('active'));
+    NAV_BTNS.forEach(n => { if (n.getAttribute('onclick') === `switchTab('${name}')`) n.classList.add('active'); });
+    ({
+      overview:           () => { loadOverviewEvents(); loadAnnPreview(); loadRecentRegistrations(); },
+      events:             loadAllEvents,
+      merch:              loadMerch,
+      'resources-global': loadGlobalResources,
+      announcements:      loadAnnouncements,
+      members:            loadMembers,
+      profile:            loadProfile,
+    })[name]?.();
+  };
+
+  /* ── Workspace ── */
+  window.openEventWorkspace = (eventId, eventTitle) => {
+    currentEventId = eventId; currentEventTitle = eventTitle;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-workspace').classList.add('active');
+    NAV_BTNS.forEach(n => n.classList.remove('active'));
+    document.getElementById('wsEventTitle').textContent = eventTitle;
+    showWsPanel('regs');
+  };
+
+  window.backToEvents = () => { currentEventId=null; currentEventTitle=''; switchTab('events'); };
+
+  window.showWsPanel = (name) => {
+    document.querySelectorAll('.ws-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ws-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`ws-${name}`).classList.add('active');
+    const idx = ['regs','resources','report','gallery','ann-ws'].indexOf(name);
+    document.querySelectorAll('.ws-tab')[idx]?.classList.add('active');
+    if (name==='regs')      { regPage=1; loadEventRegs(); }
+    if (name==='resources') loadResourceHistory();
+    if (name==='report')    loadReportPanel();
+    if (name==='gallery')   loadGallery();
+    if (name==='ann-ws')    loadEventAnnouncements();
+  };
+
+  /* ══ OVERVIEW ══ */
+  async function loadOverviewEvents() {
+    const el = document.getElementById('overviewEventsGrid');
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res = await fetch(`${API}/digital/events`, { headers: H() });
+      const { events } = await res.json();
+      allEvents = events;
+      el.innerHTML = events.length
+        ? events.map(renderEventCard).join('')
+        : '<div class="no-data"><i class="fas fa-calendar-xmark"></i>No events found</div>';
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load events</div>'; }
+  }
+
+  async function loadRecentRegistrations() {
+    const el = document.getElementById('recentRegsGrid');
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res = await fetch(`${API}/digital/registrations/recent`, { headers: H() });
+      const data = await res.json();
+      if (!res.ok || !data.registrations?.length) {
+        el.innerHTML = '<div class="no-data"><i class="fas fa-user-check"></i>No recent registrations.</div>';
+        return;
+      }
+      el.innerHTML = `<div style="display:grid;gap:.5rem">${data.registrations.slice(0,8).map(r => `
+        <div class="history-item" style="padding:.6rem .75rem">
+          <div class="history-item-info">
+            <h4>${r.name} <small style="color:var(--ink3);font-size:.68rem">(${r.status||'no status'})</small></h4>
+            <p>${r.email} · ${r.phone||'—'} · ${r.department||'—'} ${r.year||''}</p>
+            <p style="font-size:.68rem">${r.eventTitle} · ${new Date(r.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</p>
+          </div>
+        </div>`).join('')}</div>`;
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load registrations.</div>'; }
+  }
+
+  async function loadAnnPreview() {
+    const el = document.getElementById('annPreviewContainer');
+    try {
+      const res  = await fetch(`${API}/digital/announcements/global`, { headers: H() });
+      const data = await res.json();
+      const top  = data.announcements?.slice(0,4) || [];
+      if (!top.length) { el.innerHTML = '<div class="no-data"><i class="fas fa-bullhorn"></i>No announcements.</div>'; return; }
+      el.innerHTML = top.map(a => {
+        const pin = a.pinned ? '<span class="badge badge-important" style="margin-left:.4rem"><i class="fas fa-thumbtack"></i> Pinned</span>' : '';
+        return `<div class="ann-card ${a.pinned?'pinned':''}">
+          <div class="ann-card-hdr"><div class="ann-card-title">${a.title}${pin}</div></div>
+          <div class="ann-card-body">${a.body.slice(0,100)}${a.body.length>100?'…':''}</div>
+          <div class="ann-meta"><span><i class="fas fa-user"></i>${a.postedBy?.name||'Team'}</span><span><i class="fas fa-calendar"></i>${new Date(a.createdAt).toLocaleDateString('en-IN')}</span></div>
+        </div>`;
+      }).join('');
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load.</div>'; }
+  }
+
+  function renderEventCard(e) {
+    const s = e.stats || {}, regs = s.registrations || {};
+    const d = new Date(e.eventDate);
+    return `
+      <div class="ev-row" style="cursor:pointer" onclick="openEventWorkspace('${e._id}','${escQ(e.title)}')">
+        <div class="ev-date-box"><span class="day">${d.getDate()}</span><span class="mon">${d.toLocaleString('en',{month:'short'}).toUpperCase()}</span></div>
+        <div style="flex:1">
+          <div style="font-size:.88rem;font-weight:600;margin-bottom:.15rem">${e.title}</div>
+          <div style="font-size:.72rem;color:var(--ink3);display:flex;gap:.75rem;flex-wrap:wrap">
+            <span><i class="fas fa-location-dot"></i>${e.venue||'TBD'}</span>
+            <span><i class="fas fa-tag"></i>${e.category||'—'}</span>
+            <span><i class="fas fa-users"></i>${regs.total||0} regs</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span class="badge badge-${e.status}">${e.status}</span>
+          <span style="font-size:.72rem;color:var(--a);font-weight:600">Open →</span>
+        </div>
+      </div>`;
+  }
+
+  /* ══ ALL EVENTS ══ */
+  async function loadAllEvents() {
+    const el = document.getElementById('allEventsGrid');
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      if (!allEvents.length) {
+        const res = await fetch(`${API}/digital/events`, { headers: H() });
+        const d   = await res.json(); allEvents = d.events;
+      }
+      el.innerHTML = allEvents.length
+        ? allEvents.map(renderEventCard).join('')
+        : '<div class="no-data"><i class="fas fa-calendar-xmark"></i>No events</div>';
+    } catch { el.innerHTML = '<div class="no-data"><i class="fas fa-wifi"></i>Could not load</div>'; }
+  }
+
+  /* ══ REGISTRATIONS ══ */
+  window.loadEventRegs = async () => {
+    const search = document.getElementById('regSearch').value;
+    const status = document.getElementById('regStatusFilter').value;
+    const tbody  = document.getElementById('regsTableBody');
+    tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><i class="fas fa-spinner"></i>Loading…</div></td></tr>';
+    try {
+      const q = new URLSearchParams({ page: regPage, limit: 30 });
+      if (search) q.set('search', search);
+      if (status) q.set('status', status);
+      const res  = await fetch(`${API}/digital/events/${currentEventId}/registrations?${q}`, { headers: H() });
+      const data = await res.json();
+      allRegsCache  = data.registrations;
+      regTotalPages = data.pages;
+      if (!data.registrations.length) {
+        tbody.innerHTML = '<tr><td colspan="8"><div class="no-data"><i class="fas fa-users"></i>No registrations found</div></td></tr>';
+      } else {
+        tbody.innerHTML = data.registrations.map((r,i) => `
+          <tr>
+            <td style="color:var(--ink3)">${(regPage-1)*30+i+1}</td>
+            <td><strong>${r.name}</strong></td>
+            <td style="font-size:.72rem;color:var(--ink3)">${r.email}</td>
+            <td>${r.phone||'—'}</td>
+            <td style="font-size:.72rem">${r.department||'—'}${r.year?' · '+r.year:''}</td>
+            <td><span class="badge badge-${r.status}">${r.status}</span></td>
+            <td style="text-align:center">${r.certificateSent
+              ? '<i class="fas fa-check-circle" style="color:#3a9c5a"></i>'
+              : '<i class="fas fa-circle" style="color:var(--ink3);opacity:.3"></i>'}</td>
+            <td style="font-size:.7rem;color:var(--ink3)">${new Date(r.createdAt).toLocaleDateString('en-IN')}</td>
+          </tr>`).join('');
+      }
+      document.getElementById('regPagInfo').textContent = `${data.total} total · Page ${data.page}/${data.pages}`;
+      document.getElementById('regPrevBtn').disabled = regPage<=1;
+      document.getElementById('regNextBtn').disabled = regPage>=regTotalPages;
+    } catch {
+      tbody.innerHTML = '<tr><td colspan="8"><div class="no-data"><i class="fas fa-wifi"></i>Could not load</div></td></tr>';
+    }
+  };
+
+  window.changeRegPage = (dir) => { regPage=Math.max(1,Math.min(regTotalPages,regPage+dir)); loadEventRegs(); };
+  window.debounceRegs  = () => { clearTimeout(regSearchTimer); regSearchTimer=setTimeout(()=>{regPage=1;loadEventRegs();},350); };
+  window.exportRegCSV  = () => {
+    if (!allRegsCache.length) { showToast('No data to export','error'); return; }
+    const hdr  = ['Name','Email','Phone','Dept','Year','Status','Cert Sent','Date'];
+    const rows = allRegsCache.map(r => [r.name,r.email,r.phone||'',r.department||'',r.year||'',r.status,r.certificateSent?'Yes':'No',new Date(r.createdAt).toLocaleDateString('en-IN')].map(v=>`"${v}"`).join(','));
+    const csv  = [hdr.join(','),...rows].join('\n');
+    const a    = document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download=`${currentEventTitle.replace(/\s+/g,'-')}_registrations.csv`; a.click();
+    showToast('CSV downloaded!','success');
+  };
+
+  /* ══ RESOURCES ══ */
+  const fileInput = document.getElementById('resourceFile');
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files[0]; if (!f) return;
+    document.getElementById('fileInfo').style.display='flex';
+    document.getElementById('fileName').textContent=f.name;
+    document.getElementById('fileSize').textContent=(f.size/1024).toFixed(1)+' KB';
+  });
+  const fileDrop = document.getElementById('fileDrop');
+  fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragging'); });
+  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragging'));
+  fileDrop.addEventListener('drop', e => {
+    e.preventDefault(); fileDrop.classList.remove('dragging');
+    const f = e.dataTransfer.files[0];
+    if (f) { fileInput.files=e.dataTransfer.files; fileInput.dispatchEvent(new Event('change')); }
+  });
+
+  const merchPhoto = document.getElementById('merchPhoto');
+  merchPhoto?.addEventListener('change', () => {
+    const f = merchPhoto.files[0]; if (!f) return;
+    document.getElementById('merchPhotoInfo').style.display='flex';
+    document.getElementById('merchPhotoName').textContent=f.name;
+    document.getElementById('merchPhotoSize').textContent=(f.size/1024).toFixed(1)+' KB';
+  });
+  const merchPhotoDrop = document.getElementById('merchPhotoDrop');
+  merchPhotoDrop?.addEventListener('dragover', e => { e.preventDefault(); merchPhotoDrop.classList.add('dragging'); });
+  merchPhotoDrop?.addEventListener('dragleave', () => merchPhotoDrop.classList.remove('dragging'));
+  merchPhotoDrop?.addEventListener('drop', e => {
+    e.preventDefault(); merchPhotoDrop.classList.remove('dragging');
+    const f = e.dataTransfer.files[0];
+    if (f) { merchPhoto.files=e.dataTransfer.files; merchPhoto.dispatchEvent(new Event('change')); }
+  });
+
+  window.sendResource = async () => {
+    const file=fileInput.files[0], subject=document.getElementById('resSubject').value.trim(), message=document.getElementById('resMessage').value.trim();
+    if (!file)    { showToast('Please select a file','error'); return; }
+    if (!subject) { showToast('Subject is required','error'); return; }
+    if (!message) { showToast('Message is required','error'); return; }
+    const btn=document.getElementById('sendResBtn'); btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .8s linear infinite;display:inline-block"></i> Sending…';
+    const formData=new FormData(); formData.append('file',file); formData.append('subject',subject); formData.append('message',message);
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/resources`,{method:'POST',headers:{'x-user-id':user.id},body:formData});
+      const data=await res.json(); if (!res.ok) throw new Error(data.message);
+      showToast(`Resource sent to ${data.count} student(s) ✓`,'success');
+      document.getElementById('resSubject').value=''; document.getElementById('resMessage').value='';
+      fileInput.value=''; document.getElementById('fileInfo').style.display='none';
+      loadResourceHistory();
+    } catch(err){ showToast(err.message||'Failed','error'); }
+    finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> Send to All Approved Students'; }
+  };
+
+  async function loadResourceHistory() {
+    const el=document.getElementById('resourceHistoryList'); el.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/resources`,{headers:H()});
+      const data=await res.json();
+      el.innerHTML=data.resources.length
+        ? data.resources.map(r=>`<div class="history-item"><div class="history-item-info"><h4>${r.originalName}</h4><p>${r.recipientCount} students · by ${r.sentBy?.name||'—'}</p></div><div class="history-item-right"><span style="font-size:.68rem;color:var(--ink3)">${new Date(r.createdAt).toLocaleDateString('en-IN')}</span><a href="${API}/digital/events/${currentEventId}/resources/${r._id}/download" class="btn btn-o btn-sm" target="_blank"><i class="fas fa-download"></i></a></div></div>`).join('')
+        : '<div class="no-data"><i class="fas fa-folder-open"></i>No resources sent yet</div>';
+    } catch { el.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load</div>'; }
+  }
+
+  /* ══ REPORT ══ */
+  async function loadReportPanel() {
+    const snapEl=document.getElementById('reportSnapshot');
+    snapEl.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading stats…</div>';
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/registrations?limit=1`,{headers:H()});
+      const data=await res.json();
+      const certRes=await fetch(`${API}/digital/events/${currentEventId}/certificates`,{headers:H()});
+      const certData=await certRes.json();
+      const certSent=certData.students?.filter(s=>s.certEmailSent).length||0;
+      snapEl.innerHTML=`<p style="font-weight:600;margin-bottom:.5rem">Current Event Stats</p><p>Total Registrations: <strong style="color:var(--a)">${data.total}</strong></p><p>Certificates Sent: <strong style="color:#3a9c5a">${certSent}</strong></p>`;
+    } catch { snapEl.innerHTML='<p style="color:var(--ink3);font-size:.78rem">Could not load stats</p>'; }
+    loadReportHistory();
+  }
+
+  window.sendReport = async () => {
+    const email=document.getElementById('facEmail').value.trim(), name=document.getElementById('facName').value.trim(), message=document.getElementById('reportMessage').value.trim(), files=document.getElementById('reportFiles').files;
+    if (!email) { showToast('Faculty email is required','error'); return; }
+    const btn=document.getElementById('sendReportBtn'); btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .8s linear infinite;display:inline-block"></i> Sending…';
+    const formData=new FormData();
+    formData.append('facultyEmail',email); formData.append('facultyName',name); formData.append('customMessage',message);
+    for (let i=0;i<files.length;i++) formData.append('attachments',files[i]);
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/report/send`,{method:'POST',headers:{'x-user-id':user.id},body:formData});
+      const data=await res.json(); if (!res.ok) throw new Error(data.message);
+      showToast(`Report emailed to ${email} ✓`,'success');
+      document.getElementById('facEmail').value=''; document.getElementById('facName').value=''; document.getElementById('reportMessage').value=''; document.getElementById('reportFiles').value='';
+      loadReportHistory();
+    } catch(err){ showToast(err.message||'Failed','error'); }
+    finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-envelope"></i> Email Report'; }
+  };
+
+  async function loadReportHistory() {
+    const el=document.getElementById('reportHistoryList'); el.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/report/history`,{headers:H()}); const data=await res.json();
+      el.innerHTML=data.reports.length
+        ? data.reports.map(r=>`<div class="history-item"><div class="history-item-info"><h4>${r.facultyName||'Faculty'}</h4><p>Sent to ${r.facultyEmail} · ${r.snapshot?.totalRegistrations} students</p></div><div class="history-item-right"><span class="badge badge-approved">sent</span><span style="font-size:.68rem;color:var(--ink3)">${new Date(r.createdAt).toLocaleDateString('en-IN')}</span></div></div>`).join('')
+        : '<div class="no-data"><i class="fas fa-file-alt"></i>No reports sent yet</div>';
+    } catch { el.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load</div>'; }
+  }
+
+  /* ══ GALLERY ══ */
+  async function loadGallery() {
+    const grid=document.getElementById('galleryGrid'); grid.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/gallery`,{headers:H()}); const data=await res.json();
+      document.getElementById('galleryCount').textContent=`${data.total} photo${data.total!==1?'s':''}`;
+      grid.innerHTML=data.photos.length
+        ? data.photos.map(p=>`<div class="gallery-item" onclick="openLightbox('${API}/events/${currentEventId}/gallery/${p._id}/image')"><img src="${API}/events/${currentEventId}/gallery/${p._id}/image" loading="lazy" alt="${p.caption||''}"><div class="gallery-item-cap">${p.caption||''}</div></div>`).join('')
+        : '<div class="no-data" style="grid-column:1/-1"><i class="fas fa-images"></i>No photos yet</div>';
+    } catch { grid.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load gallery</div>'; }
+  }
+
+  window.openLightbox  = (src) => { document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').classList.add('show'); };
+  window.closeLightbox = () => document.getElementById('lightbox').classList.remove('show');
+
+  /* ══ ANNOUNCEMENTS ══ */
+  async function loadEventAnnouncements() {
+    const el=document.getElementById('wsAnnList'); el.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res=await fetch(`${API}/digital/events/${currentEventId}/announcements`,{headers:H()}); const data=await res.json();
+      el.innerHTML=data.announcements.length ? data.announcements.map(renderAnnCard).join('') : '<div class="no-data"><i class="fas fa-bullhorn"></i>No announcements for this event</div>';
+    } catch { el.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load</div>'; }
+  }
+
+  async function loadAnnouncements() {
+    const el=document.getElementById('annContainer'); el.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res=await fetch(`${API}/digital/announcements/global`,{headers:H()}); const data=await res.json();
+      el.innerHTML=data.announcements.length ? data.announcements.map(renderAnnCard).join('') : '<div class="no-data"><i class="fas fa-bullhorn"></i>No announcements yet</div>';
+    } catch { el.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load</div>'; }
+  }
+
+  function renderAnnCard(a) {
+    const pin = a.pinned ? '<span class="badge badge-important" style="margin-left:.4rem"><i class="fas fa-thumbtack"></i> Pinned</span>' : '';
+    return `<div class="ann-card ${a.pinned?'pinned':''}">
+      <div class="ann-card-hdr"><div class="ann-card-title">${a.title}${pin}</div></div>
+      <div class="ann-card-body">${a.body}</div>
+      <div class="ann-meta">
+        <span class="badge badge-${a.priority}">${a.priority}</span>
+        <span><i class="fas fa-user"></i>${a.postedBy?.name||'—'}</span>
+        ${a.event?`<span><i class="fas fa-calendar"></i>${a.event.title||''}</span>`:''}
+        <span><i class="fas fa-clock"></i>${new Date(a.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+      </div>
+    </div>`;
+  }
+
+  /* ══ GLOBAL RESOURCES ══ */
+  async function loadGlobalResources() {
+    const selectedEvent = document.getElementById("globalResEventFilter").value;
+
+const uploadBox = document.getElementById("uploadResourceBox");
+
+if(selectedEvent){
+    uploadBox.style.display = "block";
+}else{
+    uploadBox.style.display = "none";
+}
+    const el=document.getElementById('globalResourcesList'), countEl=document.getElementById('globalResCount');
+    el.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    const evSel=document.getElementById('globalResEventFilter');
+    if (evSel.options.length<=1 && allEvents.length) {
+      allEvents.forEach(e=>{ const o=document.createElement('option'); o.value=e._id; o.textContent=e.title; evSel.appendChild(o); });
+    }
+    
+    try {
+      let all=[];
+      if (selectedEvent) {
+        const res=await fetch(`${API}/digital/events/${selectedEvent}/resources`,{headers:H()});
+        const data=await res.json();
+        all=(data.resources||[]).map(r=>({...r,eventTitle:allEvents.find(e=>e._id===selectedEvent)?.title||'—',eventId:selectedEvent}));
+      } else {
+        const results=await Promise.allSettled(allEvents.map(e=>fetch(`${API}/digital/events/${e._id}/resources`,{headers:H()}).then(r=>r.json()).then(d=>(d.resources||[]).map(r=>({...r,eventTitle:e.title,eventId:e._id})))));
+        results.forEach(r=>{ if(r.status==='fulfilled') all.push(...r.value); });
+        all.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+      }
+      countEl.textContent=`${all.length} file${all.length!==1?'s':''}`;
+      if (!all.length) { el.innerHTML='<div class="no-data"><i class="fas fa-folder-open"></i>No resources sent yet</div>'; return; }
+      const fileIco=(mime='')=>mime.includes('pdf')?'fa-file-pdf':mime.includes('zip')?'fa-file-zipper':mime.includes('presentation')||mime.includes('pptx')?'fa-file-powerpoint':mime.includes('word')||mime.includes('doc')?'fa-file-word':mime.includes('image')?'fa-file-image':'fa-file';
+      el.innerHTML=`<div style="display:flex;flex-direction:column;gap:.625rem">`+all.map(r=>`
+        <div class="history-item">
+          <div style="width:38px;height:38px;border-radius:9px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);display:flex;align-items:center;justify-content:center;color:var(--a);font-size:.9rem;flex-shrink:0"><i class="fas ${fileIco(r.mimeType)}"></i></div>
+          <div class="history-item-info" style="flex:1;min-width:0">
+            <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.originalName}</h4>
+            <p>${r.subject} · <strong style="color:var(--a)">${r.eventTitle}</strong> · ${r.recipientCount} recipient${r.recipientCount!==1?'s':''} · by ${r.sentBy?.name||'—'}</p>
+          </div>
+          <div class="history-item-right">
+            <span style="font-size:.7rem;color:var(--ink3)">${new Date(r.createdAt).toLocaleDateString('en-IN')}</span>
+            <span class="badge badge-green"><i class="fas fa-check"></i> Sent</span>
+            <a href="${API}/digital/events/${r.eventId}/resources/${r._id}/download" class="btn btn-o btn-sm" target="_blank"><i class="fas fa-download"></i></a>
+          </div>
+        </div>`).join('')+`</div>`;
+    } catch { el.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load resources</div>'; }
+  }
+  window.loadGlobalResources = loadGlobalResources;
+
+  /* ══ MERCH ══ */
+  async function loadMerch() {
+    const el=document.getElementById('merchAdminList');
+    el.innerHTML='<div class="loading"><i class="fas fa-spinner"></i>Loading…</div>';
+    try {
+      const res=await fetch(`${API}/digital/merch`,{headers:H()}); const data=await res.json();
+      if (!res.ok) throw new Error(data.message||'Failed');
+      if (!data.items?.length) { el.innerHTML='<div class="no-data"><i class="fas fa-shirt"></i>No merch items yet</div>'; return; }
+      el.innerHTML=data.items.map(item=>`
+        <div class="history-item">
+          <div style="display:flex;align-items:center;gap:.75rem;flex:1;min-width:0">
+            <div style="width:50px;height:50px;border-radius:10px;background:#f5f2f8;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+              ${item.photoData?`<img src="data:${item.photoMime};base64,${item.photoData}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover">`:'<i class="fas fa-shirt" style="font-size:1.2rem;color:#7c3aed"></i>'}
+            </div>
+            <div style="min-width:0">
+              <h4 style="font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</h4>
+              <p style="margin:.15rem 0 .05rem;font-size:.74rem;color:var(--ink3)">${item.description||'No description'}</p>
+              <p style="font-size:.72rem;color:var(--ink3)">Price: ₹${item.price} · ${item.tag||'Available'} · ${item.inStock?'In stock':'Out of stock'}</p>
+            </div>
+          </div>
+          <div class="history-item-right" style="display:flex;flex-direction:column;gap:.45rem;align-items:flex-end">
+            <button class="btn btn-o btn-sm" onclick="archiveMerch('${item._id}')">Archive</button>
+          </div>
+        </div>`).join('');
+    } catch { el.innerHTML='<div class="no-data"><i class="fas fa-wifi"></i>Could not load merch items</div>'; }
+  }
+
+  async function addMerch() {
+    const name=document.getElementById('merchName').value.trim(), desc=document.getElementById('merchDesc').value.trim(), price=document.getElementById('merchPrice').value.trim(), tag=document.getElementById('merchTag').value.trim(), inStock=document.getElementById('merchStock').value, photo=document.getElementById('merchPhoto').files[0];
+    if (!name||!price||!photo) { showToast('Name, price and photo are required','error'); return; }
+    const btn=document.getElementById('addMerchBtn'); btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner" style="animation:spin .8s linear infinite"></i> Saving…';
+    const fd=new FormData(); fd.append('name',name); fd.append('description',desc); fd.append('price',price); fd.append('tag',tag); fd.append('inStock',inStock); fd.append('photo',photo);
+    try {
+      const res=await fetch(`${API}/digital/merch`,{method:'POST',headers:{'x-user-id':user.id},body:fd});
+      const data=await res.json(); if (!res.ok) throw new Error(data.message||'Could not save');
+      showToast('Merch item added','success');
+      ['merchName','merchDesc','merchPrice','merchTag'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('merchStock').value='true'; document.getElementById('merchPhoto').value=''; document.getElementById('merchPhotoInfo').style.display='none';
+      loadMerch();
+    } catch(err){ showToast(err.message||'Error adding merch','error'); }
+    finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-plus-circle"></i> Add Merch Item'; }
+  }
+
+  async function archiveMerch(id) {
+    if (!confirm('Archive this merch item?')) return;
+    try {
+      const res=await fetch(`${API}/digital/merch/${id}`,{method:'DELETE',headers:H()}); const data=await res.json();
+      if (!res.ok) throw new Error(data.message||'Could not archive');
+      showToast('Merch archived','success'); loadMerch();
+    } catch(err){ showToast(err.message||'Archive failed','error'); }
+  }
+
+  window.addMerch=addMerch; window.archiveMerch=archiveMerch;
+
+  /* ══ TEAM MEMBERS ══ */
+  async function loadMembers() {
+    const grid=document.getElementById('membersContainer');
+    try {
+      const res=await fetch(`${API}/digital/members`,{headers:H()}); const data=await res.json();
+      grid.innerHTML=(data.members||[]).length
+        ? data.members.map(m=>`
+          <div class="member-card">
+            <div class="m-av-wrap"><div class="m-av">${m.name[0]}</div></div>
+            <div style="flex:1;min-width:0">
+              <div class="m-name">${m.name}${m.name===user.name?'<span class="you-dot"></span>':''}</div>
+              <div class="m-role">${m.teamRole||'Digital'}</div>
+              ${m.email?`<div style="font-size:.68rem;color:var(--ink3)">${m.email}</div>`:''}
+            </div>
+          </div>`).join('')
+        : '<div class="no-data" style="grid-column:1/-1"><i class="fas fa-users"></i>No members found</div>';
+    } catch { grid.innerHTML='<div class="no-data" style="grid-column:1/-1"><i class="fas fa-wifi"></i>Could not load</div>'; }
+  }
+
+  /* ══ PROFILE — loads from session immediately, tries API for extras ══ */
+  function loadProfile() {
+    // Always populate from session data first — never shows an error for basic info
+    const av   = document.getElementById('profileAv');
+    const photo = localStorage.getItem(`clustr-photo-${user.id}`);
+    if (photo) av.innerHTML = `<img src="${photo}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+    else av.textContent = user.name[0].toUpperCase();
+
+    document.getElementById('profileNameDisplay').textContent  = user.name;
+    document.getElementById('profileRoleDisplay').textContent  = user.teamRole || 'Digital Team Member';
+    document.getElementById('profileEmailDisplay').textContent = user.email || '';
+    document.getElementById('profileLinkedin').value           = user.linkedin || '';
+
+    // Try to enrich from API (silently — no error toast if it fails)
+    fetch(`${API}/team/profile/${user.id}`, { headers: H() })
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data) return;
+        const p = data.user || data;
+        if (p.photo && p.photoMime) {
+          const src = `data:${p.photoMime};base64,${p.photo}`;
+          av.innerHTML = `<img src="${src}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+        }
+        if (p.linkedin) document.getElementById('profileLinkedin').value = p.linkedin;
+      })
+      .catch(() => {}); // silently ignore API errors
+  }
+
+  window.updateProfile = async () => {
+    const formData = new FormData();
+    const photo    = document.getElementById('profilePhotoInput').files[0];
+    if (photo) formData.append('photo', photo);
+    formData.append('linkedin', document.getElementById('profileLinkedin').value.trim());
+    const btn = document.querySelector('#tab-profile .btn-p');
+    btn.innerHTML = '<i class="fas fa-spinner" style="animation:spin .8s linear infinite"></i> Saving…'; btn.disabled = true;
+    try {
+      const res  = await fetch(`${API}/team/profile/${user.id}`, { method:'PUT', body:formData, headers:{'x-user-id':user.id} });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      showToast('Profile updated ✓', 'success');
+      // Update avatar preview from local file immediately
+      if (photo) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          localStorage.setItem(`clustr-photo-${user.id}`, reader.result);
+          const src = reader.result;
+          document.getElementById('profileAv').innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover">`;
+          ['sbAv','topAv'].forEach(id => { document.getElementById(id).innerHTML = `<img src="${src}" alt="">`; });
+        };
+        reader.readAsDataURL(photo);
+      }
+      document.getElementById('profilePhotoInput').value = '';
+    } catch(err) { showToast(err.message || 'Failed to update profile', 'error'); }
+    finally { btn.innerHTML = '<i class="fas fa-save"></i> Update Profile'; btn.disabled = false; }
+  };
+
+  document.getElementById('profilePhotoInput').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (f) {
+      const r = new FileReader();
+      r.onload = () => document.getElementById('profileAv').innerHTML = `<img src="${r.result}" style="width:100%;height:100%;object-fit:cover">`;
+      r.readAsDataURL(f);
+    }
+  });
+
+  window.showToast = () => {};
+
+  /* ── Misc ── */
+  function escQ(s){ return (s||'').replace(/'/g,"\\'"); }
+  window.doLogout = () => { localStorage.removeItem('clustr-team-session'); window.location.href='portal.html'; };
+
+  /* ── Init ── */
+  loadOverviewEvents();
+  loadRecentRegistrations();
+  loadAnnPreview();
+  window.uploadGlobalResource = async function(){
+
+  const eventId = document.getElementById("globalResEventFilter").value;
+  const file = document.getElementById("globalResourceFile").files[0];
+  const subject = document.getElementById("globalResourceSubject").value;
+  const message = document.getElementById("globalResourceMessage").value;
+
+  if(!eventId){
+    showToast("Select an event first","error");
+    return;
+  }
+
+  if(!file){
+    showToast("Select a file","error");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file",file);
+  formData.append("subject",subject);
+  formData.append("message",message);
+
+  try{
+
+    const res = await fetch(`${API}/digital/events/${eventId}/resources`,{
+      method:"POST",
+      headers:{
+        "x-user-id":user.id
+      },
+      body:formData
+    });
+
+    const data = await res.json();
+
+    if(!res.ok) throw new Error(data.message);
+
+    showToast("Resource uploaded successfully","success");
+
+    loadGlobalResources();
+
+  }catch(err){
+    showToast(err.message,"error");
+  }
+
+}
+})();
+</script>
+</body>
+</html>

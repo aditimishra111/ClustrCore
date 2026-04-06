@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard – TechNova</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --orange:#c8623a; --orange-l:#e08c4a; --orange-d:#a34c28;
+      --blue:#3a6bc8;   --blue-l:#6a9be8;   --blue-d:#2a50a0;
+      --ag:#3a9c5a;
+      --grad:linear-gradient(135deg, var(--orange) 0%, var(--orange-l) 50%, var(--blue) 100%);
+      --grad-text:linear-gradient(90deg, var(--orange) 0%, var(--orange-l) 40%, var(--blue) 100%);
+      --bg:#faf8f5; --bg2:#f2ede6; --bg3:#ebe4d9;
+      --ink:#1a1410; --ink2:#4a3f35; --ink3:#8c7b6d;
+      --card:#ffffff; --card2:rgba(255,255,255,0.75);
+      --line:rgba(26,20,16,0.08); --line2:rgba(26,20,16,0.15);
+      --sh1:0 1px 4px rgba(26,20,16,0.06), 0 4px 16px rgba(26,20,16,0.06);
+      --sh2:0 8px 32px rgba(26,20,16,0.10), 0 2px 8px rgba(26,20,16,0.06);
+      --sh3:0 24px 64px rgba(26,20,16,0.14), 0 4px 16px rgba(26,20,16,0.08);
+      --r:16px; --ease:cubic-bezier(0.4,0,0.2,1); --t:0.3s; --sw:272px; --glow:rgba(200,98,58,.18);
+    }
+    [data-theme="dark"] {
+      --bg:#110e0b; --bg2:#1a1512; --bg3:#231e18;
+      --ink:#f5f0ea; --ink2:#b5a898; --ink3:#6b5e52;
+      --card:#1e1a15; --card2:rgba(30,26,21,0.85);
+      --line:rgba(245,240,234,0.07); --line2:rgba(245,240,234,0.14);
+      --sh1:0 1px 4px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.25);
+      --sh2:0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+      --sh3:0 24px 64px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background var(--t),color var(--t);overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--orange);border-radius:2px}
+    a{text-decoration:none;color:inherit}
+
+    /* ══ SIDEBAR ══ */
+    .sidebar{position:fixed;left:0;top:0;width:var(--sw);height:100vh;background:var(--card2);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-right:1px solid var(--line2);display:flex;flex-direction:column;z-index:200;overflow:hidden;box-shadow:var(--sh2);}
+    .sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);}
+    .sidebar::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 40% at 20% 15%,rgba(200,98,58,.08) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(58,107,200,.06) 0%,transparent 60%);}
+    .sb-logo{padding:1.5rem 1.375rem 1.125rem;border-bottom:1px solid var(--line);position:relative;z-index:1;}
+    .sb-brand{display:flex;align-items:center;gap:.5rem;text-decoration:none;margin-bottom:1.125rem;}
+    .sb-brandname{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;letter-spacing:-.02em;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sb-profile{display:flex;align-items:center;gap:.75rem;padding:.75rem .875rem;border-radius:100px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;transition:all var(--t);}
+    .sb-profile:hover{border-color:var(--orange);background:rgba(200,98,58,.06);transform:translateY(-1px);box-shadow:var(--sh1)}
+    .sb-av-wrap{position:relative;flex-shrink:0}
+    .sb-av{width:40px;height:40px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:white;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;overflow:hidden;box-shadow:0 2px 10px var(--glow);}
+    .sb-av img{width:100%;height:100%;object-fit:cover}
+    .sb-cam{position:absolute;bottom:-2px;right:-2px;width:15px;height:15px;background:var(--orange);border-radius:50%;border:2px solid var(--card);display:flex;align-items:center;justify-content:center;color:white;font-size:.4rem;}
+    .sb-meta{min-width:0}
+    .sb-meta strong{display:block;font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sb-meta span{font-size:.68rem;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase;}
+    .sb-nav{flex:1;padding:.875rem;overflow-y:auto;display:flex;flex-direction:column;gap:.15rem;position:relative;z-index:1;}
+    .sb-label{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:.625rem .625rem .15rem;}
+    .sb-item{display:flex;align-items:center;gap:.7rem;padding:.62rem .875rem;border-radius:100px;color:var(--ink2);text-decoration:none;font-size:.86rem;font-weight:500;transition:all var(--t);border:1px solid transparent;cursor:pointer;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+    .sb-item:hover,.sb-item.active{background:var(--bg2);color:var(--ink);border-color:var(--line2);box-shadow:var(--sh1);}
+    .sb-item.active{background:rgba(200,98,58,.08);border-color:rgba(200,98,58,.25);color:var(--orange);}
+    .sb-item i{width:17px;text-align:center;font-size:.8rem;color:var(--ink3);transition:color var(--t);}
+    .sb-item:hover i,.sb-item.active i{color:var(--orange)}
+    .sb-footer{padding:.875rem;border-top:1px solid var(--line);position:relative;z-index:1;}
+    .sb-theme{display:flex;align-items:center;justify-content:space-between;padding:.55rem .875rem;background:var(--bg2);border:1px solid var(--line);border-radius:100px;cursor:pointer;margin-bottom:.5rem;transition:all var(--t);}
+    .sb-theme:hover{border-color:var(--line2);box-shadow:var(--sh1)}
+    .sb-theme span{font-size:.8rem;font-weight:500;color:var(--ink2);display:flex;align-items:center;gap:.45rem}
+    .pill{width:36px;height:19px;background:var(--line2);border-radius:20px;position:relative;transition:background var(--t);flex-shrink:0}
+    .pill::after{content:'';position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform var(--t);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+    [data-theme="dark"] .pill{background:var(--orange)}
+    [data-theme="dark"] .pill::after{transform:translateX(17px)}
+    .sb-out{display:flex;align-items:center;gap:.55rem;padding:.6rem .875rem;background:none;border:1px solid var(--line);border-radius:100px;color:var(--ink3);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:all var(--t);width:100%;}
+    .sb-out:hover{background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.3);color:#ef4444}
+
+    /* ══ VIEWS ══ */
+    .view{display:none}.view.active{display:block;animation:fadeUp .4s var(--ease) both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ══ MAIN ══ */
+    .main{margin-left:var(--sw);min-height:100vh;padding:2rem 2.25rem 0;position:relative;z-index:1}
+
+    /* ══ TOPBAR ══ */
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;animation:fadeUp .6s var(--ease) both;}
+    .topbar-left h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.8vw,2rem);font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:.2rem;}
+    .topbar-left h1 span{background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic;}
+    .topbar-left p{font-size:.82rem;color:var(--ink3);font-weight:300}
+    .topbar-right{display:flex;align-items:center;gap:.75rem}
+    .live-time{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500;color:var(--ink2);background:var(--card2);backdrop-filter:blur(10px);border:1px solid var(--line2);border-radius:100px;padding:.35rem 1rem;letter-spacing:.04em;}
+    .online-dot{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;background:rgba(58,156,90,.1);color:var(--ag);border:1px solid rgba(58,156,90,.25);padding:.35rem .875rem;border-radius:100px;}
+    .online-dot::before{content:'';width:5px;height:5px;background:var(--ag);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+    .top-av{width:38px;height:38px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:.9rem;cursor:pointer;overflow:hidden;border:2px solid var(--line2);transition:all var(--t);box-shadow:0 2px 10px var(--glow);}
+    .top-av:hover{border-color:var(--orange);transform:translateY(-1px);box-shadow:0 4px 16px var(--glow)}
+    .top-av img{width:100%;height:100%;object-fit:cover}
+
+    /* ══ REWARD BANNER ══ */
+    .reward{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.375rem 1.75rem;margin-bottom:1.75rem;display:flex;align-items:center;gap:1.25rem;box-shadow:var(--sh1);position:relative;overflow:hidden;animation:fadeUp .5s var(--ease) .15s both;}
+    .reward::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,98,58,.04),rgba(58,107,200,.04));pointer-events:none;}
+    .reward-ico{width:52px;height:52px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.25rem;flex-shrink:0;box-shadow:0 4px 20px var(--glow);}
+    .reward-txt{flex:1}
+    .reward-txt h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:.2rem;}
+    .reward-txt p{font-size:.78rem;color:var(--ink3);line-height:1.55;font-weight:300}
+    .reward-right{flex-shrink:0;text-align:right}
+    .reward-count{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.25rem;}
+    .reward-sub{font-size:.65rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+    .reward-bar{width:160px;height:7px;background:var(--bg2);border-radius:100px;overflow:hidden;margin-top:.5rem;border:1px solid var(--line);}
+    .reward-fill{height:100%;background:var(--grad);border-radius:100px;transition:width 1.2s var(--ease);width:0%}
+
+    /* ══ MAIN GRID ══ */
+    .grid-main{display:grid;grid-template-columns:1.4fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+
+    /* ══ SECTION CARD ══ */
+    .sc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;box-shadow:var(--sh1);}
+    .sc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--line);}
+    .sc-hdr-left{display:flex;align-items:center;gap:.6rem}
+    .sc-hdr-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,rgba(200,98,58,.12),rgba(224,140,74,.12));border:1px solid rgba(200,98,58,.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:.8rem;}
+    .sc-hdr h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+
+    /* ══ EVENTS ══ */
+    .ev-card{border:1px solid var(--line);border-radius:16px;margin-bottom:.75rem;transition:all var(--t);position:relative;overflow:hidden;background:var(--bg);}
+    .ev-card:hover{border-color:var(--line2);box-shadow:var(--sh2);transform:translateY(-2px)}
+    .ev-card-accent{height:2px;background:var(--grad);width:100%}
+    .ev-card-body{padding:1rem 1.125rem}
+    .ev-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.625rem}
+    .ev-card-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.3;flex:1;}
+    .ev-chips{display:flex;gap:.35rem;flex-wrap:wrap;flex-shrink:0}
+    .chip{display:inline-flex;align-items:center;gap:.2rem;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.2rem .6rem;border-radius:100px}
+    .chip-open{background:rgba(200,98,58,.1);color:var(--orange);border:1px solid rgba(200,98,58,.25)}
+    .chip-completed{background:rgba(139,92,246,.1);color:#8b5cf6;border:1px solid rgba(139,92,246,.25)}
+    .chip-closed{background:rgba(239,68,68,.08);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+    .chip-free{background:rgba(58,156,90,.1);color:var(--ag);border:1px solid rgba(58,156,90,.25)}
+    .chip-paid{background:rgba(200,98,58,.08);color:var(--orange);border:1px solid rgba(200,98,58,.2)}
+    .ev-meta{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:.625rem}
+    .ev-meta span{font-size:.72rem;color:var(--ink3);display:flex;align-items:center;gap:.28rem}
+    .ev-meta i{color:var(--orange);font-size:.65rem}
+    .ev-desc{font-size:.78rem;color:var(--ink2);line-height:1.55;margin-bottom:.875rem;font-weight:300}
+    .ev-footer{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding-top:.75rem;border-top:1px solid var(--line)}
+    .ev-cat{display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--ink3)}
+    .ev-cat i{color:var(--orange);font-size:.65rem}
+    .btn-reg{display:inline-flex;align-items:center;gap:.35rem;font-size:.74rem;font-weight:600;padding:.42rem .875rem;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t);text-decoration:none;white-space:nowrap;}
+    .btn-reg.open-reg{background:var(--grad);color:#fff;box-shadow:0 2px 12px var(--glow)}
+    .btn-reg.open-reg:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--glow)}
+    .btn-reg.already{background:rgba(58,156,90,.1);color:var(--ag);border:1px solid rgba(58,156,90,.3);cursor:default}
+    .btn-reg.closed-reg{background:var(--bg2);color:var(--ink3);border:1px solid var(--line);cursor:default;opacity:.7}
+
+    /* ══ PROGRESS ══ */
+    .prog-item{margin-bottom:1.125rem}
+    .prog-top{display:flex;justify-content:space-between;margin-bottom:.35rem}
+    .prog-top span{font-size:.8rem;color:var(--ink2);font-weight:500}
+    .prog-top .pct{font-size:.78rem;font-weight:700;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .prog-track{height:5px;background:var(--bg2);border-radius:100px;overflow:hidden;border:1px solid var(--line)}
+    .prog-fill{height:100%;background:var(--grad);border-radius:100px;transition:width 1s var(--ease);width:0%}
+
+    /* ══ ANNOUNCEMENTS ══ */
+    .ann{display:flex;gap:.875rem;padding:.875rem 1rem;border:1px solid var(--line);border-radius:14px;margin-bottom:.625rem;transition:all var(--t);background:var(--bg);}
+    .ann:hover{border-color:rgba(200,98,58,.2);box-shadow:var(--sh1);transform:translateX(2px)}
+    .ann-ico{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(200,98,58,.1),rgba(224,140,74,.1));border:1px solid rgba(200,98,58,.2);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:.8rem;flex-shrink:0;}
+    .ann h4{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;margin-bottom:.2rem}
+    .ann p{font-size:.77rem;color:var(--ink2);line-height:1.5;margin-bottom:.25rem;font-weight:300}
+    .ann-time{font-size:.67rem;color:var(--ink3)}
+
+    /* ══ RESOURCES ══ */
+    .res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
+    .res-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.125rem;display:flex;flex-direction:column;gap:.75rem;transition:all var(--t);box-shadow:var(--sh1);}
+    .res-card:hover{border-color:var(--line2);box-shadow:var(--sh2);transform:translateY(-3px)}
+    .res-card-top{display:flex;align-items:center;gap:.75rem}
+    .res-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;flex-shrink:0}
+    .res-icon.pdf{background:linear-gradient(135deg,#ef4444,#f87171)}
+    .res-icon.ppt{background:linear-gradient(135deg,#f59e0b,#fbbf24)}
+    .res-icon.doc{background:linear-gradient(135deg,#3a6bc8,#60a5fa)}
+    .res-icon.zip{background:linear-gradient(135deg,#8b5cf6,#a78bfa)}
+    .res-icon.img{background:linear-gradient(135deg,#3a9c5a,#5ccf80)}
+    .res-icon.other{background:linear-gradient(135deg,var(--orange),var(--orange-l))}
+    .res-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.15rem}
+    .res-meta{font-size:.68rem;color:var(--ink3)}
+    .res-event-tag{display:inline-flex;align-items:center;gap:.25rem;font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.18rem .5rem;border-radius:100px;background:rgba(200,98,58,.08);color:var(--orange);border:1px solid rgba(200,98,58,.2);}
+    .res-msg{font-size:.78rem;color:var(--ink2);line-height:1.5;border-left:2px solid var(--orange);padding-left:.625rem;font-weight:300}
+    .res-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.625rem;border-top:1px solid var(--line)}
+    .res-date{font-size:.68rem;color:var(--ink3)}
+    .btn-dl{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:600;padding:.38rem .875rem;border-radius:100px;background:var(--grad);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t);text-decoration:none;box-shadow:0 2px 10px var(--glow);}
+    .btn-dl:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--glow)}
+
+    /* ══ MERCH ══ */
+    .merch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+    .merch-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:all var(--t);box-shadow:var(--sh1)}
+    .merch-card:hover{border-color:rgba(200,98,58,.2);box-shadow:var(--sh2);transform:translateY(-3px)}
+    .merch-card-img{height:145px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.35rem;background:var(--bg2)}
+    .merch-card-img span:first-child{font-size:3rem}
+    .merch-card-img span:last-child{font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+    .merch-card-body{padding:1rem}
+    .merch-tag{display:inline-block;font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.18rem .55rem;border-radius:100px;background:var(--grad);color:#fff;margin-bottom:.4rem}
+    .merch-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.25rem}
+    .merch-desc{font-size:.75rem;color:var(--ink3);line-height:1.5;margin-bottom:.75rem;font-weight:300}
+    .merch-footer{display:flex;align-items:center;justify-content:space-between}
+    .merch-price{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .btn-order{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:600;padding:.42rem .875rem;border-radius:100px;background:var(--grad);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t);box-shadow:0 2px 10px var(--glow);}
+    .btn-order:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--glow)}
+
+    /* ══ MERCH SLIDESHOW ══ */
+    .merch-banner{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;box-shadow:var(--sh1);margin-bottom:1.75rem;}
+    .merch-banner-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--line);}
+    .merch-banner-hdr-l{display:flex;align-items:center;gap:.6rem}
+    .merch-banner-hdr-l h2{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+    .merch-banner-hdr-l i{color:var(--orange);font-size:.85rem}
+    .merch-banner-hdr-r a{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:500;color:var(--orange);border:1px solid rgba(200,98,58,.25);padding:.38rem 1rem;border-radius:100px;transition:all var(--t);}
+    .merch-banner-hdr-r a:hover{background:rgba(200,98,58,.06)}
+    .ss-wrap{position:relative;overflow:hidden;border-radius:14px}
+    .ss-track{display:flex;transition:transform .5s var(--ease)}
+    .ss-slide{min-width:100%;padding:0 2px}
+    .ss-inner{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex}
+    .ss-img{width:190px;height:190px;flex-shrink:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.4rem;background:var(--bg3)}
+    .ss-img span:first-child{font-size:3.5rem}
+    .ss-img span:last-child{font-size:.62rem;color:var(--ink3);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+    .ss-info{padding:1.5rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+    .ss-tag{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .55rem;border-radius:100px;background:var(--grad);color:#fff;margin-bottom:.5rem;width:fit-content}
+    .ss-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.35rem}
+    .ss-desc{font-size:.8rem;color:var(--ink3);line-height:1.6;flex:1;margin-bottom:.875rem;font-weight:300}
+    .ss-btm{display:flex;align-items:center;justify-content:space-between}
+    .ss-price{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;background:var(--grad-text);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .ss-buy{display:inline-flex;align-items:center;gap:.35rem;font-size:.8rem;font-weight:600;background:var(--grad);color:#fff;padding:.55rem 1.125rem;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all var(--t);box-shadow:0 2px 12px var(--glow);}
+    .ss-buy:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--glow)}
+    .ss-controls{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-top:.875rem}
+    .ss-dot{width:7px;height:7px;border-radius:50%;background:var(--line2);border:none;cursor:pointer;transition:all var(--t);padding:0}
+    .ss-dot.active{background:var(--orange);width:20px;border-radius:100px}
+    .ss-arr{width:32px;height:32px;background:var(--bg2);border:1px solid var(--line);border-radius:100px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:.72rem;transition:all var(--t);}
+    .ss-arr:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
+
+    /* ══ VIEW HEADER ══ */
+    .view-hdr{margin-bottom:1.75rem}
+    .view-hdr h2{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;letter-spacing:-.03em;margin-bottom:.25rem;}
+    .view-hdr h2 em{font-style:italic;color:var(--orange)}
+    .view-hdr p{font-size:.82rem;color:var(--ink3);font-weight:300}
+    .view-hdr-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .section-label{font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;color:var(--ink2);margin-bottom:.875rem;display:flex;align-items:center;gap:.75rem;}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--line)}
+
+    /* ══ SETTINGS / PROFILE ══ */
+    .setcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.5rem;margin-bottom:1rem;box-shadow:var(--sh1);}
+    .setcard h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;margin-bottom:1.25rem;padding-bottom:.875rem;border-bottom:1px solid var(--line);}
+    .ff-fld{margin-bottom:.875rem}
+    .ff-fld label{display:block;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:.35rem;}
+    .ff-fld input{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:.6rem .875rem;font-family:'DM Sans',sans-serif;font-size:.84rem;color:var(--ink);outline:none;transition:border-color var(--t);}
+    .ff-fld input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(200,98,58,.08)}
+    .btn-p{display:inline-flex;align-items:center;gap:.4rem;background:var(--grad);color:#fff;border:none;border-radius:100px;padding:.6rem 1.25rem;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all var(--t);box-shadow:0 2px 14px var(--glow);}
+    .btn-p:hover{transform:translateY(-1px);box-shadow:0 4px 22px var(--glow)}
+
+    /* ══ EMPTY / SKELETON ══ */
+    .empty{text-align:center;padding:2.5rem 1rem;color:var(--ink3);opacity:.5}
+    .empty i{display:block;font-size:2rem;margin-bottom:.75rem}
+    .empty p{font-size:.82rem;font-weight:300}
+    .skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:12px;}
+    @keyframes shim{from{background-position:200% 0}to{background-position:-200% 0}}
+
+    /* ══ MODAL ══ */
+    .modal-overlay{position:fixed;inset:0;background:rgba(26,20,16,.45);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--t);}
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{background:var(--card);border:1px solid var(--line2);border-radius:24px;width:90%;max-width:400px;padding:1.75rem;box-shadow:var(--sh3);transform:translateY(16px) scale(.97);transition:transform var(--t);}
+    .modal-overlay.open .modal{transform:translateY(0) scale(1)}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:.875rem;border-bottom:1px solid var(--line)}
+    .modal-hdr h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;}
+    .modal-x{width:32px;height:32px;background:var(--bg2);border:1px solid var(--line);border-radius:100px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:.8rem;transition:all var(--t)}
+    .modal-x:hover{background:#fee2e2;color:#ef4444;border-color:#fecaca}
+    .av-preview{width:110px;height:110px;border-radius:50%;margin:0 auto 1.375rem;overflow:hidden;border:3px solid var(--line2);box-shadow:0 4px 20px var(--glow)}
+    .av-preview img{width:100%;height:100%;object-fit:cover}
+    .av-init{width:100%;height:100%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:2.25rem;color:#fff}
+    .photo-drop{border:2px dashed var(--line2);border-radius:14px;padding:1.5rem;text-align:center;cursor:pointer;transition:all var(--t);margin-bottom:.875rem}
+    .photo-drop:hover{border-color:var(--orange);background:rgba(200,98,58,.04)}
+    .photo-drop i{font-size:1.4rem;color:var(--ink3);display:block;margin-bottom:.4rem}
+    .photo-drop p{font-size:.8rem;color:var(--ink3);font-weight:300}
+    .photo-drop strong{color:var(--orange)}
+    .btn-save{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;padding:.7rem;background:var(--grad);color:#fff;border:none;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all var(--t);box-shadow:0 2px 14px var(--glow);}
+    .btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 22px var(--glow)}
+    .btn-save:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    /* ══ FOOTER ══ */
+    footer{background:var(--ink);color:rgba(245,240,234,0.8);padding:5rem 0 2rem;margin-left:var(--sw);position:relative;overflow:hidden;margin-top:3rem;}
+    [data-theme="dark"] footer{background:#0a0806}
+    footer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);}
+    .ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:3rem;margin-bottom:3rem}
+    .ft-sec h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:#f5f0ea;margin-bottom:1rem}
+    .ft-sec h4{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange-l);margin-bottom:1rem}
+    .ft-sec p{font-size:.85rem;line-height:1.7;color:rgba(245,240,234,.55)}
+    .socials{display:flex;gap:.75rem;margin-top:1rem}
+    .socials a{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(245,240,234,.6);display:flex;align-items:center;justify-content:center;font-size:.85rem;text-decoration:none;transition:all var(--t);}
+    .socials a:hover{background:var(--orange);border-color:var(--orange);color:#fff;transform:translateY(-2px)}
+    .ft-sec ul{list-style:none}
+    .ft-sec ul li{margin-bottom:.5rem}
+    .ft-sec ul li a{color:rgba(245,240,234,.55);text-decoration:none;font-size:.85rem;transition:color var(--t)}
+    .ft-sec ul li a:hover{color:var(--orange-l)}
+    .ft-contact li{display:flex;align-items:center;gap:.55rem;color:rgba(245,240,234,.55);font-size:.85rem;margin-bottom:.5rem;list-style:none}
+    .ft-contact li i{color:var(--orange-l);width:14px}
+    .nl-form{display:flex;gap:.5rem;margin-top:1rem}
+    .nl-form input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:100px;padding:.6rem 1rem;color:#f5f0ea;font-family:'DM Sans',sans-serif;font-size:.83rem;outline:none;transition:border-color var(--t);}
+    .nl-form input:focus{border-color:var(--orange-l)}
+    .nl-form input::placeholder{color:rgba(245,240,234,.3)}
+    .nl-form button{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;background:var(--grad);color:#fff;font-size:.85rem;flex-shrink:0;transition:all var(--t);}
+    .nl-form button:hover{transform:scale(1.1)}
+    .ft-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:1.5rem;text-align:center;font-size:.8rem;color:rgba(245,240,234,.3)}
+
+    @media(max-width:1100px){.ft-grid{grid-template-columns:1fr 1fr;gap:2rem}}
+    @media(max-width:900px){.grid-main{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:1.25rem}footer{margin-left:0}.ss-img{width:140px;height:140px}.ft-grid{grid-template-columns:1fr}}
+    @media(max-width:520px){.stat-strip{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <a href="index.html" class="sb-brand"><span class="sb-brandname">TechNova</span></a>
+    <div class="sb-profile" onclick="openModal('photoModal')">
+      <div class="sb-av-wrap">
+        <div class="sb-av" id="sbAv">S</div>
+        <div class="sb-cam"><i class="fas fa-camera"></i></div>
+      </div>
+      <div class="sb-meta">
+        <strong id="sbName">Student</strong>
+        <span>Student Portal</span>
+      </div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-label">Navigation</span>
+    <button class="sb-item active" onclick="showView('dashboard')"><i class="fas fa-home"></i> Dashboard</button>
+    <button class="sb-item" onclick="showView('events-view')"><i class="fas fa-calendar-alt"></i> My Events</button>
+    <button class="sb-item" onclick="showView('resources-view')"><i class="fas fa-folder-open"></i> Resources</button>
+    <a class="sb-item" href="resume.html"><i class="fas fa-user-graduate"></i> My Resume</a>
+    <span class="sb-label">Account</span>
+    <button class="sb-item" onclick="showView('profile')"><i class="fas fa-user-circle"></i> Profile</button>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-theme" id="themeRow">
+      <span><i class="fas fa-moon" id="themeIcon"></i> <span id="themeLabel">Dark Mode</span></span>
+      <div class="pill"></div>
+    </div>
+    <button class="sb-out" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD VIEW -->
+  <div class="view active" id="view-dashboard">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Hey, <span id="userGreeting">Student</span> 👋</h1>
+        <p id="todayDate">Loading…</p>
+      </div>
+      <div class="topbar-right">
+        <div class="live-time" id="liveTime">--:--</div>
+        <span class="online-dot">Online</span>
+        <div class="top-av" id="topAv" onclick="openModal('photoModal')">S</div>
+      </div>
+    </div>
+
+    <div class="grid-main">
+      <div class="sc">
+        <div class="sc-hdr">
+          <div class="sc-hdr-left">
+            <div class="sc-hdr-icon"><i class="fas fa-calendar-alt"></i></div>
+            <h2>Upcoming Events</h2>
+          </div>
+          <span style="font-size:.72rem;color:var(--ink3)" id="evCount"></span>
+        </div>
+        <div id="eventsContainer">
+          <div class="skel" style="height:110px;margin-bottom:.75rem"></div>
+          <div class="skel" style="height:110px;margin-bottom:.75rem"></div>
+          <div class="skel" style="height:110px"></div>
+        </div>
+      </div>
+
+      <div class="sc" style="flex:1">
+        <div class="sc-hdr">
+          <div class="sc-hdr-left">
+            <div class="sc-hdr-icon"><i class="fas fa-bullhorn"></i></div>
+            <h2>Announcements</h2>
+          </div>
+        </div>
+        <div id="annContainer">
+          <div class="skel" style="height:64px;margin-bottom:.5rem"></div>
+          <div class="skel" style="height:64px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Merch Slideshow -->
+    <div class="merch-banner">
+      <div class="merch-banner-hdr">
+        <div class="merch-banner-hdr-l"><i class="fas fa-shirt"></i><h2>TechNova Merch</h2></div>
+        <div class="merch-banner-hdr-r">
+          <a href="#" onclick="showView('resources-view');return false;">View all <i class="fas fa-arrow-right" style="font-size:.65rem"></i></a>
+        </div>
+      </div>
+      <div class="ss-wrap"><div class="ss-track" id="ssTrack"></div></div>
+      <div class="ss-controls">
+        <button class="ss-arr" onclick="slideMove(-1)"><i class="fas fa-chevron-left"></i></button>
+        <div id="ssDots"></div>
+        <button class="ss-arr" onclick="slideMove(1)"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENTS VIEW -->
+  <div class="view" id="view-events-view">
+    <div class="view-hdr">
+      <h2>My <em>Events</em></h2>
+      <p>All events you've registered for or that are currently open.</p>
+    </div>
+    <div id="allEventsContainer">
+      <div class="skel" style="height:110px;margin-bottom:.75rem;border-radius:14px"></div>
+      <div class="skel" style="height:110px;margin-bottom:.75rem;border-radius:14px"></div>
+      <div class="skel" style="height:110px;border-radius:14px"></div>
+    </div>
+  </div>
+
+  <!-- RESOURCES VIEW -->
+  <div class="view" id="view-resources-view">
+    <div class="view-hdr view-hdr-row">
+      <div>
+        <h2>Resources &amp; <em>Merch</em></h2>
+        <p>Study materials and event files sent by the Digital Team, plus official TechNova merchandise.</p>
+      </div>
+    </div>
+    <div class="section-label"><i class="fas fa-file-alt" style="color:var(--orange);margin-right:.4rem"></i> Study Resources &amp; Files</div>
+    <div class="res-grid" id="resourcesGrid">
+      <div class="skel" style="height:140px;border-radius:14px"></div>
+      <div class="skel" style="height:140px;border-radius:14px"></div>
+      <div class="skel" style="height:140px;border-radius:14px"></div>
+    </div>
+    <div class="section-label" style="margin-top:2rem"><i class="fas fa-shirt" style="color:var(--orange);margin-right:.4rem"></i> Official Merch Store</div>
+    <div class="merch-grid" id="merchGrid">
+      <div class="skel" style="height:280px;border-radius:14px"></div>
+      <div class="skel" style="height:280px;border-radius:14px"></div>
+      <div class="skel" style="height:280px;border-radius:14px"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE VIEW -->
+  <div class="view" id="view-profile">
+    <div class="view-hdr">
+      <h2>My <em>Profile</em></h2>
+      <p>Manage your student account and personal details.</p>
+    </div>
+    <div class="setcard">
+      <h3>Student Profile</h3>
+      <div style="display:flex;gap:1.25rem;align-items:flex-start;margin-bottom:1.25rem">
+        <div id="setAv" style="width:72px;height:72px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;overflow:hidden;box-shadow:0 4px 16px var(--glow);flex-shrink:0">S</div>
+        <div style="flex:1">
+          <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;margin-bottom:.15rem" id="setPnm">Student</div>
+          <div style="font-size:.77rem;color:var(--ink3);margin-bottom:.875rem" id="setPem">—</div>
+          <input type="file" id="profilePhotoInput" accept="image/*" style="font-size:.78rem;color:var(--ink2)">
+          <div style="font-size:.72rem;color:var(--ink3);margin-top:.25rem">Max 5MB · JPG / PNG / WEBP</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:.875rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:170px">
+          <div class="ff-fld"><label>Display Name</label><input type="text" id="setN" placeholder="Your name"></div>
+        </div>
+        <div style="flex:1;min-width:170px">
+          <div class="ff-fld"><label>Email</label><input type="email" id="setE" placeholder="your@email.com"></div>
+        </div>
+      </div>
+      <div class="ff-fld"><label>Course / Branch</label><input type="text" id="setCourse" placeholder="e.g. B.Tech Computer Science"></div>
+      <div class="ff-fld"><label>Year / Semester</label><input type="text" id="setYear" placeholder="e.g. 2nd Year"></div>
+      <button class="btn-p" onclick="savePrf()"><i class="fas fa-check"></i> Save Changes</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div style="max-width:1200px;margin:0 auto;padding:0 2rem">
+    <div class="ft-grid">
+      <div class="ft-sec">
+        <h3>TechNova</h3>
+        <p>Empowering innovation and building a community of tech enthusiasts dedicated to learning and growth.</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      <div class="ft-sec">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="events.html">Events</a></li>
+          <li><a href="index.html#team">Team</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="ft-sec">
+        <h4>Contact Us</h4>
+        <ul class="ft-contact">
+          <li><i class="fas fa-envelope"></i> technova@college.edu</li>
+          <li><i class="fas fa-phone"></i> +91 98765 43210</li>
+          <li><i class="fas fa-map-marker-alt"></i> Tech Building, Room 301</li>
+        </ul>
+      </div>
+      <div class="ft-sec">
+        <h4>Newsletter</h4>
+        <p>Stay updated with our latest events and announcements.</p>
+        <form class="nl-form" onsubmit="return false">
+          <input type="email" placeholder="Enter your email" aria-label="Email for newsletter">
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="ft-bottom"><p>&copy; 2026 ClustrCore. All rights reserved.</p></div>
+  </div>
+</footer>
+
+<!-- Photo Modal -->
+<div class="modal-overlay" id="photoModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3><i class="fas fa-camera" style="color:var(--orange);margin-right:.4rem"></i>Profile Photo</h3>
+      <button class="modal-x" onclick="closeModal('photoModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="av-preview"><div id="avPreview" class="av-init">S</div></div>
+    <div class="photo-drop" id="photoDrop" onclick="document.getElementById('photoInput').click()">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <p>Drop photo here or <strong>click to browse</strong></p>
+      <p style="font-size:.7rem;margin-top:.25rem">JPEG, PNG — max 2 MB</p>
+    </div>
+    <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+    <button class="btn-save" id="savePhotoBtn" onclick="savePhoto()" disabled>
+      <i class="fas fa-save"></i> Save Photo
+    </button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const API           = '/api';
+  const POINTS_TARGET = 100;
+
+  /* ── AUTH ── */
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  if (!user) { window.location.href = 'index.html'; return; }
+  const name    = user.name || user.email.split('@')[0];
+  const initial = name[0].toUpperCase();
+
+  document.getElementById('userGreeting').textContent = name;
+  document.getElementById('sbName').textContent       = name;
+
+  /* Seed profile view with current user data */
+  document.getElementById('setPnm').textContent  = name;
+  document.getElementById('setPem').textContent  = user.email || '—';
+  document.getElementById('setN').value          = name;
+  document.getElementById('setE').value          = user.email || '';
+  document.getElementById('setCourse').value     = user.course || '';
+  document.getElementById('setYear').value       = user.year   || '';
+
+  /* ── VIEW SWITCHING ── */
+  window.showView = (viewName) => {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(`view-${viewName}`).classList.add('active');
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    const map = { dashboard: 0, 'events-view': 1, 'resources-view': 2, profile: 4 };
+    const idx = map[viewName];
+    if (idx !== undefined) document.querySelectorAll('.sb-item')[idx]?.classList.add('active');
+    if (viewName === 'resources-view') loadResources();
+    if (viewName === 'events-view')    loadAllEventsView();
+  };
+
+  /* ── THEME ── */
+  const html = document.documentElement;
+  applyTheme(localStorage.getItem('clustr-theme') || 'light');
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    localStorage.setItem('clustr-theme', t);
+    const ic = document.getElementById('themeIcon');
+    const lb = document.getElementById('themeLabel');
+    if (ic) ic.className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    if (lb) lb.textContent = t === 'dark' ? 'Light Mode' : 'Dark Mode';
+  }
+  document.getElementById('themeRow').addEventListener('click', () =>
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+  /* ── LIVE CLOCK ── */
+  function tickClock() {
+    const now = new Date();
+    document.getElementById('liveTime').textContent =
+      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+  tickClock(); setInterval(tickClock, 10000);
+  document.getElementById('todayDate').textContent =
+    new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  /* ── PROFILE PHOTO ── */
+  let pendingPhoto = null;
+  function loadPhoto() {
+    const saved = localStorage.getItem('clustr-profile-photo');
+    if (saved) setPhoto(saved); else setInitial();
+  }
+  function setPhoto(url) {
+    document.getElementById('sbAv').innerHTML  = `<img src="${url}" alt="">`;
+    document.getElementById('topAv').innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    document.getElementById('setAv').innerHTML = `<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover">`;
+  }
+  function setInitial() {
+    document.getElementById('sbAv').textContent  = initial;
+    document.getElementById('topAv').textContent = initial;
+    document.getElementById('setAv').textContent = initial;
+  }
+  loadPhoto();
+
+  const photoInput = document.getElementById('photoInput');
+  photoInput.addEventListener('change', () => {
+    const f = photoInput.files[0]; if (!f) return;
+    if (f.size > 2 * 1024 * 1024) { showToast('Max 2 MB please', 'error'); return; }
+    const r = new FileReader();
+    r.onload = e => {
+      pendingPhoto = e.target.result;
+      const p = document.getElementById('avPreview');
+      p.className = ''; p.innerHTML = `<img src="${pendingPhoto}" style="width:100%;height:100%;object-fit:cover">`;
+      document.getElementById('savePhotoBtn').disabled = false;
+    };
+    r.readAsDataURL(f);
+  });
+
+  /* Profile page photo input (separate from modal) */
+  document.getElementById('profilePhotoInput').addEventListener('change', (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { alert('Max 5 MB please'); return; }
+    const r = new FileReader();
+    r.onload = ev => {
+      const url = ev.target.result;
+      localStorage.setItem('clustr-profile-photo', url);
+      setPhoto(url);
+    };
+    r.readAsDataURL(f);
+  });
+
+  const pd = document.getElementById('photoDrop');
+  pd.addEventListener('dragover', e => { e.preventDefault(); pd.style.borderColor = 'var(--orange)'; });
+  pd.addEventListener('dragleave', () => pd.style.borderColor = '');
+  pd.addEventListener('drop', e => {
+    e.preventDefault(); pd.style.borderColor = '';
+    const f = e.dataTransfer.files[0];
+    if (f?.type.startsWith('image/')) { photoInput.files = e.dataTransfer.files; photoInput.dispatchEvent(new Event('change')); }
+  });
+  window.savePhoto = () => {
+    if (!pendingPhoto) return;
+    localStorage.setItem('clustr-profile-photo', pendingPhoto);
+    setPhoto(pendingPhoto); closeModal('photoModal');
+    pendingPhoto = null;
+    document.getElementById('savePhotoBtn').disabled = true;
+  };
+
+  /* ── PROFILE SAVE ── */
+  window.savePrf = () => {
+    const n = document.getElementById('setN').value.trim();
+    if (n) {
+      ['userGreeting', 'sbName', 'setPnm'].forEach(id => document.getElementById(id).textContent = n);
+      document.getElementById('setAv').textContent = n[0].toUpperCase();
+      if (!localStorage.getItem('clustr-profile-photo')) {
+        document.getElementById('sbAv').textContent  = n[0].toUpperCase();
+        document.getElementById('topAv').textContent = n[0].toUpperCase();
+      }
+      try {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        u.name   = n;
+        u.course = document.getElementById('setCourse').value.trim();
+        u.year   = document.getElementById('setYear').value.trim();
+        localStorage.setItem('user', JSON.stringify(u));
+      } catch(e) {}
+    }
+    const email = document.getElementById('setE').value.trim();
+    if (email) document.getElementById('setPem').textContent = email;
+    alert('Profile updated ✓');
+  };
+
+  /* ── REWARD ── */
+  function updateReward(pts) {
+    const pct  = Math.min(100, Math.round((pts / POINTS_TARGET) * 100));
+    const done = pts >= POINTS_TARGET;
+    document.getElementById('rewardCount') && (document.getElementById('rewardCount').textContent = done ? '✓ Unlocked' : `${pts}/${POINTS_TARGET}`);
+    if (done && document.getElementById('rewardTitle')) {
+      document.getElementById('rewardTitle').textContent = '🎉 You unlocked a free workshop!';
+      document.getElementById('rewardDesc').textContent  = 'You have enough points. Contact the team to claim.';
+      document.getElementById('rewardFill').style.background = 'linear-gradient(90deg,#3a9c5a,#5ccf80)';
+    }
+    if (document.getElementById('rewardFill')) setTimeout(() => { document.getElementById('rewardFill').style.width = pct + '%'; }, 120);
+  }
+
+  /* ── PROGRESS BARS ── */
+  function setBar(pId, bId, v) {
+    const val = Math.min(100, Math.max(0, Math.round(v)));
+    const pEl = document.getElementById(pId);
+    const bEl = document.getElementById(bId);
+    if (pEl) pEl.textContent = val + '%';
+    if (bEl) setTimeout(() => { bEl.style.width = val + '%'; }, 120);
+  }
+
+  /* ── REGISTERED EVENTS ── */
+  function getRegistered() {
+    try { return JSON.parse(localStorage.getItem('clustr-registered') || '[]'); } catch { return []; }
+  }
+  function markRegistered(eventId) {
+    const reg = getRegistered();
+    if (!reg.includes(eventId)) { reg.push(eventId); localStorage.setItem('clustr-registered', JSON.stringify(reg)); }
+  }
+
+  /* ── FILE TYPE ICON ── */
+  function fileIcon(name = '') {
+    const ext = name.split('.').pop().toLowerCase();
+    if (['pdf'].includes(ext))               return { cls: 'pdf', icon: 'fa-file-pdf' };
+    if (['ppt','pptx'].includes(ext))        return { cls: 'ppt', icon: 'fa-file-powerpoint' };
+    if (['doc','docx'].includes(ext))        return { cls: 'doc', icon: 'fa-file-word' };
+    if (['zip','rar','7z'].includes(ext))    return { cls: 'zip', icon: 'fa-file-zipper' };
+    if (['jpg','jpeg','png','gif','webp'].includes(ext)) return { cls: 'img', icon: 'fa-file-image' };
+    return { cls: 'other', icon: 'fa-file' };
+  }
+
+  /* ── LOAD DASHBOARD ── */
+  async function loadDashboard() {
+    try {
+      const [evRes, annRes, merchRes] = await Promise.all([
+        fetch(`${API}/events/public`),
+        fetch(`${API}/events/public/announcements`),
+        fetch(`${API}/digital/merch/public`),
+      ]);
+      const events = evRes.ok    ? await evRes.json()   : [];
+      const anns   = annRes.ok   ? await annRes.json()  : [];
+      const merch  = merchRes.ok ? await merchRes.json(): { items: [] };
+
+      renderEvents(events, 'eventsContainer');
+      renderAnn(anns);
+      renderMerchSlideshow(merch.items || []);
+      document.getElementById('evCount').textContent = events.length ? `${events.length} upcoming` : '';
+    } catch {
+      document.getElementById('eventsContainer').innerHTML =
+        '<div class="empty"><i class="fas fa-wifi"></i><p>Could not load. Is the server running?</p></div>';
+      document.getElementById('annContainer').innerHTML =
+        '<div class="empty"><i class="fas fa-bell-slash"></i><p>Could not load announcements.</p></div>';
+      renderMerchSlideshow([]);
+    }
+
+    setBar('pct1','bar1',0); setBar('pct2','bar2',0); setBar('pct3','bar3',0);
+    updateReward(0);
+  }
+
+  /* ── LOAD ALL EVENTS VIEW ── */
+  async function loadAllEventsView() {
+    const c = document.getElementById('allEventsContainer');
+    c.innerHTML = '<div class="skel" style="height:110px;margin-bottom:.75rem;border-radius:14px"></div>'.repeat(3);
+    try {
+      const res = await fetch(`${API}/events/public`);
+      const events = res.ok ? await res.json() : [];
+      renderEvents(events, 'allEventsContainer');
+    } catch {
+      c.innerHTML = '<div class="empty"><i class="fas fa-wifi"></i><p>Could not load events.</p></div>';
+    }
+  }
+
+  /* ── RENDER EVENTS ── */
+  function renderEvents(events, containerId) {
+    const c   = document.getElementById(containerId);
+    const reg = getRegistered();
+    if (!events.length) {
+      c.innerHTML = '<div class="empty"><i class="fas fa-calendar-xmark"></i><p>No upcoming events right now.</p></div>';
+      return;
+    }
+    c.innerHTML = events.map(e => {
+      const status   = (e.status || 'open').toLowerCase().replace(/\s+/g,'');
+      const isReg    = reg.includes(String(e._id));
+      const isClosed = status === 'closed' || status === 'completed';
+      const fee      = e.registrationFee || 0;
+      const regUrl   = `register.html?id=${e._id}&event=${encodeURIComponent(e.title)}&category=${e.category||'other'}&fee=${fee}`;
+
+      let btnHtml;
+      if (isReg) {
+        btnHtml = `<span class="btn-reg already"><i class="fas fa-check-circle"></i> Registered</span>`;
+      } else if (isClosed) {
+        btnHtml = `<span class="btn-reg closed-reg"><i class="fas fa-lock"></i> Closed</span>`;
+      } else {
+        btnHtml = `<a class="btn-reg open-reg" href="${regUrl}" onclick="markRegistered('${e._id}')" target="_blank">
+          <i class="fas fa-arrow-right"></i> Register Now</a>`;
+      }
+
+      return `
+        <div class="ev-card">
+          <div class="ev-card-accent"></div>
+          <div class="ev-card-body">
+            <div class="ev-card-top">
+              <div class="ev-card-title">${e.title}</div>
+              <div class="ev-chips">
+                <span class="chip chip-${status}">${e.status || 'Open'}</span>
+                ${fee > 0 ? `<span class="chip chip-paid">₹${fee}</span>` : `<span class="chip chip-free">Free</span>`}
+              </div>
+            </div>
+            ${(e.date || e.time) ? `<div class="ev-meta">
+              ${e.date ? `<span><i class="fas fa-calendar"></i>${e.date}</span>` : ''}
+              ${e.time ? `<span><i class="fas fa-clock"></i>${e.time}</span>` : ''}
+              ${e.venue ? `<span><i class="fas fa-location-dot"></i>${e.venue}</span>` : ''}
+            </div>` : ''}
+            ${e.description ? `<div class="ev-desc">${e.description.slice(0,110)}${e.description.length>110?'…':''}</div>` : ''}
+            <div class="ev-footer">
+              <span class="ev-cat">${e.category ? `<i class="fas fa-tag"></i>${e.category}` : ''}</span>
+              ${btnHtml}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── RENDER ANNOUNCEMENTS ── */
+  function renderAnn(anns) {
+    const c = document.getElementById('annContainer');
+    if (!anns.length) {
+      c.innerHTML = '<div class="empty"><i class="fas fa-bell-slash"></i><p>No announcements yet.</p></div>';
+      return;
+    }
+    c.innerHTML = anns.map(a => `
+      <div class="ann">
+        <div class="ann-ico"><i class="fas fa-${a.icon||'bullhorn'}"></i></div>
+        <div>
+          <h4>${a.title}</h4>
+          <p>${(a.body||a.content||'').slice(0,120)}${(a.body||a.content||'').length>120?'…':''}</p>
+          <span class="ann-time">${a.date||''} ${a.author?'· '+a.author:''}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  /* Student-authenticated list */
+  window.downloadStudentResource = async (resourceId) => {
+    const uid = user.id || user._id;
+    if (!uid) { showToast('Session expired. Please sign in again.', 'error'); return; }
+    try {
+      const res = await fetch(`${API}/studentresources/resources/${resourceId}/download`, {
+        headers: { 'x-user-id': uid },
+      });
+      if (res.status === 401 || res.status === 403) {
+        showToast('Please sign in as a student to download.', 'error');
+        return;
+      }
+      if (!res.ok) { showToast('Could not download file.', 'error'); return; }
+      let fname = 'download';
+      const cd = res.headers.get('Content-Disposition');
+      if (cd) {
+        const m = cd.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)/i) || cd.match(/filename="([^"]+)"/);
+        if (m) fname = decodeURIComponent(m[1].trim());
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      showToast('Download started', 'success');
+    } catch {
+      showToast('Download failed.', 'error');
+    }
+  };
+
+  let resourcesLoaded = false;
+  async function loadResources() {
+    if (resourcesLoaded) return;
+    resourcesLoaded = true;
+
+    const resGrid   = document.getElementById('resourcesGrid');
+    const merchGrid = document.getElementById('merchGrid');
+
+    try {
+      const uid = user.id || user._id;
+      if (!uid) {
+        resGrid.innerHTML = `
+          <div class="empty" style="grid-column:1/-1">
+            <i class="fas fa-id-card"></i>
+            <p>Please <strong>sign out</strong> and <strong>sign in again</strong> once so your session includes your account ID.</p>
+          </div>`;
+        const merchRes = await fetch(`${API}/digital/merch/public`);
+        const merchData = merchRes.ok ? await merchRes.json() : { items: [] };
+        renderMerchCards(merchData.items || [], merchGrid);
+        return;
+      }
+      const [resRes, merchRes] = await Promise.all([
+        fetch(`${API}/studentresources/resources?limit=200`, { headers: { 'x-user-id': uid } }),
+        fetch(`${API}/digital/merch/public`),
+      ]);
+
+      const merchData = merchRes.ok ? await merchRes.json() : { items: [] };
+      let allResources = [];
+      if (resRes.ok) {
+        const data = await resRes.json();
+        allResources = data.resources || [];
+      } else if (resRes.status === 401 || resRes.status === 403) {
+        resGrid.innerHTML = `
+          <div class="empty" style="grid-column:1/-1">
+            <i class="fas fa-user-lock"></i>
+            <p>Sign in as a student to see resources shared by the Digital Team.</p>
+          </div>`;
+        renderMerchCards(merchData.items || [], merchGrid);
+        return;
+      }
+
+      allResources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      if (!allResources.length) {
+        resGrid.innerHTML = `
+          <div class="empty" style="grid-column:1/-1">
+            <i class="fas fa-folder-open"></i>
+            <p>No resources have been shared yet. Check back after your event!</p>
+          </div>`;
+      } else {
+        resGrid.innerHTML = allResources.map(r => {
+          const fi   = fileIcon(r.originalName || r.name || '');
+          const date = r.createdAt
+            ? new Date(r.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
+            : '';
+          const size = r.size ? `${(r.size/1024).toFixed(0)} KB` : '';
+          const evTitle = r.eventTitle || '';
+          const sentLabel = typeof r.sentBy === 'string' ? r.sentBy : (r.sentBy?.name || 'Digital Team');
+
+          return `
+            <div class="res-card">
+              <div class="res-card-top">
+                <div class="res-icon ${fi.cls}"><i class="fas ${fi.icon}"></i></div>
+                <div style="min-width:0">
+                  <div class="res-name">${(r.originalName || r.name || 'Resource').replace(/</g,'&lt;')}</div>
+                  <div class="res-meta">${(r.subject || '').replace(/</g,'&lt;')}${size ? ' · ' + size : ''}</div>
+                </div>
+              </div>
+              ${evTitle ? `<div><span class="res-event-tag"><i class="fas fa-calendar"></i> ${evTitle.replace(/</g,'&lt;')}</span></div>` : ''}
+              ${r.message ? `<div class="res-msg">${String(r.message).slice(0,100)}${String(r.message).length>100?'…':''}</div>` : ''}
+              <div class="res-footer">
+                <span class="res-date">${date}${sentLabel ? ' · ' + sentLabel.replace(/</g,'&lt;') : ''}</span>
+                <button type="button" class="btn-dl" onclick="downloadStudentResource('${r._id}')"><i class="fas fa-download"></i> Download</button>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      renderMerchCards(merchData.items || [], merchGrid);
+
+    } catch {
+      resGrid.innerHTML   = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-wifi"></i><p>Could not load resources. Is the server running?</p></div>`;
+      merchGrid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fas fa-wifi"></i><p>Could not load merch.</p></div>`;
+    }
+  }
+
+  /* ── RENDER MERCH CARDS ── */
+  function renderMerchCards(items, container) {
+    const staticItems = [
+      { emoji:'👕', label:'T-Shirt',  tag:'Bestseller', name:'TechNova T-Shirt',  description:'Premium 100% cotton unisex tee with the TechNova gradient logo. Available S–XL.',     price:'399' },
+      { emoji:'🧥', label:'Hoodie',   tag:'Limited',    name:'TechNova Hoodie',    description:'Heavyweight fleece hoodie with embroidered logo on chest. Perfect for late-night hackathons.', price:'799' },
+      { emoji:'🎨', label:'Stickers', tag:'Popular',    name:'Sticker Pack ×10',     description:'10 high-quality vinyl stickers — TechNova artwork, tech memes and club mascots.',  price:'99' },
+      { emoji:'☕', label:'Mug',      tag:'New',        name:'TechNova Mug',        description:'11oz ceramic mug with gradient TechNova logo. Fuel your coding sessions in style.', price:'299' },
+      { emoji:'🧢', label:'Cap',      tag:'Exclusive',  name:'TechNova Cap',        description:'Structured 6-panel cap with embroidered TN logo. One size fits all.',               price:'449' },
+      { emoji:'👜', label:'Tote Bag', tag:'Eco',        name:'TechNova Tote Bag',   description:'Heavy canvas tote with gradient print.',                                              price:'249' },
+    ];
+    const display = items && items.length ? items : staticItems;
+    container.innerHTML = display.map(m => {
+      const photo = m.photoUrl || (m.photoData ? `data:${m.photoMime};base64,${m.photoData}` : null);
+      return `
+        <div class="merch-card">
+          <div class="merch-card-img" style="${photo ? 'background:transparent' : ''}">
+            ${photo
+              ? `<img src="${photo}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;"/>`
+              : `<span>${m.emoji || '🛍️'}</span><span>${m.label || m.category || ''}</span>`}
+          </div>
+          <div class="merch-card-body">
+            <div class="merch-tag">${m.tag || m.badge || 'Available'}</div>
+            <div class="merch-name">${m.name}</div>
+            <div class="merch-desc">${m.description || m.desc || ''}</div>
+            <div class="merch-footer">
+              <span class="merch-price">₹${m.price || m.priceInr || ''}</span>
+              <button class="btn-order" onclick="showToast('Contact the club to order!','info')">
+                <i class="fas fa-shopping-bag"></i> Order
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── RENDER MERCH SLIDESHOW ── */
+  function renderMerchSlideshow(items) {
+    const staticItems = [
+      { emoji:'👕', label:'T-Shirt',  tag:'Bestseller', name:'TechNova T-Shirt',  description:'Premium 100% cotton unisex tee with the TechNova gradient logo. Available S–XL.',     price:'399' },
+      { emoji:'🧥', label:'Hoodie',   tag:'Limited',    name:'TechNova Hoodie',    description:'Heavyweight fleece hoodie with embroidered logo on chest. Perfect for late-night hackathons.', price:'799' },
+      { emoji:'🎨', label:'Stickers', tag:'Popular',    name:'TechNova Sticker Pack ×10',     description:'10 high-quality vinyl stickers — TechNova artwork, tech memes and club mascots.',  price:'99' },
+      { emoji:'☕', label:'Mug',      tag:'New',        name:'TechNova Mug',        description:'11oz ceramic mug with gradient TechNova logo.',                                      price:'299' },
+      { emoji:'🧢', label:'Cap',      tag:'Exclusive',  name:'TechNova Cap',        description:'Structured 6-panel cap with embroidered TN logo. One size fits all.',               price:'449' },
+      { emoji:'👜', label:'Tote Bag', tag:'Eco',        name:'TechNova Tote Bag',   description:'Heavy canvas tote with gradient print.',                                              price:'249' },
+    ];
+    const display = items && items.length ? items : staticItems;
+    const track = document.getElementById('ssTrack');
+    const dots  = document.getElementById('ssDots');
+    track.innerHTML = display.map(m => {
+      const photo = m.photoUrl || (m.photoData ? `data:${m.photoMime};base64,${m.photoData}` : null);
+      return `<div class="ss-slide"><div class="ss-inner">
+        <div class="ss-img">${photo
+          ? `<img src="${photo}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"/>`
+          : `<span>${m.emoji||'🛍️'}</span><span>${m.label||''}</span>`}</div>
+        <div class="ss-info">
+          <div>
+            <span class="ss-tag">${m.tag||'Available'}</span>
+            <div class="ss-name">${m.name}</div>
+            <div class="ss-desc">${m.description||m.desc||''}</div>
+          </div>
+          <div class="ss-btm">
+            <span class="ss-price">₹${m.price||m.priceInr||''}</span>
+            <button class="ss-buy" onclick="showToast('Contact the club to order!','info')">
+              <i class="fas fa-shopping-bag"></i> Order Now
+            </button>
+          </div>
+        </div>
+      </div></div>`;
+    }).join('');
+    dots.innerHTML = '';
+    display.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'ss-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', `Slide ${i+1}`);
+      d.onclick = () => { goSlide(i); resetTimer(); };
+      dots.appendChild(d);
+    });
+    goSlide(0); resetTimer();
+  }
+
+  /* ── SLIDESHOW CONTROLS ── */
+  let curSlide = 0, timer;
+  function goSlide(n) {
+    const slides = document.querySelectorAll('.ss-slide');
+    if (!slides.length) return;
+    curSlide = (n + slides.length) % slides.length;
+    document.getElementById('ssTrack').style.transform = `translateX(-${curSlide * 100}%)`;
+    document.querySelectorAll('.ss-dot').forEach((d, i) => d.classList.toggle('active', i === curSlide));
+  }
+  window.slideMove = dir => { goSlide(curSlide + dir); resetTimer(); };
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => goSlide(curSlide + 1), 4500);
+  }
+  const ssWrap = document.querySelector('.ss-wrap');
+  if (ssWrap) {
+    ssWrap.addEventListener('mouseenter', () => clearInterval(timer));
+    ssWrap.addEventListener('mouseleave', resetTimer);
+  }
+
+  /* ── MODALS ── */
+  window.openModal = id => {
+    document.getElementById(id).classList.add('open');
+    if (id === 'photoModal') {
+      const saved = localStorage.getItem('clustr-profile-photo');
+      const p = document.getElementById('avPreview');
+      if (saved) { p.className=''; p.innerHTML=`<img src="${saved}" style="width:100%;height:100%;object-fit:cover">`; }
+      else        { p.className='av-init'; p.textContent=initial; }
+      document.getElementById('savePhotoBtn').disabled = true;
+      pendingPhoto = null;
+    }
+  };
+  window.closeModal = id => document.getElementById(id).classList.remove('open');
+  document.querySelectorAll('.modal-overlay').forEach(o =>
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  });
+
+  /* ── TOAST ── */
+  window.showToast = () => {};
+
+  /* ── LOGOUT ── */
+  window.logout = () => {
+    if (confirm('Sign out of TechNova?')) {
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    }
+  };
+
+  /* ── INIT ── */
+  loadDashboard();
+})();
+</script>
+</body>
+</html>

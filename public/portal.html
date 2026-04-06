@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Portal – ClustrCore</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+    :root {
+      --orange:#c8623a; --orange-l:#e08c4a; --orange-d:#a34c28;
+      --blue:#3a6bc8;   --blue-l:#6a9be8;   --blue-d:#2a50a0;
+      --ag:#3a9c5a;
+      --grad:linear-gradient(135deg, var(--orange) 0%, var(--orange-l) 50%, var(--blue) 100%);
+      --grad-text:linear-gradient(90deg, var(--orange) 0%, var(--orange-l) 40%, var(--blue) 100%);
+
+      --bg:#faf8f5; --bg2:#f2ede6; --bg3:#ebe4d9;
+      --ink:#1a1410; --ink2:#4a3f35; --ink3:#8c7b6d;
+      --card:#ffffff; --card2:rgba(255,255,255,0.75);
+      --line:rgba(26,20,16,0.08); --line2:rgba(26,20,16,0.15);
+      --sh1:0 1px 4px rgba(26,20,16,0.06), 0 4px 16px rgba(26,20,16,0.06);
+      --sh2:0 8px 32px rgba(26,20,16,0.10), 0 2px 8px rgba(26,20,16,0.06);
+      --sh3:0 24px 64px rgba(26,20,16,0.14), 0 4px 16px rgba(26,20,16,0.08);
+      --r:16px; --ease:cubic-bezier(0.4,0,0.2,1); --t:0.3s;
+      --glow:rgba(200,98,58,.2);
+      --tech-glow:rgba(58,107,200,0.2);
+      --events-glow:rgba(200,98,58,0.2);
+      --digital-glow:rgba(139,92,246,0.2);
+    }
+    [data-theme="dark"] {
+      --bg:#110e0b; --bg2:#1a1512; --bg3:#231e18;
+      --ink:#f5f0ea; --ink2:#b5a898; --ink3:#6b5e52;
+      --card:#1e1a15; --card2:rgba(30,26,21,0.85);
+      --line:rgba(245,240,234,0.07); --line2:rgba(245,240,234,0.14);
+      --sh1:0 1px 4px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.25);
+      --sh2:0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+      --sh3:0 24px 64px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;font-size:16px}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);color:var(--ink);
+      min-height:100vh;
+      transition:background var(--t),color var(--t);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.025;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:var(--bg2)}
+    ::-webkit-scrollbar-thumb{background:var(--orange);border-radius:2px}
+
+    .screen{display:none;min-height:100vh;position:relative}
+    .screen.active{display:flex}
+    #screen-select{flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem}
+    #screen-auth{align-items:center;justify-content:center;padding:2rem 1rem}
+
+    #screen-select::after,#screen-auth::after{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 30%, rgba(200,98,58,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 20% 70%, rgba(58,107,200,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 40% at 50% 5%, rgba(224,140,74,0.07) 0%, transparent 50%);
+    }
+
+    #screen-select::before,#screen-auth::before{
+      content:'';position:fixed;inset:0;pointer-events:none;
+      background-image:
+        linear-gradient(var(--line) 1px,transparent 1px),
+        linear-gradient(90deg,var(--line) 1px,transparent 1px);
+      background-size:60px 60px;opacity:.6;
+      animation:gridDrift 30s linear infinite;
+    }
+    @keyframes gridDrift{from{background-position:0 0}to{background-position:60px 60px}}
+
+    .top-bar{
+      position:fixed;top:0;left:0;right:0;z-index:300;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:.875rem 1.5rem;
+    }
+    .top-bar-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      width:100%;
+      padding:.6rem 1.25rem;
+      background:var(--card2);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid var(--line2);
+      border-radius:100px;
+      box-shadow:var(--sh1);
+    }
+    .home-btn{
+      display:inline-flex;align-items:center;gap:.45rem;
+      font-size:.82rem;font-weight:500;color:var(--ink2);
+      text-decoration:none;transition:color var(--t);
+    }
+    .home-btn:hover{color:var(--orange)}
+    .home-btn i{font-size:.75rem}
+    .top-bar-logo{
+      font-family:'Playfair Display',serif;
+      font-size:1.1rem;font-weight:700;letter-spacing:-.02em;
+      background:var(--grad-text);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .theme-btn-float{
+      width:34px;height:34px;
+      background:var(--bg2);border:1px solid var(--line2);
+      border-radius:50%;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      font-size:.82rem;color:var(--ink2);transition:all var(--t);
+    }
+    .theme-btn-float:hover{border-color:var(--orange);color:var(--orange)}
+
+    .select-header{
+      text-align:center;margin-bottom:3rem;
+      position:relative;z-index:2;
+      animation:fadeUp .8s var(--ease) both;
+      margin-top:5rem;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+    .select-eyebrow{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:var(--bg2);border:1px solid var(--line2);
+      border-radius:100px;padding:.35rem 1rem;
+      font-size:.7rem;font-weight:600;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--orange);
+      margin-bottom:1.5rem;
+    }
+    .select-eyebrow::before{
+      content:'';width:6px;height:6px;border-radius:50%;
+      background:var(--orange);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+    .select-header h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.2rem,5vw,3.5rem);
+      font-weight:900;letter-spacing:-.04em;line-height:1.05;
+      margin-bottom:.75rem;
+    }
+    .select-header h1 em{
+      font-style:italic;
+      background:var(--grad-text);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .select-header p{color:var(--ink3);font-size:1rem;font-weight:300}
+
+    .team-cards{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:1.375rem;
+      max-width:900px;width:100%;position:relative;z-index:2;
+      animation:fadeUp .8s var(--ease) .15s both;
+    }
+    .team-card{
+      background:var(--card);border:1px solid var(--line);
+      border-radius:24px;padding:2.25rem 1.625rem 2rem;
+      text-align:center;cursor:pointer;
+      transition:all var(--t);position:relative;
+      overflow:hidden;box-shadow:var(--sh1);
+    }
+    .team-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      opacity:0;transition:opacity var(--t);
+    }
+    .team-card.tech::before{background:linear-gradient(90deg,#3a6bc8,#6a9be8)}
+    .team-card.events::before{background:var(--grad)}
+    .team-card.digital::before{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+    .team-card::after{
+      content:'';position:absolute;inset:0;
+      opacity:0;transition:opacity var(--t);pointer-events:none;
+      border-radius:inherit;
+    }
+    .team-card.tech::after{background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(58,107,200,.07) 0%,transparent 70%)}
+    .team-card.events::after{background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(200,98,58,.07) 0%,transparent 70%)}
+    .team-card.digital::after{background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(139,92,246,.07) 0%,transparent 70%)}
+
+    .team-card:hover{transform:translateY(-8px);border-color:var(--line2)}
+    .team-card.tech:hover{box-shadow:var(--sh3),0 0 40px var(--tech-glow)}
+    .team-card.events:hover{box-shadow:var(--sh3),0 0 40px var(--events-glow)}
+    .team-card.digital:hover{box-shadow:var(--sh3),0 0 40px var(--digital-glow)}
+    .team-card:hover::before,.team-card:hover::after{opacity:1}
+
+    .team-icon{
+      width:72px;height:72px;border-radius:20px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.8rem;margin:0 auto 1.375rem;
+      transition:transform var(--t);
+      box-shadow:0 4px 20px var(--glow);
+    }
+    .team-card:hover .team-icon{transform:scale(1.1) rotate(-5deg)}
+    .team-card.tech .team-icon{background:linear-gradient(135deg,#3a6bc8,#6a9be8);color:#fff}
+    .team-card.events .team-icon{background:var(--grad);color:#fff}
+    .team-card.digital .team-icon{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff}
+
+    .team-card h2{
+      font-family:'Playfair Display',serif;
+      font-size:1.25rem;font-weight:700;letter-spacing:-.02em;
+      margin-bottom:.4rem;position:relative;z-index:1;
+    }
+    .team-card p{
+      font-size:.82rem;color:var(--ink3);line-height:1.65;
+      margin-bottom:1.375rem;font-weight:300;position:relative;z-index:1;
+    }
+    .team-badge{
+      display:inline-block;font-size:.65rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;
+      padding:.25rem .875rem;border-radius:100px;
+      position:relative;z-index:1;
+    }
+    .team-card.tech .team-badge{background:rgba(58,107,200,.1);color:#3a6bc8;border:1px solid rgba(58,107,200,.25)}
+    .team-card.events .team-badge{background:rgba(200,98,58,.1);color:var(--orange);border:1px solid rgba(200,98,58,.25)}
+    .team-card.digital .team-badge{background:rgba(139,92,246,.1);color:#8b5cf6;border:1px solid rgba(139,92,246,.25)}
+    .member-count{
+      position:absolute;top:1rem;right:1rem;
+      font-size:.65rem;font-weight:600;color:var(--ink3);
+      background:var(--bg2);border:1px solid var(--line);
+      padding:.2rem .55rem;border-radius:100px;
+    }
+
+    .auth-card{
+      background:var(--card);border:1px solid var(--line2);
+      border-radius:24px;padding:2.5rem 2.25rem;
+      width:100%;max-width:440px;
+      box-shadow:var(--sh3);position:relative;z-index:2;
+      animation:cardIn .55s var(--ease) both;
+      backdrop-filter:blur(20px);
+    }
+    @keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+    .auth-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      border-radius:24px 24px 0 0;
+    }
+    .auth-card.tech::before{background:linear-gradient(90deg,#3a6bc8,#6a9be8)}
+    .auth-card.events::before{background:var(--grad)}
+    .auth-card.digital::before{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+
+    .back-btn{
+      display:inline-flex;align-items:center;gap:.4rem;
+      font-size:.8rem;color:var(--ink3);
+      background:none;border:none;cursor:pointer;
+      margin-bottom:1.625rem;transition:color var(--t);
+      font-family:'DM Sans',sans-serif;padding:0;
+    }
+    .back-btn:hover{color:var(--orange)}
+
+    .auth-team-header{display:flex;align-items:center;gap:.875rem;margin-bottom:1.875rem}
+    .auth-team-icon{
+      width:52px;height:52px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.4rem;color:#fff;
+      box-shadow:0 4px 16px var(--glow);
+    }
+    .auth-team-icon.tech{background:linear-gradient(135deg,#3a6bc8,#6a9be8)}
+    .auth-team-icon.events{background:var(--grad)}
+    .auth-team-icon.digital{background:linear-gradient(135deg,#8b5cf6,#a78bfa)}
+    .auth-team-name{
+      font-family:'Playfair Display',serif;
+      font-size:1.2rem;font-weight:700;letter-spacing:-.02em;
+      margin-bottom:.15rem;
+    }
+    .auth-team-sub{font-size:.78rem;color:var(--ink3);font-weight:300}
+
+    .auth-field{margin-bottom:1rem}
+    .auth-field label{
+      display:block;font-size:.68rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;
+      color:var(--ink3);margin-bottom:.45rem;
+    }
+    .field-wrap{position:relative}
+    .field-wrap i.fi{
+      position:absolute;left:13px;top:50%;transform:translateY(-50%);
+      color:var(--ink3);font-size:.82rem;pointer-events:none;
+      transition:color var(--t);
+    }
+    .field-wrap:focus-within i.fi{color:var(--orange)}
+    .field-wrap input,.field-wrap select{
+      width:100%;padding:.72rem 1rem .72rem 2.5rem;
+      background:var(--bg2);border:1px solid var(--line2);
+      border-radius:100px;font-family:'DM Sans',sans-serif;
+      font-size:.88rem;color:var(--ink);outline:none;
+      transition:all var(--t);appearance:none;
+    }
+    .field-wrap input::placeholder{color:var(--ink3)}
+    .field-wrap input:focus,.field-wrap select:focus{
+      border-color:var(--orange);background:var(--card);
+      box-shadow:0 0 0 3px rgba(200,98,58,.12);
+    }
+    .sel-wrap::after{
+      content:'\f078';font-family:'Font Awesome 6 Free';font-weight:900;
+      position:absolute;right:14px;top:50%;transform:translateY(-50%);
+      pointer-events:none;color:var(--ink3);font-size:.7rem;
+    }
+
+    .auth-error{
+      font-size:.8rem;color:#ef4444;
+      min-height:1.2em;margin-bottom:.5rem;text-align:center;
+    }
+
+    .primary-btn{
+      width:100%;padding:.85rem;margin-top:.25rem;
+      background:var(--grad);color:#fff;
+      border:none;border-radius:100px;
+      font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:600;
+      cursor:pointer;transition:all var(--t);
+      box-shadow:0 4px 20px var(--glow);
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+      position:relative;overflow:hidden;
+    }
+    .primary-btn::before{
+      content:'';position:absolute;inset:0;
+      background:rgba(255,255,255,.12);opacity:0;transition:opacity var(--t);
+    }
+    .primary-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 32px var(--glow)}
+    .primary-btn:hover:not(:disabled)::before{opacity:1}
+    .primary-btn:disabled{opacity:.6;cursor:not-allowed}
+    .btn-spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .phone-hint{
+      text-align:center;font-size:.8rem;color:var(--ink3);
+      margin-bottom:1rem;padding:.65rem 1rem;
+      background:var(--bg2);border:1px solid var(--line2);
+      border-radius:100px;display:none;font-weight:300;
+    }
+    .phone-hint.show{display:block}
+    .phone-hint strong{color:var(--ink);font-weight:600}
+
+    .otp-boxes{display:flex;justify-content:center;gap:.625rem;margin:.5rem 0 1rem}
+    .otp-box{
+      width:46px;height:54px;text-align:center;
+      background:var(--bg2);border:1.5px solid var(--line2);
+      border-radius:14px;
+      font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;
+      color:var(--ink);outline:none;transition:all var(--t);
+      caret-color:var(--orange);
+    }
+    .otp-box:focus{border-color:var(--orange);background:var(--card);box-shadow:0 0 0 3px rgba(200,98,58,.12)}
+    .otp-box.filled{border-color:rgba(200,98,58,.5);background:rgba(200,98,58,.04)}
+
+    .resend-row{text-align:center;margin-top:.875rem}
+    .resend-btn{
+      background:none;border:none;color:var(--orange);
+      font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;
+      cursor:pointer;transition:color var(--t);
+    }
+    .resend-btn:hover:not(:disabled){color:var(--blue)}
+    .resend-btn:disabled{color:var(--ink3);cursor:default}
+    .resend-timer{font-size:.8rem;color:var(--ink3)}
+
+    .step{display:none}.step.active{display:block}
+
+    .auth-card.shake{animation:shake .45s cubic-bezier(.36,.07,.19,.97) both}
+    @keyframes shake{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-5px)}40%,60%{transform:translateX(5px)}}
+
+    .redirect-overlay{
+      position:fixed;inset:0;background:var(--bg);z-index:9999;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
+      opacity:0;pointer-events:none;transition:opacity .4s ease;
+    }
+    .redirect-overlay.show{opacity:1;pointer-events:all}
+    .redirect-spinner{
+      width:48px;height:48px;
+      border:3px solid var(--line2);border-top-color:var(--orange);
+      border-radius:50%;animation:spin .7s linear infinite;
+    }
+    .redirect-text{
+      font-family:'Playfair Display',serif;
+      font-size:1.2rem;font-weight:700;color:var(--ink);
+    }
+    .redirect-sub{font-size:.82rem;color:var(--ink3);font-weight:300}
+
+    @media(max-width:768px){
+      .team-cards{grid-template-columns:1fr;max-width:380px}
+      .top-bar{padding:.625rem .875rem}
+    }
+    @media(max-width:480px){
+      .auth-card{padding:1.75rem 1.25rem}
+      .otp-box{width:40px;height:50px;font-size:1.2rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="home-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    <span class="top-bar-logo">ClustrCore</span>
+    <button class="theme-btn-float" id="themeBtn" aria-label="Toggle theme">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 1: TEAM SELECT ════════════════════════════ -->
+<div id="screen-select" class="screen active">
+
+  <div class="select-header">
+    <div class="select-eyebrow">Team Portal</div>
+    <h1>Choose Your <em>Team</em></h1>
+    <p>Select your team to continue to the dashboard</p>
+  </div>
+
+  <div class="team-cards">
+    <div class="team-card tech" onclick="selectTeam('tech')">
+      <span class="member-count" id="count-tech">— members</span>
+      <div class="team-icon"><i class="fas fa-code"></i></div>
+      <h2>Technical</h2>
+      <p>Manage dev tasks, repositories, technical sessions and infrastructure.</p>
+    </div>
+    <div class="team-card events" onclick="selectTeam('events')">
+      <span class="member-count" id="count-events">— members</span>
+      <div class="team-icon"><i class="fas fa-calendar-days"></i></div>
+      <h2>Events</h2>
+      <p>Plan, coordinate and execute workshops, hackathons and competitions.</p>
+    </div>
+    <div class="team-card digital" onclick="selectTeam('digital')">
+      <span class="member-count" id="count-digital">— members</span>
+      <div class="team-icon"><i class="fas fa-palette"></i></div>
+      <h2>Digital</h2>
+      <p>Handle social media, branding, design assets and online presence.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ SCREEN 2: OTP AUTH ════════════════════════════════ -->
+<div id="screen-auth" class="screen">
+
+  <div class="auth-card" id="authCard">
+    <button class="back-btn" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i> Choose different team
+    </button>
+
+    <div class="auth-team-header">
+      <div class="auth-team-icon" id="authIcon"><i class="fas fa-code"></i></div>
+      <div>
+        <div class="auth-team-name" id="authTeamName">Technical Team</div>
+        <div class="auth-team-sub" id="authTeamSub">Select your name to receive OTP</div>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step active" id="step-1">
+      <div class="auth-field">
+        <label>Your Name</label>
+        <div class="field-wrap sel-wrap">
+          <i class="fas fa-user fi"></i>
+          <select id="memberSelect">
+            <option value="">— loading members... —</option>
+          </select>
+        </div>
+      </div>
+      <div class="auth-error" id="step1Error"></div>
+      <button class="primary-btn" id="sendOtpBtn" onclick="sendOtp()">
+        <div class="btn-spin" id="sendSpin"></div>
+        <span id="sendBtnText"><i class="fas fa-paper-plane"></i> Send OTP to my Phone</span>
+      </button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step-2">
+      <div class="phone-hint show" id="phoneHint">
+        OTP sent to <strong id="maskedPhone">****</strong> — valid for 10 minutes
+      </div>
+      <div class="auth-field">
+        <label>Enter 6-digit OTP</label>
+        <div class="otp-boxes">
+          <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o0" autocomplete="one-time-code">
+          <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o1">
+          <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o2">
+          <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o3">
+          <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o4">
+          <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o5">
+        </div>
+      </div>
+      <div class="auth-error" id="step2Error"></div>
+      <button class="primary-btn" id="verifyOtpBtn" onclick="verifyOtp()">
+        <div class="btn-spin" id="verifySpin"></div>
+        <span id="verifyBtnText"><i class="fas fa-check-circle"></i> Verify &amp; Enter</span>
+      </button>
+      <div class="resend-row">
+        <button class="resend-btn" id="resendBtn" onclick="resendOtp()" disabled>Resend OTP</button>
+        <span class="resend-timer" id="resendTimer">&nbsp;(wait <span id="timerCount">30</span>s)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Redirect overlay -->
+<div class="redirect-overlay" id="redirectOverlay">
+  <div class="redirect-spinner"></div>
+  <div class="redirect-text" id="redirectText">Redirecting…</div>
+  <div class="redirect-sub" id="redirectSub">Taking you to your dashboard</div>
+</div>
+
+<script>
+(() => {
+  const API = 'http://localhost:5000/api';
+
+  const TEAM_PAGES = {
+    tech:    'tech-dashboard.html',
+    events:  'events-dashboard.html',
+    digital: 'digital-dashboard.html',
+  };
+
+  const TEAM_CFG = {
+    tech:    { name:'Technical Team',  icon:'fas fa-code'          },
+    events:  { name:'Events Team',     icon:'fas fa-calendar-days' },
+    digital: { name:'Digital Team',    icon:'fas fa-palette'       },
+  };
+
+  let currentTeam   = null;
+  let currentUserId = null;
+  let timerInterval = null;
+  let dbMembers     = {};
+
+  /* ── THEME ── */
+  const htmlEl = document.documentElement;
+  applyTheme(localStorage.getItem('clustr-theme') || 'light');
+
+  function applyTheme(t) {
+    htmlEl.setAttribute('data-theme', t);
+    localStorage.setItem('clustr-theme', t);
+    const b = document.getElementById('themeBtn');
+    if (b) b.querySelector('i').className = t==='dark' ? 'fas fa-sun' : 'fas fa-moon';
+  }
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    applyTheme(htmlEl.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+  });
+
+  /* ── SCREEN SWITCH ── */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${n}`).classList.add('active');
+  }
+
+  /* ── LOAD MEMBER COUNTS ── */
+  async function loadAllMemberCounts() {
+    for (const team of ['tech','events','digital']) {
+      try {
+        const res  = await fetch(`${API}/team/members/${team}`);
+        const data = await res.json();
+        if (res.ok) {
+          dbMembers[team] = data.members;
+          const el = document.getElementById(`count-${team}`);
+          if (el) el.textContent = `${data.members.length} member${data.members.length!==1?'s':''}`;
+        }
+      } catch(_) {}
+    }
+  }
+  loadAllMemberCounts();
+
+  /* ── SELECT TEAM ── */
+  window.selectTeam = async (team) => {
+    currentTeam = team;
+    const cfg   = TEAM_CFG[team];
+
+    document.getElementById('authCard').className    = `auth-card ${team}`;
+    document.getElementById('authIcon').className    = `auth-team-icon ${team}`;
+    document.getElementById('authIcon').innerHTML    = `<i class="${cfg.icon}"></i>`;
+    document.getElementById('authTeamName').textContent = cfg.name;
+    document.getElementById('authTeamSub').textContent  = 'Select your name to receive OTP';
+
+    showStep(1);
+    document.getElementById('step1Error').textContent = '';
+    document.getElementById('step2Error').textContent = '';
+    clearOtpBoxes();
+
+    const sel = document.getElementById('memberSelect');
+    sel.innerHTML = '<option value="">— pick your name —</option>';
+
+    const members = dbMembers[team] || [];
+    if (members.length > 0) {
+      members.forEach(m => {
+        const o = document.createElement('option');
+        o.value = m.name;
+        o.textContent = `${m.name} — ${m.teamRole}`;
+        sel.appendChild(o);
+      });
+    } else {
+      try {
+        const res  = await fetch(`${API}/team/members/${team}`);
+        const data = await res.json();
+        if (res.ok) {
+          dbMembers[team] = data.members;
+          data.members.forEach(m => {
+            const o = document.createElement('option');
+            o.value = m.name; o.textContent = `${m.name} — ${m.teamRole}`;
+            sel.appendChild(o);
+          });
+        }
+      } catch(_) {
+        sel.innerHTML = '<option value="">Could not load members</option>';
+      }
+    }
+
+    showScreen('screen-auth');
+  };
+
+  window.goBack = () => { clearTimer(); showScreen('screen-select'); };
+
+  /* ── SEND OTP ── */
+  window.sendOtp = async () => {
+    const name = document.getElementById('memberSelect').value;
+    if (!name) { setError(1,'Please select your name.'); return; }
+
+    setLoading('send', true);
+    try {
+      const res  = await fetch(`${API}/team/send-otp`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ name, team: currentTeam }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      currentUserId = data.userId;
+      document.getElementById('maskedPhone').textContent = data.masked;
+      showStep(2);
+      document.getElementById('authTeamSub').textContent = 'Enter the OTP sent to your phone';
+      document.getElementById('o0').focus();
+      startResendTimer();
+      showToast(`OTP sent to ${data.masked} ✓`, 'success');
+
+    } catch(err) {
+      setError(1, err.message || 'Failed to send OTP.');
+      shake();
+    } finally {
+      setLoading('send', false);
+    }
+  };
+
+  /* ── VERIFY OTP ── */
+  window.verifyOtp = async () => {
+    const otp = [...Array(6)].map((_,i) => document.getElementById(`o${i}`).value).join('');
+    if (otp.length < 6) { setError(2,'Enter all 6 digits.'); return; }
+
+    setLoading('verify', true);
+    try {
+      const res  = await fetch(`${API}/team/verify-otp`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ userId: currentUserId, otp }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      localStorage.setItem('clustr-session', JSON.stringify({ team: currentTeam, user: data.user }));
+      localStorage.setItem('clustr-team-session', JSON.stringify({ team: currentTeam, user: data.user }));
+
+      clearTimer();
+
+      const overlay = document.getElementById('redirectOverlay');
+      document.getElementById('redirectText').textContent  = `Welcome, ${data.user.name}! 🎉`;
+      document.getElementById('redirectSub').textContent   = `Opening ${TEAM_CFG[currentTeam].name} dashboard…`;
+      overlay.classList.add('show');
+
+      setTimeout(() => { window.location.href = TEAM_PAGES[currentTeam]; }, 1200);
+
+    } catch(err) {
+      setError(2, err.message || 'Invalid OTP.');
+      clearOtpBoxes();
+      shake();
+      document.getElementById('o0').focus();
+    } finally {
+      setLoading('verify', false);
+    }
+  };
+
+  window.resendOtp = async () => {
+    clearOtpBoxes();
+    document.getElementById('step2Error').textContent = '';
+    await sendOtp();
+  };
+
+  /* ── RESEND TIMER ── */
+  function startResendTimer() {
+    clearTimer();
+    let secs = 30;
+    document.getElementById('resendBtn').disabled = true;
+    document.getElementById('resendTimer').style.display = '';
+    document.getElementById('timerCount').textContent = secs;
+    timerInterval = setInterval(() => {
+      secs--;
+      document.getElementById('timerCount').textContent = secs;
+      if (secs <= 0) {
+        clearTimer();
+        document.getElementById('resendBtn').disabled = false;
+        document.getElementById('resendTimer').style.display = 'none';
+      }
+    }, 1000);
+  }
+  function clearTimer() { if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+
+  /* ── OTP BOX UX ── */
+  for (let i=0; i<6; i++) {
+    const box = document.getElementById(`o${i}`);
+    box.addEventListener('input', e => {
+      const v = e.target.value.replace(/\D/g,'');
+      e.target.value = v ? v[0] : '';
+      e.target.classList.toggle('filled', !!v);
+      if (v && i < 5) document.getElementById(`o${i+1}`).focus();
+      if (i === 5 && v) verifyOtp();
+    });
+    box.addEventListener('keydown', e => {
+      if (e.key==='Backspace' && !e.target.value && i>0) document.getElementById(`o${i-1}`).focus();
+    });
+    box.addEventListener('paste', e => {
+      e.preventDefault();
+      const txt = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      for (let j=0; j<txt.length; j++) {
+        const b = document.getElementById(`o${j}`);
+        if (b) { b.value=txt[j]; b.classList.add('filled'); }
+      }
+      const last = document.getElementById(`o${Math.min(txt.length,5)}`);
+      if (last) last.focus();
+      if (txt.length===6) verifyOtp();
+    });
+  }
+  function clearOtpBoxes() {
+    for(let i=0;i<6;i++){const b=document.getElementById(`o${i}`);b.value='';b.classList.remove('filled');}
+  }
+
+  /* ── HELPERS ── */
+  function setLoading(type, on) {
+    const id   = type==='send' ? 'sendOtpBtn'  : 'verifyOtpBtn';
+    const spin = type==='send' ? 'sendSpin'     : 'verifySpin';
+    const txt  = type==='send' ? 'sendBtnText'  : 'verifyBtnText';
+    document.getElementById(id).disabled        = on;
+    document.getElementById(spin).style.display = on ? 'block' : 'none';
+    document.getElementById(txt).style.display  = on ? 'none'  : 'flex';
+  }
+  function setError(step, msg) {
+    const el = document.getElementById(`step${step}Error`);
+    el.textContent = msg;
+    setTimeout(() => { el.textContent=''; }, 4000);
+  }
+  function shake() {
+    const c = document.getElementById('authCard');
+    c.classList.add('shake');
+    setTimeout(() => c.classList.remove('shake'), 500);
+  }
+
+  window.showToast = () => {};
+
+})();
+</script>
+</body>
+</html>
